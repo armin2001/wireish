@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { Inter, Space_Grotesk } from 'next/font/google';
 import Script from 'next/script'; // <-- 1. Uvezen Script
 import './globals.css';
+import { Analytics } from '@vercel/analytics/react';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 
@@ -62,6 +63,8 @@ export default function RootLayout({
             `,
           }}
         />
+        {/* Vercel Analytics */}
+        <Analytics />
       </body>
     </html>
   );
