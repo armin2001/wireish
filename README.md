@@ -1,6 +1,6 @@
 <div align="center">
 
-  <h1 align="center">Wireish</h1>
+  <img src="https://raw.githubusercontent.com/armin2001/wireish/main/public/logo.svg" alt="Wireish" width="220" style="margin-bottom: 20px;" />
 
   <p align="center">
     <strong>High-End AI Automation Agency & SaaS Infrastructure</strong>
