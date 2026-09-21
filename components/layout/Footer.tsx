@@ -51,8 +51,8 @@ export default function Footer() {
       <div className="max-w-7xl mx-auto pt-8 border-t border-border/50 flex flex-col sm:flex-row items-center justify-between text-xs text-gray-500 gap-4">
         <p>© {new Date().getFullYear()} Wireish. All rights reserved.</p>
         <div className="flex gap-6">
-          <span className="hover:text-gray-400 cursor-pointer">Privacy Policy</span>
-          <span className="hover:text-gray-400 cursor-pointer">Terms of Service</span>
+            <Link href="/privacy" className="hover:text-gray-400 transition-colors">Privacy Policy</Link>
+            <Link href="/terms" className="hover:text-gray-400 transition-colors">Terms of Service</Link>
         </div>
       </div>
     </footer>
