@@ -1,36 +1,41 @@
 import { NextResponse } from 'next/server';
 import { Resend } from 'resend';
 
-// Inicijalizacija sa tvojim API ključem (koji ćemo staviti u .env)
+// Inicijalizacija Resend-a sa tvojim ključem iz .env.local
 const resend = new Resend(process.env.RESEND_API_KEY);
 
-export async function POST(request: Request) {
+export async function POST(req: Request) {
   try {
-    const body = await request.json();
-    const { name, email, company, message } = body;
+    // 1. Ovdje sada izvlačimo i 'phone' i 'company' iz zahtjeva
+    const { name, email, company, phone, message } = await req.json();
 
-    // Slanje maila na tvoju adresu
+    // 2. Sastavljamo i šaljemo email
     const data = await resend.emails.send({
-      from: 'Wireish Demo <onboarding@resend.dev>', // Kasnije možeš verifikovati svoju domenu
-      to: ['armin@wireish.com'],
-      subject: `New Demo Request from ${name} (${company || 'No Company'})`,
-      replyTo: email,
+      from: 'Wireish <contact@wireish.com>', // Zadrži ovo ili stavi svoju domenu ako si je verifikovao
+      to: ['armin@wireish.com'], // <-- OBAVEZNO OVDJE UPIŠI SVOJ EMAIL!
+      subject: `Novi Demo Upit - ${name}`,
       html: `
-        <div style="font-family: sans-serif; padding: 20px; background: #0f0f13; color: #ffffff; border-radius: 10px;">
-          <h2 style="color: #8b5cf6;">New Demo / Contact Submission</h2>
-          <p><strong>Name:</strong> ${name}</p>
+        <div style="font-family: sans-serif; max-width: 600px; padding: 20px; border: 1px solid #eaeaea; border-radius: 10px;">
+          <h2 style="color: #333;">Novi lead sa Wireish platforme! 🚀</h2>
+          <hr style="border: 1px solid #eaeaea; margin-bottom: 20px;" />
+          
+          <p><strong>Ime:</strong> ${name}</p>
           <p><strong>Email:</strong> ${email}</p>
-          <p><strong>Company:</strong> ${company || 'N/A'}</p>
-          <p><strong>Message / Details:</strong></p>
-          <blockquote style="background: rgba(255,255,255,0.05); padding: 15px; border-left: 4px solid #8b5cf6; margin: 10px 0;">
-            ${message || 'No additional message provided.'}
-          </blockquote>
+          <p><strong>Kompanija:</strong> ${company ? company : 'Nije uneseno'}</p>
+          <p><strong>Telefon:</strong> ${phone ? phone : 'Nije uneseno'}</p>
+          
+          <br/>
+          <h3 style="color: #555;">Detalji projekta / Poruka:</h3>
+          <div style="background-color: #f9f9f9; padding: 15px; border-radius: 5px; color: #333;">
+            ${message}
+          </div>
         </div>
-      `,
+      `
     });
 
     return NextResponse.json({ success: true, data });
   } catch (error) {
-    return NextResponse.json({ error: 'Failed to send email' }, { status: 500 });
+    console.error('Resend error:', error);
+    return NextResponse.json({ error: 'Greška pri slanju' }, { status: 500 });
   }
 }

@@ -2,12 +2,13 @@
 
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Sparkles, Send, CheckCircle2 } from 'lucide-react';
+import { Send, CheckCircle2 } from 'lucide-react';
 
 export default function ContactCTA() {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [company, setCompany] = useState('');
+  const [phone, setPhone] = useState(''); // Dodan state za telefon
   const [message, setMessage] = useState('');
   const [loading, setLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
@@ -20,7 +21,8 @@ export default function ContactCTA() {
       const res = await fetch('/api/contact', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, email, company, message }),
+        // Sada se telefon uspješno šalje na tvoj API
+        body: JSON.stringify({ name, email, company, phone, message }),
       });
 
       if (res.ok) {
@@ -44,19 +46,19 @@ export default function ContactCTA() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="glass p-8 md:p-14 relative overflow-hidden border border-border/80 shadow-2xl rounded-3xl"
+          className="glass p-8 md:p-14 relative overflow-hidden border border-border/80 shadow-2xl rounded-3xl bg-gradient-to-b from-white/[0.02] to-transparent"
         >
           {/* Pozadinski glow efekat */}
           <div className="absolute top-0 right-0 w-96 h-96 bg-primary/10 rounded-full blur-[120px] -z-10" />
 
           <div className="text-center mb-12">
-            <span className="px-4 py-1.5 rounded-full border border-border bg-card text-primary text-sm font-medium mb-4 inline-block glass">
+            <span className="px-4 py-1.5 rounded-full border border-white/10 bg-white/5 text-gray-300 text-sm font-medium mb-4 inline-block backdrop-blur-md">
               Get in Touch
             </span>
-            <h2 className="font-display text-3xl md:text-5xl font-bold mb-4">
-              Book a <span className="text-gradient">Demo</span>
+            <h2 className="font-display text-3xl md:text-5xl font-bold mb-4 text-white">
+              Book a <span className="text-transparent bg-clip-text bg-gradient-to-r from-gray-100 to-gray-500">Demo</span>
             </h2>
-            <p className="text-gray-400 max-w-lg mx-auto text-base">
+            <p className="text-gray-400 max-w-lg mx-auto text-base leading-relaxed">
               Ready to automate your customer communication? Fill out the details below and we&apos;ll set up a tailored walkthrough.
             </p>
           </div>
@@ -67,16 +69,18 @@ export default function ContactCTA() {
               animate={{ opacity: 1, scale: 1 }}
               className="text-center py-16 space-y-4"
             >
-              <div className="w-16 h-16 bg-primary/20 text-primary rounded-full flex items-center justify-center mx-auto mb-4 border border-primary/30">
+              <div className="w-16 h-16 bg-white/10 text-white rounded-full flex items-center justify-center mx-auto mb-4 border border-white/20">
                 <CheckCircle2 className="w-8 h-8" />
               </div>
               <h3 className="text-2xl font-bold text-white">Request Received!</h3>
-              <p className="text-gray-400 max-w-md mx-auto">
-                Thank you, <span className="text-white font-medium">{name}</span>. We have received your message and will contact you shortly at <span className="text-primary font-medium">{email}</span>.
+              <p className="text-gray-400 max-w-md mx-auto leading-relaxed">
+                Thank you, <span className="text-white font-medium">{name}</span>. We have received your message and will contact you shortly at <span className="text-white font-medium">{email}</span>.
               </p>
             </motion.div>
           ) : (
             <form onSubmit={handleSubmit} className="space-y-6">
+              
+              {/* Prvi red: Ime i Email */}
               <div className="grid md:grid-cols-2 gap-6">
                 <div>
                   <label className="block text-xs uppercase tracking-wider text-gray-400 mb-2 font-semibold">Your Name</label>
@@ -86,7 +90,7 @@ export default function ContactCTA() {
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     placeholder="John Doe" 
-                    className="w-full px-4 py-3.5 rounded-2xl bg-background/50 border border-border focus:border-primary focus:outline-none text-white text-sm transition-all"
+                    className="w-full px-4 py-3.5 rounded-2xl bg-white/5 border border-white/10 focus:border-white/30 focus:bg-white/10 focus:outline-none text-white text-sm transition-all"
                   />
                 </div>
                 <div>
@@ -97,22 +101,40 @@ export default function ContactCTA() {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="john@company.com" 
-                    className="w-full px-4 py-3.5 rounded-2xl bg-background/50 border border-border focus:border-primary focus:outline-none text-white text-sm transition-all"
+                    className="w-full px-4 py-3.5 rounded-2xl bg-white/5 border border-white/10 focus:border-white/30 focus:bg-white/10 focus:outline-none text-white text-sm transition-all"
                   />
                 </div>
               </div>
 
-              <div>
-                <label className="block text-xs uppercase tracking-wider text-gray-400 mb-2 font-semibold">Company Name <span className="text-gray-600 font-normal">(Optional)</span></label>
-                <input 
-                  type="text" 
-                  value={company}
-                  onChange={(e) => setCompany(e.target.value)}
-                  placeholder="Wireish Inc." 
-                  className="w-full px-4 py-3.5 rounded-2xl bg-background/50 border border-border focus:border-primary focus:outline-none text-white text-sm transition-all"
-                />
+              {/* Drugi red: Kompanija i Telefon */}
+              <div className="grid md:grid-cols-2 gap-6">
+                <div>
+                  <label className="block text-xs uppercase tracking-wider text-gray-400 mb-2 font-semibold">
+                    Company Name <span className="text-gray-600 font-normal normal-case">(Optional)</span>
+                  </label>
+                  <input 
+                    type="text" 
+                    value={company}
+                    onChange={(e) => setCompany(e.target.value)}
+                    placeholder="Wireish Inc." 
+                    className="w-full px-4 py-3.5 rounded-2xl bg-white/5 border border-white/10 focus:border-white/30 focus:bg-white/10 focus:outline-none text-white text-sm transition-all"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs uppercase tracking-wider text-gray-400 mb-2 font-semibold">
+                    Phone Number <span className="text-gray-600 font-normal normal-case">(Optional)</span>
+                  </label>
+                  <input 
+                    type="tel" 
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
+                    placeholder="+387 60 123 4567" 
+                    className="w-full px-4 py-3.5 rounded-2xl bg-white/5 border border-white/10 focus:border-white/30 focus:bg-white/10 focus:outline-none text-white text-sm transition-all"
+                  />
+                </div>
               </div>
 
+              {/* Treći red: Poruka */}
               <div>
                 <label className="block text-xs uppercase tracking-wider text-gray-400 mb-2 font-semibold">Project Details / Message</label>
                 <textarea 
@@ -120,15 +142,16 @@ export default function ContactCTA() {
                   value={message}
                   onChange={(e) => setMessage(e.target.value)}
                   placeholder="Tell us about your automation needs..." 
-                  className="w-full px-4 py-3.5 rounded-2xl bg-background/50 border border-border focus:border-primary focus:outline-none text-white text-sm transition-all resize-none"
+                  className="w-full px-4 py-3.5 rounded-2xl bg-white/5 border border-white/10 focus:border-white/30 focus:bg-white/10 focus:outline-none text-white text-sm transition-all resize-none"
                 />
               </div>
 
-              <div className="pt-2">
+              {/* Dugme za slanje */}
+              <div className="pt-4">
                 <button 
                   type="submit" 
                   disabled={loading}
-                  className="w-full py-4 rounded-full bg-white text-black font-bold hover:bg-gray-200 transition-all shadow-[0_0_25px_var(--color-primary-glow)] disabled:opacity-50 flex items-center justify-center gap-2 text-base cursor-pointer hover:scale-[1.01]"
+                  className="w-full py-4 rounded-xl bg-white text-black font-bold hover:bg-gray-200 transition-all shadow-[0_0_20px_rgba(255,255,255,0.1)] hover:shadow-[0_0_30px_rgba(255,255,255,0.2)] disabled:opacity-50 flex items-center justify-center gap-2 text-base cursor-pointer"
                 >
                   {loading ? (
                     'Sending Request...'
