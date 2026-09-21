@@ -4,7 +4,7 @@ import HowItWorks from '@/components/sections/HowItWorks';
 import Benefits from '@/components/sections/Benefits';
 import FAQ from '@/components/sections/FAQ';
 import ContactCTA from '@/components/sections/ContactCTA';
-
+import { Analytics } from "@vercel/analytics/next"
 export default function Home() {
   return (
     <>
@@ -14,6 +14,7 @@ export default function Home() {
       <Benefits />
       <FAQ />
       <ContactCTA />
+      <Analytics />
     </>
   );
 }
