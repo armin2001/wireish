@@ -1,83 +1,147 @@
 'use client';
 
 import { useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
 import { motion } from 'framer-motion';
-import { CheckCircle2, Loader2 } from 'lucide-react';
-import { contactSchema, type ContactFormData } from '@/lib/schema';
+import { Sparkles, Send, CheckCircle2 } from 'lucide-react';
 
 export default function ContactCTA() {
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isSuccess, setIsSuccess] = useState(false);
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [company, setCompany] = useState('');
+  const [message, setMessage] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
 
-  const { register, handleSubmit, formState: { errors } } = useForm<ContactFormData>({
-    resolver: zodResolver(contactSchema),
-  });
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
 
-  const onSubmit = async (data: ContactFormData) => {
-    setIsSubmitting(true);
-    // Ovdje simuliramo slanje (kasnije ćemo ovo spojiti sa pravim email servisom)
-    await new Promise(resolve => setTimeout(resolve, 1500));
-    console.log("Podaci iz forme:", data);
-    setIsSubmitting(false);
-    setIsSuccess(true);
+    try {
+      const res = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, email, company, message }),
+      });
+
+      if (res.ok) {
+        setSubmitted(true);
+      } else {
+        alert('Something went wrong. Please try again.');
+      }
+    } catch (error) {
+      console.error(error);
+      alert('An error occurred while sending your message.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
-    <section id="contact" className="py-32 px-6 relative">
-      <div className="max-w-4xl mx-auto glass p-8 md:p-16 relative overflow-hidden">
-        {/* Dekorativni sjaj unutar kartice */}
-        <div className="absolute top-0 right-0 w-64 h-64 bg-secondary/20 rounded-full blur-[100px] -z-10" />
+    <section id="contact" className="py-24 px-6 relative z-10">
+      <div className="max-w-4xl mx-auto">
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+          className="glass p-8 md:p-14 relative overflow-hidden border border-border/80 shadow-2xl rounded-3xl"
+        >
+          {/* Pozadinski glow efekat */}
+          <div className="absolute top-0 right-0 w-96 h-96 bg-primary/10 rounded-full blur-[120px] -z-10" />
 
-        <div className="grid md:grid-cols-2 gap-12 relative z-10">
-          <div>
-            <h2 className="font-display text-4xl font-bold mb-4">Ready to automate?</h2>
-            <p className="text-gray-400 mb-8">
-              Book a free demo. We&apos;ll analyze your current workflows and show you exactly how Wireish can save you time and increase conversions.
+          <div className="text-center mb-12">
+            <span className="px-4 py-1.5 rounded-full border border-border bg-card text-primary text-sm font-medium mb-4 inline-block glass">
+              Get in Touch
+            </span>
+            <h2 className="font-display text-3xl md:text-5xl font-bold mb-4">
+              Book a <span className="text-gradient">Demo</span>
+            </h2>
+            <p className="text-gray-400 max-w-lg mx-auto text-base">
+              Ready to automate your customer communication? Fill out the details below and we&apos;ll set up a tailored walkthrough.
             </p>
           </div>
 
-          <div>
-            {isSuccess ? (
-              <motion.div 
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                className="flex flex-col items-center justify-center h-full text-center space-y-4 py-8"
-              >
-                <CheckCircle2 className="w-16 h-16 text-accent" />
-                <h3 className="text-2xl font-bold">Request Sent!</h3>
-                <p className="text-gray-400">We will get back to you within 24 hours to schedule your demo.</p>
-              </motion.div>
-            ) : (
-              <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+          {submitted ? (
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="text-center py-16 space-y-4"
+            >
+              <div className="w-16 h-16 bg-primary/20 text-primary rounded-full flex items-center justify-center mx-auto mb-4 border border-primary/30">
+                <CheckCircle2 className="w-8 h-8" />
+              </div>
+              <h3 className="text-2xl font-bold text-white">Request Received!</h3>
+              <p className="text-gray-400 max-w-md mx-auto">
+                Thank you, <span className="text-white font-medium">{name}</span>. We have received your message and will contact you shortly at <span className="text-primary font-medium">{email}</span>.
+              </p>
+            </motion.div>
+          ) : (
+            <form onSubmit={handleSubmit} className="space-y-6">
+              <div className="grid md:grid-cols-2 gap-6">
                 <div>
-                  <input {...register('name')} placeholder="Your Name" className="w-full bg-background/50 border border-border rounded-lg px-4 py-3 focus:outline-none focus:border-primary transition-colors text-white placeholder:text-gray-600" />
-                  {errors.name && <p className="text-red-400 text-sm mt-1">{errors.name.message}</p>}
+                  <label className="block text-xs uppercase tracking-wider text-gray-400 mb-2 font-semibold">Your Name</label>
+                  <input 
+                    type="text" 
+                    required
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    placeholder="John Doe" 
+                    className="w-full px-4 py-3.5 rounded-2xl bg-background/50 border border-border focus:border-primary focus:outline-none text-white text-sm transition-all"
+                  />
                 </div>
-                
                 <div>
-                  <input {...register('email')} placeholder="Work Email" className="w-full bg-background/50 border border-border rounded-lg px-4 py-3 focus:outline-none focus:border-primary transition-colors text-white placeholder:text-gray-600" />
-                  {errors.email && <p className="text-red-400 text-sm mt-1">{errors.email.message}</p>}
+                  <label className="block text-xs uppercase tracking-wider text-gray-400 mb-2 font-semibold">Email Address</label>
+                  <input 
+                    type="email" 
+                    required
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="john@company.com" 
+                    className="w-full px-4 py-3.5 rounded-2xl bg-background/50 border border-border focus:border-primary focus:outline-none text-white text-sm transition-all"
+                  />
                 </div>
+              </div>
 
-                <div>
-                  <input {...register('company')} placeholder="Company Name" className="w-full bg-background/50 border border-border rounded-lg px-4 py-3 focus:outline-none focus:border-primary transition-colors text-white placeholder:text-gray-600" />
-                  {errors.company && <p className="text-red-400 text-sm mt-1">{errors.company.message}</p>}
-                </div>
+              <div>
+                <label className="block text-xs uppercase tracking-wider text-gray-400 mb-2 font-semibold">Company Name <span className="text-gray-600 font-normal">(Optional)</span></label>
+                <input 
+                  type="text" 
+                  value={company}
+                  onChange={(e) => setCompany(e.target.value)}
+                  placeholder="Wireish Inc." 
+                  className="w-full px-4 py-3.5 rounded-2xl bg-background/50 border border-border focus:border-primary focus:outline-none text-white text-sm transition-all"
+                />
+              </div>
 
-                <div>
-                  <textarea {...register('message')} placeholder="How can we help you?" rows={4} className="w-full bg-background/50 border border-border rounded-lg px-4 py-3 focus:outline-none focus:border-primary transition-colors resize-none text-white placeholder:text-gray-600" />
-                  {errors.message && <p className="text-red-400 text-sm mt-1">{errors.message.message}</p>}
-                </div>
+              <div>
+                <label className="block text-xs uppercase tracking-wider text-gray-400 mb-2 font-semibold">Project Details / Message</label>
+                <textarea 
+                  rows={4}
+                  value={message}
+                  onChange={(e) => setMessage(e.target.value)}
+                  placeholder="Tell us about your automation needs..." 
+                  className="w-full px-4 py-3.5 rounded-2xl bg-background/50 border border-border focus:border-primary focus:outline-none text-white text-sm transition-all resize-none"
+                />
+              </div>
 
-                <button disabled={isSubmitting} type="submit" className="w-full bg-white text-black font-bold rounded-lg px-4 py-4 flex items-center justify-center hover:bg-gray-200 transition-colors shadow-[0_0_15px_var(--color-primary-glow)]">
-                  {isSubmitting ? <Loader2 className="w-5 h-5 animate-spin" /> : 'Book Demo'}
+              <div className="pt-2">
+                <button 
+                  type="submit" 
+                  disabled={loading}
+                  className="w-full py-4 rounded-full bg-white text-black font-bold hover:bg-gray-200 transition-all shadow-[0_0_25px_var(--color-primary-glow)] disabled:opacity-50 flex items-center justify-center gap-2 text-base cursor-pointer hover:scale-[1.01]"
+                >
+                  {loading ? (
+                    'Sending Request...'
+                  ) : (
+                    <>
+                      <Send className="w-4 h-4" /> Send Demo Request
+                    </>
+                  )}
                 </button>
-              </form>
-            )}
-          </div>
-        </div>
+              </div>
+            </form>
+          )}
+        </motion.div>
       </div>
     </section>
   );
