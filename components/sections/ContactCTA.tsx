@@ -46,7 +46,7 @@ export default function ContactCTA() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="glass p-8 md:p-14 relative overflow-hidden border border-border/80 shadow-2xl rounded-3xl bg-gradient-to-b from-white/[0.02] to-transparent"
+          className="glass p-8 md:p-14 relative overflow-hidden border border-border/80 shadow-2xl rounded-3xl bg-linear-to-b from-white/2 to-transparent"
         >
           {/* Pozadinski glow efekat */}
           <div className="absolute top-0 right-0 w-96 h-96 bg-primary/10 rounded-full blur-[120px] -z-10" />
@@ -56,7 +56,7 @@ export default function ContactCTA() {
               Get in Touch
             </span>
             <h2 className="font-display text-3xl md:text-5xl font-bold mb-4 text-white">
-              Book a <span className="text-transparent bg-clip-text bg-gradient-to-r from-gray-100 to-gray-500">Demo</span>
+              Book a <span className="text-transparent bg-clip-text bg-linear-to-r from-gray-100 to-gray-500">Demo</span>
             </h2>
             <p className="text-gray-400 max-w-lg mx-auto text-base leading-relaxed">
               Ready to automate your customer communication? Fill out the details below and we&apos;ll set up a tailored walkthrough.
