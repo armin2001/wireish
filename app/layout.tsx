@@ -2,9 +2,9 @@ import type { Metadata } from 'next';
 import { Inter, Space_Grotesk } from 'next/font/google';
 import Script from 'next/script'; // <-- 1. Uvezen Script
 import './globals.css';
-import { Analytics } from '@vercel/analytics/react';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
+import { Analytics } from "@vercel/analytics/next"
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
 const spaceGrotesk = Space_Grotesk({ subsets: ['latin'], variable: '--font-space-grotesk' });
