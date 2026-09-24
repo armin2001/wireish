@@ -35,7 +35,7 @@ export default function Footer() {
         <div>
           <h4 className="font-bold text-sm uppercase tracking-wider mb-4 text-gray-300">Connect</h4>
           <div className="flex items-center gap-4 text-gray-400">
-            <a href="https://instagram.com" target="_blank" rel="noreferrer" className="w-10 h-10 rounded-xl bg-white/5 border border-border flex items-center justify-center hover:text-white hover:border-primary/50 transition-all">
+            <a href="https://www.instagram.com/wireish/" target="_blank" rel="noreferrer" className="w-10 h-10 rounded-xl bg-white/5 border border-border flex items-center justify-center hover:text-white hover:border-primary/50 transition-all">
               <FaInstagram className="w-5 h-5" />
             </a>
             <a href="https://linkedin.com" target="_blank" rel="noreferrer" className="w-10 h-10 rounded-xl bg-white/5 border border-border flex items-center justify-center hover:text-white hover:border-primary/50 transition-all">
