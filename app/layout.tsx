@@ -3,7 +3,7 @@ import { Inter, Space_Grotesk } from 'next/font/google';
 import Script from 'next/script'; // <-- 1. Uvezen Script
 import './globals.css';
 import Navbar from '@/components/layout/Navbar';
-import Footer from '@/components/layout/Footer';
+import {Footer} from '@/components/layout/Footer';
 import { Analytics } from "@vercel/analytics/next"
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
