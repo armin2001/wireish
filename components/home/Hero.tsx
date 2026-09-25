@@ -25,7 +25,7 @@ export default function Hero() {
   const idle = useIdle();
 
   return (
-    <section className="relative isolate flex min-h-[100svh] items-center overflow-hidden">
+    <section className="relative isolate flex min-h-svh items-center overflow-hidden">
       {/* 3D layer: interactive on pointer devices, decorative (and scroll-safe) on touch. */}
       <div className="absolute inset-0 -z-10 pointer-events-none lg:pointer-events-auto">
         {idle ? <BrandScene variant="hero" /> : <SceneFallback />}
@@ -33,9 +33,9 @@ export default function Hero() {
       {/* Readability: fade the scene under the copy and into the next section. */}
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-0 -z-[5] bg-[linear-gradient(90deg,var(--color-night)_0%,rgb(5_7_22/0.72)_34%,transparent_62%)] max-lg:bg-[linear-gradient(180deg,rgb(5_7_22/0.2)_0%,rgb(5_7_22/0.85)_55%,var(--color-night)_100%)]"
+        className="pointer-events-none absolute inset-0 z-[-5] bg-[linear-gradient(90deg,var(--color-night)_0%,rgb(5_7_22/0.72)_34%,transparent_62%)] max-lg:bg-[linear-gradient(180deg,rgb(5_7_22/0.2)_0%,rgb(5_7_22/0.85)_55%,var(--color-night)_100%)]"
       />
-      <div aria-hidden className="pointer-events-none absolute inset-x-0 bottom-0 -z-[5] h-40 bg-linear-to-b from-transparent to-night" />
+      <div aria-hidden className="pointer-events-none absolute inset-x-0 bottom-0 z-[-5] h-40 bg-linear-to-b from-transparent to-night" />
 
       <div className="pointer-events-none mx-auto w-full max-w-6xl px-6 pb-20 pt-32">
         <div className="pointer-events-auto max-w-xl">
@@ -64,7 +64,7 @@ export default function Hero() {
                 <li key={label}>
                   <span
                     title={label}
-                    className="grid h-9 w-9 place-items-center rounded-xl border border-white/10 bg-white/[0.03] text-mist"
+                    className="grid h-9 w-9 place-items-center rounded-xl border border-white/10 bg-white/3 text-mist"
                   >
                     <Icon className="h-4 w-4" aria-hidden />
                     <span className="sr-only">{label}</span>

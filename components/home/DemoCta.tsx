@@ -3,7 +3,7 @@ import { DEMO_HREF } from '@/lib/content';
 
 export default function DemoCta() {
   return (
-    <div className="glass-raised relative mx-auto max-w-6xl overflow-hidden rounded-[2rem] px-8 py-14 md:px-14 md:py-16">
+    <div className="glass-raised relative mx-auto max-w-6xl overflow-hidden rounded-4xl px-8 py-14 md:px-14 md:py-16">
       <div className="wire-line absolute inset-x-0 top-0" aria-hidden />
       <div
         aria-hidden
@@ -12,7 +12,7 @@ export default function DemoCta() {
       />
       <div className="relative flex flex-col gap-8 md:flex-row md:items-end md:justify-between">
         <div className="max-w-xl">
-          <h2 className="font-display text-3xl font-semibold tracking-[-0.025em] text-white md:text-4xl">
+          <h2 className="font-display text-3xl font-semibold tracking-tight text-white md:text-4xl">
             See it answer your customers.
           </h2>
           <p className="mt-4 text-lg text-mist">

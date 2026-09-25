@@ -97,7 +97,7 @@ export function TransitionProvider({ children }: { children: ReactNode }) {
           reveal: { clipPath: 'inset(0% 0% 100% 0%)', transition: { duration: 0.46, ease: [0.22, 1, 0.36, 1] } },
         }}
         onAnimationComplete={onAnimationComplete}
-        className="fixed inset-0 z-[100] grid place-items-center bg-night"
+        className="fixed inset-0 z-100 grid place-items-center bg-night"
         style={{ pointerEvents: phase === 'idle' ? 'none' : 'auto' }}
       >
         <svg className="absolute inset-0 h-full w-full" viewBox="0 0 100 100" preserveAspectRatio="none">

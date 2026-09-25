@@ -38,7 +38,7 @@ export default function CanvasTeaser() {
     <section className="px-6 py-28">
       <div className="mx-auto grid max-w-6xl items-center gap-14 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)]">
         <div className="max-w-md">
-          <h2 className="font-display text-4xl font-semibold leading-tight tracking-[-0.025em] text-white md:text-5xl">
+          <h2 className="font-display text-4xl font-semibold leading-tight tracking-tight text-white md:text-5xl">
             Sketch your setup before we build it.
           </h2>
           <p className="mt-5 text-lg leading-relaxed text-mist">
