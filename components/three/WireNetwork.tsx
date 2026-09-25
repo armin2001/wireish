@@ -192,6 +192,24 @@ function createResources(variant: SceneVariant): Resources {
   };
 }
 
+/**
+ * Per-frame shader uniform writes. Kept outside the component so the React Compiler
+ * doesn't treat these GPU-side updates as mutating a value its effects depend on.
+ */
+function updateUniforms(r: Resources, t: number, dt: number, pulse: number, dpr: number, answer: boolean) {
+  for (const wire of r.wires) {
+    const u = wire.material.uniforms;
+    u.uTime.value = t;
+    u.uBoost.value = THREE.MathUtils.damp(u.uBoost.value, 0, 1.4, dt);
+    // The agent answers: route the message out to the tools.
+    if (answer && wire.direction === 'out') u.uBoost.value = 0.8;
+  }
+  r.core.material.uniforms.uTime.value = t;
+  r.core.material.uniforms.uPulse.value = pulse;
+  r.particles.material.uniforms.uTime.value = t;
+  r.particles.material.uniforms.uPixelRatio.value = dpr;
+}
+
 function disposeResources(r: Resources) {
   for (const wire of r.wires) {
     wire.geometry.dispose();
@@ -284,29 +302,19 @@ export function WireNetwork({ variant, reduceMotion }: WireNetworkProps) {
 
     pointerLight.current?.position.set(p.x * state.viewport.width * 0.5, p.y * state.viewport.height * 0.5, 2.4);
 
-    for (const wire of r.wires) {
-      const u = wire.material.uniforms;
-      u.uTime.value = t;
-      u.uBoost.value = THREE.MathUtils.damp(u.uBoost.value, 0, 1.4, dt);
-    }
-
-    if (pulseAt.current && t >= pulseAt.current) {
+    const answer = pulseAt.current > 0 && t >= pulseAt.current;
+    if (answer) {
       pulseAt.current = 0;
       pulse.current = 1;
-      // The agent answers: route the message out to the tools.
-      for (const wire of r.wires) if (wire.direction === 'out') wire.material.uniforms.uBoost.value = 0.8;
     }
     pulse.current = THREE.MathUtils.damp(pulse.current, 0, 3, dt);
-    r.core.material.uniforms.uTime.value = t;
-    r.core.material.uniforms.uPulse.value = pulse.current;
+    updateUniforms(r, t, dt, pulse.current, state.viewport.dpr, answer);
+
     coreMesh.current?.scale.setScalar(1 + pulse.current * 0.08);
     if (latticeMesh.current) {
       latticeMesh.current.rotation.y = t * 0.25;
       latticeMesh.current.rotation.x = t * 0.12;
     }
-
-    r.particles.material.uniforms.uTime.value = t;
-    r.particles.material.uniforms.uPixelRatio.value = state.viewport.dpr;
   });
 
   return (

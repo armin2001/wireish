@@ -29,9 +29,9 @@ export const MAX_ZOOM = 2.5;
 const clampZoom = (z: number) => Math.min(MAX_ZOOM, Math.max(MIN_ZOOM, z));
 
 export function useViewport(
-  container: RefObject<HTMLDivElement | null>,
-  world: RefObject<HTMLDivElement | null>,
-  grid: RefObject<HTMLDivElement | null>,
+  containerRef: RefObject<HTMLDivElement | null>,
+  worldRef: RefObject<HTMLDivElement | null>,
+  gridRef: RefObject<HTMLDivElement | null>,
 ) {
   const vp = useRef<Viewport>({ x: 0, y: 0, zoom: 1 });
   const [view, setView] = useState<Viewport>({ x: 0, y: 0, zoom: 1 });
@@ -40,12 +40,12 @@ export function useViewport(
 
   const paint = useCallback(() => {
     const { x, y, zoom } = vp.current;
-    if (world.current) world.current.style.transform = `translate3d(${x}px, ${y}px, 0) scale(${zoom})`;
-    if (grid.current) {
+    if (worldRef.current) worldRef.current.style.transform = `translate3d(${x}px, ${y}px, 0) scale(${zoom})`;
+    if (gridRef.current) {
       // Switch to a coarser dot grid when zoomed out, so dots never turn into noise.
       const step = GRID * zoom < 12 ? GRID * 4 * zoom : GRID * zoom;
-      grid.current.style.backgroundSize = `${step}px ${step}px`;
-      grid.current.style.backgroundPosition = `${x}px ${y}px`;
+      gridRef.current.style.backgroundSize = `${step}px ${step}px`;
+      gridRef.current.style.backgroundPosition = `${x}px ${y}px`;
     }
     if (frame.current === null) {
       frame.current = requestAnimationFrame(() => {
@@ -53,7 +53,7 @@ export function useViewport(
         setView({ ...vp.current });
       });
     }
-  }, [world, grid]);
+  }, [worldRef, gridRef]);
 
   const stop = useCallback(() => {
     tween.current?.stop();
@@ -114,9 +114,9 @@ export function useViewport(
   );
 
   const size = useCallback(() => {
-    const rect = container.current?.getBoundingClientRect();
+    const rect = containerRef.current?.getBoundingClientRect();
     return { width: rect?.width ?? 0, height: rect?.height ?? 0, left: rect?.left ?? 0, top: rect?.top ?? 0 };
-  }, [container]);
+  }, [containerRef]);
 
   const zoomBy = useCallback(
     (factor: number) => {
