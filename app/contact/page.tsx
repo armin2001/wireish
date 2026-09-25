@@ -21,7 +21,7 @@ export default function ContactPage() {
     <main className="relative overflow-x-clip px-6 pb-28 pt-36">
       <div
         aria-hidden
-        className="pointer-events-none absolute -top-40 right-[-10%] -z-10 h-[520px] w-[520px] rounded-full opacity-25 blur-[120px]"
+        className="pointer-events-none absolute -top-40 right-[-10%] -z-10 h-130 w-130 rounded-full opacity-25 blur-[120px]"
         style={{ backgroundImage: 'var(--gradient-wire)' }}
       />
       <div className="mx-auto grid max-w-6xl gap-14 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)]">
@@ -41,9 +41,9 @@ export default function ContactPage() {
                   href={href}
                   target={href.startsWith('mailto:') ? undefined : '_blank'}
                   rel={href.startsWith('mailto:') ? undefined : 'noreferrer'}
-                  className="group flex items-center gap-4 rounded-2xl border border-transparent p-3 transition-colors hover:border-white/10 hover:bg-white/[0.03]"
+                  className="group flex items-center gap-4 rounded-2xl border border-transparent p-3 transition-colors hover:border-white/10 hover:bg-white/3"
                 >
-                  <span className="grid h-11 w-11 place-items-center rounded-xl border border-white/10 bg-white/[0.03] text-mist transition-colors group-hover:border-signal/40 group-hover:text-white">
+                  <span className="grid h-11 w-11 place-items-center rounded-xl border border-white/10 bg-white/3 text-mist transition-colors group-hover:border-signal/40 group-hover:text-white">
                     <Icon className="h-4.5 w-4.5" aria-hidden />
                   </span>
                   <span>

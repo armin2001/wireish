@@ -1,4 +1,4 @@
-import { useEffect, useState, useSyncExternalStore } from 'react';
+import { useCallback, useEffect, useState, useSyncExternalStore } from 'react';
 
 const subscribeNoop = () => () => {};
 
@@ -19,6 +19,23 @@ export function useIdle(timeout = 1500): boolean {
     return () => window.clearTimeout(id);
   }, [timeout]);
   return idle;
+}
+
+/** Live CSS media query match. False during SSR and hydration. */
+export function useMediaQuery(query: string): boolean {
+  const subscribe = useCallback(
+    (onChange: () => void) => {
+      const list = window.matchMedia(query);
+      list.addEventListener('change', onChange);
+      return () => list.removeEventListener('change', onChange);
+    },
+    [query],
+  );
+  return useSyncExternalStore(
+    subscribe,
+    () => window.matchMedia(query).matches,
+    () => false,
+  );
 }
 
 /** Platform check for rendering the right modifier key (⌘ vs Ctrl). */

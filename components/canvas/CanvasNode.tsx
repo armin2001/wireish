@@ -65,7 +65,7 @@ export const CanvasNodeView = memo(function CanvasNodeView({
           className="grid h-10 w-10 shrink-0 place-items-center rounded-xl text-white"
           style={{ backgroundImage: CATEGORY_GRADIENT[meta.category] }}
         >
-          <Icon className="h-[18px] w-[18px]" />
+          <Icon className="h-4.5 w-4.5" />
         </span>
         <span className="min-w-0">
           <span className="block truncate text-sm font-semibold text-white">{meta.label}</span>
@@ -90,7 +90,7 @@ export const CanvasNodeView = memo(function CanvasNodeView({
             aria-hidden
             className="absolute -right-3 top-1/2 grid h-6 w-6 -translate-y-1/2 cursor-crosshair place-items-center"
           >
-            <span className="h-3 w-3 rounded-full border-2 border-night bg-signal transition-transform duration-150 group-hover:scale-125 hover:!scale-150" />
+            <span className="h-3 w-3 rounded-full border-2 border-night bg-signal transition-transform duration-150 group-hover:scale-125 hover:scale-150!" />
           </span>
         )}
       </motion.div>

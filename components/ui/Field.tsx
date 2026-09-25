@@ -12,15 +12,15 @@ interface BaseProps {
 
 const shell = (invalid: boolean) =>
   cn(
-    'relative rounded-2xl border bg-white/[0.03] transition-[border-color,box-shadow,background-color] duration-200',
-    'focus-within:bg-white/[0.05]',
+    'relative rounded-2xl border bg-field transition-[border-color,box-shadow,background-color] duration-200',
+    'hover:bg-field-hover focus-within:bg-field-hover',
     invalid
       ? 'border-danger/60 focus-within:shadow-[0_0_0_4px_rgb(255_92_122/0.14)]'
-      : 'border-white/10 hover:border-white/20 focus-within:border-signal/60 focus-within:shadow-[0_0_0_4px_rgb(21_195_255/0.12)]',
+      : 'border-white/[0.08] hover:border-white/20 focus-within:border-signal/60 focus-within:shadow-[0_0_0_4px_rgb(21_195_255/0.12)]',
   );
 
 const control =
-  'peer block w-full bg-transparent px-4 pb-2.5 pt-6 text-[15px] text-white outline-none placeholder:text-transparent autofill:shadow-[inset_0_0_0_1000px_#0a0e24] autofill:[-webkit-text-fill-color:#fff]';
+  'peer block w-full bg-transparent px-4 pb-2.5 pt-6 text-[15px] text-white outline-none placeholder:text-transparent autofill:shadow-[inset_0_0_0_1000px_#1a2150] autofill:[-webkit-text-fill-color:#fff]';
 
 const floatingLabel =
   'pointer-events-none absolute left-4 top-2 text-xs text-mist transition-all duration-200 ease-wire peer-placeholder-shown:top-4 peer-placeholder-shown:text-[15px] peer-focus:top-2 peer-focus:text-xs peer-focus:text-signal';
@@ -120,7 +120,18 @@ export function Honeypot(props: InputHTMLAttributes<HTMLInputElement> & { ref?: 
     <div aria-hidden className="absolute -left-[9999px] h-px w-px overflow-hidden">
       <label>
         Leave this empty
-        <input type="text" tabIndex={-1} autoComplete="off" {...props} />
+        {/* Password managers ignore autoComplete="off"; these opt-outs stop them filling the
+            trap, which would make the API silently drop a real person's submission. */}
+        <input
+          type="text"
+          tabIndex={-1}
+          autoComplete="off"
+          data-1p-ignore
+          data-lpignore="true"
+          data-bwignore
+          data-form-type="other"
+          {...props}
+        />
       </label>
     </div>
   );

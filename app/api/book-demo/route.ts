@@ -2,7 +2,19 @@ import { NextResponse } from 'next/server';
 import { bookingSchema, CHANNEL_OPTIONS, GOAL_OPTIONS, labelFor, VOLUME_OPTIONS } from '@/lib/schema';
 import { HOST_TIME_ZONE, isBookableSlot, isValidTimeZone, MEETING_MINUTES } from '@/lib/availability';
 import { buildIcs } from '@/lib/ics';
-import { clientIp, getResend, MAIL_FROM, MAIL_TO, MailConfigError, rateLimit, renderEmail, singleLine } from '@/lib/server/mail';
+import {
+  BOOKING_FROM,
+  BOOKING_REPLY_TO,
+  clientIp,
+  devDetail,
+  getResend,
+  MAIL_FROM,
+  MAIL_TO,
+  MailConfigError,
+  rateLimit,
+  renderEmail,
+  singleLine,
+} from '@/lib/server/mail';
 
 /*
  * Books a demo: validates, re-checks the slot against business rules, emails the team
@@ -31,7 +43,10 @@ export async function POST(req: Request) {
     );
   }
   const data = parsed.data;
-  if (data.hp) return NextResponse.json({ ok: true, confirmationSent: false });
+  if (data.hp) {
+    console.warn('[book-demo] spam trap field was filled; booking dropped without sending');
+    return NextResponse.json({ ok: true, confirmationSent: false });
+  }
 
   const start = new Date(data.slotStart);
   if (!isBookableSlot(start)) {
@@ -81,14 +96,15 @@ export async function POST(req: Request) {
     });
     if (team.error) {
       console.error('[book-demo] Resend rejected the team email', team.error);
-      return NextResponse.json({ error: 'The booking service is not responding.' }, { status: 502 });
+      return NextResponse.json({ error: `The booking service is not responding.${devDetail(team.error)}` }, { status: 502 });
     }
 
     // Visitor confirmation is best-effort: the booking already reached the team.
     let confirmationSent = false;
     try {
       const visitor = await resend.emails.send({
-        from: MAIL_FROM,
+        from: BOOKING_FROM,
+        replyTo: BOOKING_REPLY_TO,
         to: [data.email],
         subject: 'Your Wireish demo is booked',
         attachments: [attachment],
@@ -111,6 +127,6 @@ export async function POST(req: Request) {
     return NextResponse.json({ ok: true, confirmationSent });
   } catch (err) {
     console.error(err instanceof MailConfigError ? '[book-demo] RESEND_API_KEY is missing' : '[book-demo] send failed', err);
-    return NextResponse.json({ error: 'The booking service is not responding.' }, { status: 500 });
+    return NextResponse.json({ error: `The booking service is not responding.${devDetail(err)}` }, { status: 500 });
   }
 }

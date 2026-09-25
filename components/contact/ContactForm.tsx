@@ -67,7 +67,7 @@ export function ContactForm() {
   };
 
   return (
-    <div className="glass-raised relative overflow-hidden rounded-[2rem] p-6 sm:p-9">
+    <div className="panel relative overflow-hidden rounded-4xl p-6 sm:p-9">
       <div className="wire-line absolute inset-x-0 top-0" aria-hidden />
       <AnimatePresence mode="wait" initial={false}>
         {sentTo ? (
@@ -77,7 +77,7 @@ export function ContactForm() {
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.97 }}
             transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
-            className="flex min-h-[460px] flex-col items-center justify-center py-10 text-center"
+            className="flex min-h-115 flex-col items-center justify-center py-10 text-center"
             role="status"
           >
             <SuccessMark />
@@ -99,7 +99,7 @@ export function ContactForm() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            onSubmit={(e) => handleSubmit(onSubmit, shake)(e)}
+            onSubmit={(event) => handleSubmit(onSubmit, shake)(event)}
             noValidate
             className="space-y-5"
           >
@@ -111,7 +111,7 @@ export function ContactForm() {
                     <input type="radio" value={option.value} className="peer sr-only" {...register('topic')} />
                     <span
                       className={cn(
-                        'inline-flex h-10 items-center rounded-full border border-white/10 px-4 text-sm text-mist transition-all duration-200',
+                        'inline-flex h-10 items-center rounded-full border border-white/8 bg-field px-4 text-sm text-mist transition-all duration-200',
                         'hover:border-white/25 hover:text-white active:scale-[0.97]',
                         'peer-checked:border-signal/60 peer-checked:bg-signal/10 peer-checked:text-white peer-checked:shadow-glow-signal',
                         'peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-signal',

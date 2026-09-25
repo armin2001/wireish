@@ -83,7 +83,7 @@ export function NeedsStep({ value, onChange, showErrors, blueprint }: NeedsStepP
   return (
     <div className="space-y-8">
       {hasMap && blueprint && (
-        <div className="rounded-2xl border border-white/10 bg-white/3 p-4">
+        <div className="rounded-2xl border border-white/8 bg-field p-4">
           <div className="flex items-start gap-3">
             <span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl text-white" style={{ backgroundImage: 'var(--gradient-wire)' }}>
               <MapIcon className="h-4 w-4" aria-hidden />
@@ -270,7 +270,7 @@ export function ReviewStep({ needs, slot, timeZone, details, mapLines, onEdit }:
   if (mapLines?.length) rows.push({ label: 'Canvas map', value: mapLines.join('; '), step: 0 });
 
   return (
-    <dl className="divide-y divide-white/[0.07] rounded-2xl border border-white/10">
+    <dl className="divide-y divide-white/[0.07] rounded-2xl border border-white/8 bg-field">
       {rows.map((row) => (
         <div key={row.label} className="flex items-start gap-4 p-4">
           <dt className="w-32 shrink-0 text-sm text-haze">{row.label}</dt>

@@ -1,19 +1,20 @@
-'use client';
-
-import dynamic from 'next/dynamic';
-import { useIdle } from '@/lib/hooks';
-
-const BrandScene = dynamic(() => import('@/components/three/BrandScene'), { ssr: false });
-
-/** Ambient version of the brand scene behind the booking flow. Loads when idle, never takes input. */
+/**
+ * Static light behind the booking page: two soft glows in logo gradients and a dot grid
+ * that fades out. No WebGL here, so nothing ever floats across the form or the text.
+ * (The 3D scene lives in its own framed panel: DemoScenePanel.)
+ */
 export function BookingBackdrop() {
-  const idle = useIdle(2500);
   return (
-    <div
-      aria-hidden
-      className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[900px] opacity-45 [mask-image:radial-gradient(70%_60%_at_60%_35%,#000_30%,transparent_80%)]"
-    >
-      {idle && <BrandScene variant="ambient" />}
+    <div aria-hidden className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
+      <div className="dot-grid absolute inset-0 opacity-70 mask-[radial-gradient(70%_45%_at_50%_0%,#000,transparent)]" />
+      <div
+        className="absolute -top-48 left-[4%] h-140 w-140 rounded-full opacity-25 blur-[140px]"
+        style={{ backgroundImage: 'var(--gradient-wire)' }}
+      />
+      <div
+        className="absolute right-[-8%] top-[12%] h-130 w-130 rounded-full opacity-20 blur-[150px]"
+        style={{ backgroundImage: 'var(--gradient-pulse)' }}
+      />
     </div>
   );
 }

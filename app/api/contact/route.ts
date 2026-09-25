@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { contactSchema, labelFor, TOPIC_OPTIONS } from '@/lib/schema';
-import { clientIp, getResend, MAIL_FROM, MAIL_TO, MailConfigError, rateLimit, renderEmail, singleLine } from '@/lib/server/mail';
+import { clientIp, devDetail, getResend, MAIL_FROM, MAIL_TO, MailConfigError, rateLimit, renderEmail, singleLine } from '@/lib/server/mail';
 
 /*
  * Fixes vs. the previous handler:
@@ -29,7 +29,10 @@ export async function POST(req: Request) {
     );
   }
   const data = parsed.data;
-  if (data.hp) return NextResponse.json({ ok: true }); // bot: pretend it worked
+  if (data.hp) {
+    console.warn('[contact] spam trap field was filled; submission dropped without sending');
+    return NextResponse.json({ ok: true }); // bot: pretend it worked
+  }
 
   try {
     const { error } = await getResend().emails.send({
@@ -51,11 +54,11 @@ export async function POST(req: Request) {
     });
     if (error) {
       console.error('[contact] Resend rejected the email', error);
-      return NextResponse.json({ error: 'The message service is not responding.' }, { status: 502 });
+      return NextResponse.json({ error: `The message service is not responding.${devDetail(error)}` }, { status: 502 });
     }
     return NextResponse.json({ ok: true });
   } catch (err) {
     console.error(err instanceof MailConfigError ? '[contact] RESEND_API_KEY is missing' : '[contact] send failed', err);
-    return NextResponse.json({ error: 'The message service is not responding.' }, { status: 500 });
+    return NextResponse.json({ error: `The message service is not responding.${devDetail(err)}` }, { status: 500 });
   }
 }

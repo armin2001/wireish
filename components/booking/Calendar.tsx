@@ -196,7 +196,7 @@ export function Calendar({ availableDays, selected, todayKey, onSelect }: Calend
                     aria-label={`${label}${available ? '' : ', no times available'}`}
                     className={cn(
                       'relative grid aspect-square w-full place-items-center rounded-xl text-sm tabular-nums transition-colors duration-150',
-                      available ? 'text-white hover:bg-white/8' : 'cursor-default text-white/20',
+                      available ? 'bg-field text-white hover:bg-field-hover' : 'cursor-default text-white/20',
                       isSelected && 'font-semibold',
                     )}
                   >

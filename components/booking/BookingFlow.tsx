@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useForm, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { AnimatePresence, motion, useAnimate } from 'framer-motion';
-import { ArrowLeft, CircleAlert } from 'lucide-react';
+import { ArrowLeft, Check, CircleAlert } from 'lucide-react';
 import { Button, Spinner } from '@/components/ui/Button';
 import { TransitionLink } from '@/components/layout/PageTransition';
 import { useToast } from '@/components/ui/Toaster';
@@ -139,7 +139,7 @@ export function BookingFlow() {
   const primaryLabel = ['Continue', 'Continue', 'Review booking', 'Confirm booking'][step];
 
   return (
-    <div className="glass-raised relative overflow-hidden rounded-[2rem]">
+    <div className="panel relative overflow-hidden rounded-4xl">
       <div className="wire-line absolute inset-x-0 top-0" aria-hidden />
 
       <AnimatePresence mode="wait" initial={false}>
@@ -229,7 +229,7 @@ export function BookingFlow() {
               </AnimatePresence>
             </div>
 
-            <div className="flex items-center justify-between gap-3 border-t border-white/[0.07] px-6 py-5 sm:px-10">
+            <div className="flex items-center justify-between gap-3 border-t border-white/[0.07] bg-night/50 px-6 py-5 sm:px-10">
               <Button
                 variant="ghost"
                 onClick={() => goTo(step - 1)}
@@ -296,12 +296,12 @@ function StepIndicator({ current, onSelect }: { current: number; onSelect: (step
                 className={cn(
                   'relative grid h-8 w-8 place-items-center rounded-full border text-xs font-semibold tabular-nums transition-all duration-300',
                   active && 'border-transparent text-white shadow-glow-signal',
-                  done && 'border-signal/50 bg-deep text-signal hover:scale-110',
-                  !active && !done && 'border-white/15 bg-deep text-haze',
+                  done && 'border-signal/50 bg-surface text-signal hover:scale-110',
+                  !active && !done && 'border-white/15 bg-surface text-haze',
                 )}
                 style={active ? { backgroundImage: 'var(--gradient-wire)' } : undefined}
               >
-                {i + 1}
+                {done ? <Check className="h-3.5 w-3.5" strokeWidth={3} aria-hidden /> : i + 1}
               </button>
               <span className={cn('text-xs', active ? 'text-white' : 'text-haze')}>{s.title}</span>
             </li>

@@ -23,7 +23,7 @@ function ToolButton({ label, shortcut, onClick, disabled, pressed, children }: T
       aria-pressed={pressed}
       className={cn(
         'group relative grid h-9 w-9 place-items-center rounded-xl text-mist transition-[color,background-color,transform] duration-150',
-        'hover:bg-white/[0.08] hover:text-white active:scale-90 disabled:pointer-events-none disabled:opacity-30',
+        'hover:bg-white/8 hover:text-white active:scale-90 disabled:pointer-events-none disabled:opacity-30',
         pressed && 'bg-signal/15 text-signal hover:text-signal',
       )}
     >
@@ -70,7 +70,7 @@ export function CanvasToolbar(props: CanvasToolbarProps) {
         type="button"
         onClick={props.onZoomReset}
         aria-label={`Zoom ${Math.round(zoom * 100)}%. Reset to 100% (0)`}
-        className="h-9 w-14 rounded-xl text-sm tabular-nums text-white transition-colors hover:bg-white/[0.08] active:scale-95"
+        className="h-9 w-14 rounded-xl text-sm tabular-nums text-white transition-colors hover:bg-white/8 active:scale-95"
       >
         {Math.round(zoom * 100)}%
       </button>

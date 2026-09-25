@@ -115,9 +115,11 @@ export default function CanvasWorkspace() {
   /* ------------------------------------------------------------ persistence */
 
   // Save after edits only: merely opening the canvas shouldn't attach the example to a booking.
-  const initialDoc = useRef(doc);
+  // Cleared on the first edit, so undoing back to the opening map is saved too.
+  const initialDoc = useRef<typeof doc | null>(doc);
   useEffect(() => {
     if (doc === initialDoc.current) return;
+    initialDoc.current = null;
     const t = window.setTimeout(() => blueprintStore.set(doc), 250);
     return () => window.clearTimeout(t);
   }, [doc]);

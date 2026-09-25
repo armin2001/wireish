@@ -25,8 +25,8 @@ export function Chip({ selected, onToggle, children, role = 'checkbox', icon }: 
       className={cn(
         'wire-border inline-flex h-11 items-center gap-2 rounded-full border px-4 text-sm transition-[background-color,border-color,color,box-shadow] duration-200',
         selected
-          ? 'border-transparent bg-white/8 text-white shadow-glow [--wire-opacity:1]'
-          : 'border-white/10 text-mist [--wire-opacity:0] [--wire-play:paused] hover:border-white/25 hover:text-white',
+          ? 'border-transparent bg-[#1f1d5e] text-white shadow-glow [--wire-opacity:1]'
+          : 'border-white/[0.08] bg-field text-mist [--wire-opacity:0] [--wire-play:paused] hover:border-white/20 hover:bg-field-hover hover:text-white',
       )}
     >
       {icon}

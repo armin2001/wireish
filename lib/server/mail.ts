@@ -19,11 +19,28 @@ export function getResend(): Resend {
   return client;
 }
 
-export const MAIL_FROM = process.env.MAIL_FROM ?? 'Wireish <contact@wireish.com>';
-export const MAIL_TO = (process.env.MAIL_TO ?? 'armin@wireish.com')
+/** Sender name shown in the recipient's inbox, in front of the address. */
+const SENDER_NAME = 'Wireish';
+
+/**
+ * Accepts "booking@wireish.com" or "Name <booking@wireish.com>". A bare address gets the
+ * Wireish name added, so inboxes show "Wireish" instead of the raw address.
+ */
+function sender(value: string | undefined, fallback: string): string {
+  const v = value?.trim() || fallback;
+  return v.includes('<') ? v : `${SENDER_NAME} <${v}>`;
+}
+
+export const MAIL_FROM = sender(process.env.MAIL_FROM, 'contact@wireish.com');
+export const MAIL_TO = (process.env.MAIL_TO?.trim() || 'armin@wireish.com')
   .split(',')
   .map((s) => s.trim())
   .filter(Boolean);
+
+/** Sender of the confirmation a visitor receives after booking a demo. */
+export const BOOKING_FROM = sender(process.env.BOOKING_FROM, 'booking@wireish.com');
+/** Where the visitor's reply to that confirmation goes. Must be an address that has an inbox. */
+export const BOOKING_REPLY_TO = sender(process.env.BOOKING_REPLY_TO, 'booking@wireish.com');
 
 export function escapeHtml(value: string): string {
   return value
@@ -99,4 +116,17 @@ export function renderEmail({ heading, intro, rows, sections = [] }: EmailConten
     </div>
     <p style="color:#7A83A6;font-size:12px;margin:16px 0 0">Wireish</p>
   </div></body></html>`;
+}
+
+/**
+ * During local development, appends the real reason a send failed to the error the form
+ * shows, e.g. "(The wireish.com domain is not verified)". In production it adds nothing,
+ * so visitors never see provider details.
+ */
+export function devDetail(err: unknown): string {
+  if (process.env.NODE_ENV === 'production') return '';
+  if (err instanceof MailConfigError) return ' (RESEND_API_KEY is not set in .env.local)';
+  const message =
+    err && typeof err === 'object' && 'message' in err ? String((err as { message: unknown }).message) : String(err);
+  return ` (${message})`;
 }
