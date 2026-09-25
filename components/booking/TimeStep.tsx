@@ -82,7 +82,7 @@ export function TimeStep({ value, onChange, showError }: TimeStepProps) {
           </p>
           <p className="mt-1 text-sm text-haze">{MEETING_MINUTES}-minute video call</p>
 
-          <div className="mt-4 max-h-[340px] space-y-5 overflow-y-auto pr-1">
+          <div className="mt-4 max-h-85 space-y-5 overflow-y-auto pr-1">
             {daySlots.length === 0 && (
               <p className="rounded-2xl border border-white/10 p-4 text-sm text-mist">
                 No free times on this day. Pick a day with a dot under it.

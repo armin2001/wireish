@@ -252,11 +252,12 @@ export default function CanvasWorkspace() {
     });
   };
 
+  // The toast is fired outside the state updater: updaters run during render (twice in
+  // Strict Mode), so side effects inside them update other components mid-render.
   const toggleSnapping = () => {
-    setSnapping((on) => {
-      toast({ title: on ? 'Snapping off' : 'Snapping on', description: on ? 'Nodes move freely.' : 'Nodes snap to a 24px grid.' });
-      return !on;
-    });
+    const next = !snapping;
+    setSnapping(next);
+    toast({ title: next ? 'Snapping on' : 'Snapping off', description: next ? 'Nodes snap to a 24px grid.' : 'Nodes move freely.' });
   };
 
   const bookWithMap = () => {
@@ -289,6 +290,8 @@ export default function CanvasWorkspace() {
 
   const onPointerDown = (e: ReactPointerEvent<HTMLDivElement>) => {
     if (e.pointerType === 'mouse' && e.button !== 0 && e.button !== 1) return;
+    // Controls on the canvas handle their own clicks; capturing the pointer would swallow them.
+    if ((e.target as Element).closest('button, a, input, select, textarea')) return;
     container.current?.setPointerCapture(e.pointerId);
     pointers.current.set(e.pointerId, { x: e.clientX, y: e.clientY });
     if (pointers.current.size === 2) return beginPinch();
@@ -670,23 +673,25 @@ export default function CanvasWorkspace() {
             />
           )}
         </div>
-
-        {doc.nodes.length === 0 && (
-          <div className="pointer-events-none absolute inset-0 grid place-items-center p-6">
-            <div className="glass-overlay pointer-events-auto max-w-sm rounded-3xl p-7 text-center">
-              <p className="font-display text-lg font-semibold text-white">The canvas is empty</p>
-              <p className="mt-2 text-sm text-mist">
-                Drag a channel from the panel onto the canvas, or start from the example setup.
-              </p>
-              <Button className="mt-5" onClick={loadExample}>
-                Load example setup
-              </Button>
-            </div>
-          </div>
-        )}
       </div>
 
-      <div className="pointer-events-none absolute inset-x-0 top-[92px] z-20 flex justify-center px-3 md:pl-[288px] md:pr-[220px]">
+      {/* Outside the gesture surface on purpose: the surface captures the pointer on
+          pointerdown, which would swallow this button's click. */}
+      {doc.nodes.length === 0 && (
+        <div className="pointer-events-none absolute inset-0 z-10 grid place-items-center p-6">
+          <div className="glass-overlay pointer-events-auto max-w-sm rounded-3xl p-7 text-center">
+            <p className="font-display text-lg font-semibold text-white">The canvas is empty</p>
+            <p className="mt-2 text-sm text-mist">
+              Drag a channel from the panel onto the canvas, or start from the example setup.
+            </p>
+            <Button className="mt-5" onClick={loadExample}>
+              Load example setup
+            </Button>
+          </div>
+        </div>
+      )}
+
+      <div className="pointer-events-none absolute inset-x-0 top-23 z-20 flex justify-center px-3 md:pl-72 md:pr-55">
         <div className="pointer-events-auto">
           <CanvasToolbar
             zoom={viewport.view.zoom}
@@ -714,7 +719,7 @@ export default function CanvasWorkspace() {
 
       <NodePalette onAdd={addAtCenter} onDrop={dropFromPalette} />
 
-      <div className="absolute right-4 top-[92px] z-20 hidden md:block">
+      <div className="absolute right-4 top-23 z-20 hidden md:block">
         <Minimap
           nodes={doc.nodes}
           view={viewport.view}
@@ -726,7 +731,7 @@ export default function CanvasWorkspace() {
         />
       </div>
 
-      <div className="pointer-events-none absolute bottom-4 left-[288px] z-10 hidden items-center gap-3 md:flex">
+      <div className="pointer-events-none absolute bottom-4 left-72 z-10 hidden items-center gap-3 md:flex">
         <motion.p
           key={mode}
           initial={{ opacity: 0, y: 4 }}
