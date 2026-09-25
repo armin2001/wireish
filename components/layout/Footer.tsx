@@ -1,65 +1,93 @@
-import Image from 'next/image';
-import Link from 'next/link';
 import { FaInstagram, FaLinkedin } from 'react-icons/fa';
-import { FaXTwitter } from 'react-icons/fa6'; // Official X logo
+import { FaXTwitter } from 'react-icons/fa6';
+import { TransitionLink } from '@/components/layout/PageTransition';
+import { Logo } from '@/components/ui/Logo';
+import { DEMO_HREF, SITE } from '@/lib/content';
+
+const COLUMNS = [
+  {
+    title: 'Product',
+    links: [
+      { href: '/services', label: 'Services' },
+      { href: '/#how-it-works', label: 'How it works' },
+      { href: '/canvas', label: 'Canvas' },
+      { href: '/pricing', label: 'Pricing' },
+      { href: '/#faq', label: 'FAQ' },
+    ],
+  },
+  {
+    title: 'Company',
+    links: [
+      { href: '/contact', label: 'Contact' },
+      { href: DEMO_HREF, label: 'Book a demo' },
+    ],
+  },
+  {
+    title: 'Legal',
+    links: [
+      { href: '/privacy', label: 'Privacy policy' },
+      { href: '/terms', label: 'Terms of service' },
+    ],
+  },
+];
+
+const SOCIAL = [
+  { href: SITE.instagram, label: 'Wireish on Instagram', Icon: FaInstagram },
+  { href: SITE.linkedin, label: 'Wireish on LinkedIn', Icon: FaLinkedin },
+  { href: SITE.x, label: 'Wireish on X', Icon: FaXTwitter },
+];
 
 export function Footer() {
   return (
-      <footer className="border-t border-border bg-background pt-16 pb-12 px-6 relative z-10">
-        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-10 mb-12">
-          <div className="space-y-4 md:col-span-2">
-            <Link href="/" className="inline-block" aria-label="Wireish home">
-              <Image
-                  src="/logo.svg"
-                  alt="Wireish Logo"
-                  width={240}
-                  height={64}
-                  className="h-32 w-auto object-contain"
-              />
-            </Link>
-            <p className="text-gray-400 text-sm max-w-sm leading-relaxed">
-              Automating customer communication with intelligent AI agents across Web, Instagram, and WhatsApp. Scale
-              your support and sales 24/7.
-            </p>
-          </div>
+    <footer className="relative border-t border-white/[0.06] bg-night px-6 pb-10 pt-16">
+      <div className="wire-line absolute inset-x-0 top-0 opacity-40" aria-hidden />
+      <div className="mx-auto grid max-w-6xl gap-12 md:grid-cols-[1.4fr_repeat(3,minmax(0,1fr))]">
+        <div className="max-w-xs">
+          <TransitionLink href="/" aria-label="Wireish home" className="inline-block rounded-lg">
+            <Logo height={28} />
+          </TransitionLink>
+          <p className="mt-5 text-sm leading-relaxed text-mist">
+            AI agents that answer your customers on your website, Instagram and WhatsApp, built and run by our team.
+          </p>
+          <ul className="mt-6 flex gap-2">
+            {SOCIAL.map(({ href, label, Icon }) => (
+              <li key={label}>
+                <a
+                  href={href}
+                  target="_blank"
+                  rel="noreferrer"
+                  aria-label={label}
+                  className="grid h-10 w-10 place-items-center rounded-xl border border-white/10 text-mist transition-[color,border-color,transform] duration-200 hover:-translate-y-0.5 hover:border-signal/50 hover:text-white"
+                >
+                  <Icon className="h-4 w-4" />
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
 
-          <div>
-            <h4 className="font-bold text-sm uppercase tracking-wider mb-4 text-gray-300">Navigation</h4>
-            <ul className="space-y-3 text-sm text-gray-400">
-              <li><Link href="/services" className="hover:text-white transition-colors">Services</Link></li>
-              <li><Link href="/#how-it-works" className="hover:text-white transition-colors">How it works</Link></li>
-              <li><Link href="/pricing" className="hover:text-white transition-colors">Pricing</Link></li>
-              <li><Link href="/#faq" className="hover:text-white transition-colors">FAQ</Link></li>
+        {COLUMNS.map((column) => (
+          <nav key={column.title} aria-label={column.title}>
+            <h2 className="text-sm font-semibold text-white">{column.title}</h2>
+            <ul className="mt-4 space-y-3 text-sm">
+              {column.links.map((link) => (
+                <li key={link.href}>
+                  <TransitionLink href={link.href} className="text-mist transition-colors hover:text-white">
+                    {link.label}
+                  </TransitionLink>
+                </li>
+              ))}
             </ul>
-          </div>
+          </nav>
+        ))}
+      </div>
 
-          <div>
-            <h4 className="font-bold text-sm uppercase tracking-wider mb-4 text-gray-300">Connect</h4>
-            <div className="flex items-center gap-4 text-gray-400">
-              <a href="https://www.instagram.com/wireish/" target="_blank" rel="noreferrer"
-                 className="w-10 h-10 rounded-xl bg-white/5 border border-border flex items-center justify-center hover:text-white hover:border-primary/50 transition-all">
-                <FaInstagram className="w-5 h-5"/>
-              </a>
-              <a href="https://www.linkedin.com/in/ahmed-ma%C5%A1ala-b97524261/" target="_blank" rel="noreferrer"
-                 className="w-10 h-10 rounded-xl bg-white/5 border border-border flex items-center justify-center hover:text-white hover:border-primary/50 transition-all">
-                <FaLinkedin className="w-5 h-5"/>
-              </a>
-              <a href="https://x.com" target="_blank" rel="noreferrer"
-                 className="w-10 h-10 rounded-xl bg-white/5 border border-border flex items-center justify-center hover:text-white hover:border-primary/50 transition-all">
-                <FaXTwitter className="w-4 h-4"/>
-              </a>
-            </div>
-          </div>
-        </div>
-
-        <div
-            className="max-w-7xl mx-auto pt-8 border-t border-border/50 flex flex-col sm:flex-row items-center justify-between text-xs text-gray-500 gap-4">
-          <p>© {new Date().getFullYear()} Wireish. All rights reserved.</p>
-          <div className="flex gap-6">
-            <Link href="/privacy" className="hover:text-gray-400 transition-colors">Privacy Policy</Link>
-            <Link href="/terms" className="hover:text-gray-400 transition-colors">Terms of Service</Link>
-          </div>
-        </div>
-      </footer>
+      <div className="mx-auto mt-14 flex max-w-6xl flex-col gap-2 border-t border-white/[0.06] pt-6 text-xs text-haze sm:flex-row sm:justify-between">
+        <p>© {new Date().getFullYear()} Wireish. All rights reserved.</p>
+        <a href={`mailto:${SITE.email}`} className="transition-colors hover:text-white">
+          {SITE.email}
+        </a>
+      </div>
+    </footer>
   );
 }

@@ -1,42 +1,279 @@
 @import "tailwindcss";
 
+/*
+ * Wireish design system
+ * ---------------------
+ * Every brand color comes from the gradient stops in public/logo.svg.
+ * Rules taken from the logo itself:
+ *   1. The wordmark is pure white, so type is white. Gradients never fill body text.
+ *   2. Color travels along wires: borders, strokes, nodes, glows, 3D wires.
+ *   3. Gradients keep the logo's diagonal directions (135deg / 225deg / 315deg), never flat horizontal.
+ * JS mirror for Three.js and SVG attributes: lib/brand.ts.
+ */
+
+@property --wire-angle {
+  syntax: "<angle>";
+  inherits: false;
+  initial-value: 0deg;
+}
+
 @theme {
-  --color-background: #0A0A0F;
-  --color-card: rgba(255, 255, 255, 0.03);
-  --color-border: rgba(255, 255, 255, 0.08);
-  
-  --color-primary: #8B5CF6;
-  --color-primary-glow: rgba(139, 92, 246, 0.5);
-  
-  --color-secondary: #3B82F6;
-  --color-accent: #06B6D4;
+  /* Surfaces: navy-black taken from the hue of the logo's #322FE6 */
+  --color-night: #050716;
+  --color-deep: #0a0e24;
+  --color-raised: #111736;
 
-  --font-sans: var(--font-inter), sans-serif;
-  --font-display: var(--font-space-grotesk), sans-serif;
+  /* Text */
+  --color-mist: #a7aecb; /* body copy, 9.2:1 on night */
+  --color-haze: #7a83a6; /* secondary copy, 5.4:1 on night */
 
+  /* Logo palette (exact stops) */
+  --color-signal: #15c3ff; /* SVGID_2 0% */
+  --color-ion: #21a9fd; /* .st2 */
+  --color-azure: #0f9efd; /* SVGID_4 48.41% */
+  --color-beam: #1ca2fd; /* SVGID_1 100% */
+  --color-current: #2a66f7; /* SVGID_1 0%, SVGID_4 0% */
+  --color-iris: #4a50fc; /* SVGID_2 50.53% */
+  --color-charge: #5a41fd; /* SVGID_2 100% */
+  --color-pulse: #6334fc; /* SVGID_3 50.53% */
+  --color-conduit: #322fe6; /* SVGID_3 100% */
+  --color-spark: #9c29fe; /* SVGID_3 0% */
+
+  /* The one non-logo color: errors need to read as errors. */
+  --color-danger: #ff5c7a;
+
+  /* Semantic aliases, kept so existing components (FAQ, HowItWorks, legal pages) restyle automatically */
+  --color-background: #050716;
+  --color-primary: #5a41fd;
+  --color-primary-glow: rgb(90 65 253 / 0.5);
+  --color-secondary: #2a66f7;
+  --color-accent: #15c3ff;
+  --color-card: rgb(255 255 255 / 0.035);
+  --color-border: rgb(255 255 255 / 0.08);
+  --color-border-strong: rgb(255 255 255 / 0.16);
+
+  --font-sans: var(--font-instrument), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-sora), ui-sans-serif, system-ui, sans-serif;
+
+  --shadow-glow: 0 0 44px -10px rgb(90 65 253 / 0.6);
+  --shadow-glow-signal: 0 0 28px -6px rgb(21 195 255 / 0.65);
+  --shadow-lift: 0 28px 60px -24px rgb(0 0 0 / 0.75), 0 0 0 1px rgb(255 255 255 / 0.06);
+
+  --ease-wire: cubic-bezier(0.22, 1, 0.36, 1);
+
+  --animate-wire-spin: wire-spin 4s linear infinite;
+  --animate-wire-flow: wire-flow 0.9s linear infinite;
+  --animate-rise: rise 0.9s var(--ease-wire) both;
   --animate-blob: blob 7s infinite;
+  --animate-spark: spark 2.6s ease-out infinite;
+}
 
-  @keyframes blob {
-    0% { transform: translate(0px, 0px) scale(1); }
-    33% { transform: translate(30px, -50px) scale(1.1); }
-    66% { transform: translate(-20px, 20px) scale(0.9); }
-    100% { transform: translate(0px, 0px) scale(1); }
+/* Keyframes live outside @theme so they are always emitted (utilities below use them too). */
+@keyframes wire-spin {
+  to {
+    --wire-angle: 360deg;
   }
+}
+@keyframes wire-flow {
+  to {
+    stroke-dashoffset: -16;
+  }
+}
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+}
+/* Flicker for the broken wire on the 404 page. */
+@keyframes spark {
+  0%,
+  100% {
+    opacity: 0.15;
+    transform: scale(0.8);
+  }
+  8% {
+    opacity: 1;
+    transform: scale(1.15);
+  }
+  12% {
+    opacity: 0.3;
+  }
+  16% {
+    opacity: 0.9;
+    transform: scale(1);
+  }
+  40% {
+    opacity: 0.15;
+    transform: scale(0.8);
+  }
+}
+@keyframes blob {
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+  33% {
+    transform: translate(30px, -50px) scale(1.1);
+  }
+  66% {
+    transform: translate(-20px, 20px) scale(0.9);
+  }
+}
+
+:root {
+  /* Logo gradients with their original stops and directions */
+  --gradient-wire: linear-gradient(135deg, #15c3ff 0%, #4a50fc 50.53%, #5a41fd 100%); /* SVGID_2 */
+  --gradient-pulse: linear-gradient(225deg, #9c29fe 0%, #6334fc 50.53%, #322fe6 100%); /* SVGID_3 */
+  --gradient-current: linear-gradient(225deg, #2a66f7 0%, #2894fd 48.41%, #1ca2fd 100%); /* SVGID_1 */
+  --gradient-link: linear-gradient(315deg, #2a66f7 0%, #0f9efd 48.41%, #2775ff 100%); /* SVGID_4 */
+  /* The whole mark in one sweep, for glows and hairlines */
+  --gradient-spectrum: linear-gradient(135deg, #15c3ff 0%, #2a66f7 35%, #5a41fd 68%, #9c29fe 100%);
+  --wire-conic: conic-gradient(
+    from var(--wire-angle),
+    #15c3ff,
+    #2a66f7,
+    #5a41fd,
+    #9c29fe,
+    #5a41fd,
+    #2a66f7,
+    #15c3ff
+  );
 }
 
 @layer base {
+  html {
+    color-scheme: dark;
+    -webkit-tap-highlight-color: transparent;
+  }
   body {
-    @apply bg-background text-white antialiased overflow-x-hidden selection:bg-primary selection:text-white;
+    background-color: var(--color-night);
+    color: #fff;
+    overflow-x: clip;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  ::selection {
+    background: rgb(90 65 253 / 0.65);
+    color: #fff;
+  }
+  :focus-visible {
+    outline: 2px solid var(--color-signal);
+    outline-offset: 3px;
+  }
+  h1,
+  h2,
+  h3 {
+    text-wrap: balance;
+  }
+  p {
+    text-wrap: pretty;
   }
 }
 
-@layer utilities {
-  .glass {
-    @apply bg-card backdrop-blur-xl border border-border rounded-2xl shadow-lg;
+/* ---------- Glass: three depth layers ---------- */
+
+/* Layer 1: content cards. Also the legacy `glass` class used by existing pages. */
+@utility glass {
+  background-color: rgb(255 255 255 / 0.035);
+  backdrop-filter: blur(16px) saturate(140%);
+  -webkit-backdrop-filter: blur(16px) saturate(140%);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-2xl);
+  box-shadow:
+    inset 0 1px 0 0 rgb(255 255 255 / 0.04),
+    0 10px 30px -12px rgb(0 0 0 / 0.5);
+}
+
+/* Layer 2: primary panels (booking card, forms, toolbars). */
+@utility glass-raised {
+  background-image: linear-gradient(180deg, rgb(255 255 255 / 0.07), rgb(255 255 255 / 0.02));
+  backdrop-filter: blur(24px) saturate(160%);
+  -webkit-backdrop-filter: blur(24px) saturate(160%);
+  border: 1px solid rgb(255 255 255 / 0.1);
+  box-shadow:
+    inset 0 1px 0 0 rgb(255 255 255 / 0.08),
+    0 30px 80px -30px rgb(0 0 0 / 0.8);
+}
+
+/* Layer 3: things that float over everything (nav, menus, dialogs, toasts). */
+@utility glass-overlay {
+  background-color: rgb(10 14 36 / 0.78);
+  backdrop-filter: blur(32px) saturate(170%);
+  -webkit-backdrop-filter: blur(32px) saturate(170%);
+  border: 1px solid rgb(255 255 255 / 0.1);
+  box-shadow:
+    inset 0 1px 0 0 rgb(255 255 255 / 0.06),
+    0 40px 100px -30px rgb(0 0 0 / 0.9);
+}
+
+/* ---------- Glowing wire borders ---------- */
+
+/* Animated 1px conic border in logo colors. State-driven through two variables so hidden
+   borders don't keep repainting:
+   `[--wire-opacity:0] [--wire-play:paused] hover:[--wire-opacity:1] hover:[--wire-play:running]` */
+@utility wire-border {
+  position: relative;
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    padding: 1px;
+    border-radius: inherit;
+    background: var(--wire-conic);
+    -webkit-mask:
+      linear-gradient(#000 0 0) content-box,
+      linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    opacity: var(--wire-opacity, 1);
+    transition: opacity 0.3s var(--ease-wire);
+    animation: wire-spin 4s linear infinite;
+    animation-play-state: var(--wire-play, running);
+    pointer-events: none;
   }
-  
-  .text-gradient {
-    /* U v4 se koristi bg-linear-to-r umjesto bg-gradient-to-r */
-    @apply bg-clip-text text-transparent bg-linear-to-r from-primary via-secondary to-accent;
+}
+
+/* Soft two-tone glow in logo colors (primary buttons). Box-shadow, not a pseudo-element,
+   so it can never paint over the button's own background or hide behind a parent's. */
+@utility glow-wire {
+  box-shadow:
+    0 0 0 1px rgb(255 255 255 / 0.6),
+    -6px 4px 22px -6px rgb(21 195 255 / 0.55),
+    6px 6px 26px -6px rgb(90 65 253 / 0.65);
+  &:hover {
+    box-shadow:
+      0 0 0 1px rgb(255 255 255 / 0.9),
+      -8px 4px 30px -4px rgb(21 195 255 / 0.75),
+      8px 8px 36px -4px rgb(156 41 254 / 0.6);
+  }
+}
+
+/* 1px gradient hairline, used where a divider carries the brand. */
+@utility wire-line {
+  height: 1px;
+  background-image: var(--gradient-spectrum);
+}
+
+@utility text-gradient {
+  background-image: var(--gradient-wire);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+@utility dot-grid {
+  background-image: radial-gradient(circle at 1px 1px, rgb(255 255 255 / 0.09) 1px, transparent 0);
+  background-size: 24px 24px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }

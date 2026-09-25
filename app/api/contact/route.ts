@@ -1,41 +1,61 @@
 import { NextResponse } from 'next/server';
-import { Resend } from 'resend';
+import { contactSchema, labelFor, TOPIC_OPTIONS } from '@/lib/schema';
+import { clientIp, getResend, MAIL_FROM, MAIL_TO, MailConfigError, rateLimit, renderEmail, singleLine } from '@/lib/server/mail';
 
-// Inicijalizacija Resend-a sa tvojim ključem iz .env.local
-const resend = new Resend(process.env.RESEND_API_KEY);
-
+/*
+ * Fixes vs. the previous handler:
+ *  - input is validated with the shared zod schema (was trusted as-is)
+ *  - every value is HTML-escaped before it goes into the email (was injectable)
+ *  - Resend's { error } result is checked (send() doesn't throw, so failures used to report success)
+ *  - Resend is created lazily, rate limited per IP, with a honeypot for bots
+ */
 export async function POST(req: Request) {
+  if (!rateLimit(`contact:${clientIp(req)}`)) {
+    return NextResponse.json({ error: 'Too many messages from this connection. Try again in a few minutes.' }, { status: 429 });
+  }
+
+  let body: unknown;
   try {
-    // 1. Ovdje sada izvlačimo i 'phone' i 'company' iz zahtjeva
-    const { name, email, company, phone, message } = await req.json();
+    body = await req.json();
+  } catch {
+    return NextResponse.json({ error: 'The request was not valid JSON.' }, { status: 400 });
+  }
 
-    // 2. Sastavljamo i šaljemo email
-    const data = await resend.emails.send({
-      from: 'Wireish <contact@wireish.com>', // Zadrži ovo ili stavi svoju domenu ako si je verifikovao
-      to: ['armin@wireish.com'], // <-- OBAVEZNO OVDJE UPIŠI SVOJ EMAIL!
-      subject: `Novi Demo Upit - ${name}`,
-      html: `
-        <div style="font-family: sans-serif; max-width: 600px; padding: 20px; border: 1px solid #eaeaea; border-radius: 10px;">
-          <h2 style="color: #333;">Novi lead sa Wireish platforme! 🚀</h2>
-          <hr style="border: 1px solid #eaeaea; margin-bottom: 20px;" />
-          
-          <p><strong>Ime:</strong> ${name}</p>
-          <p><strong>Email:</strong> ${email}</p>
-          <p><strong>Kompanija:</strong> ${company ? company : 'Nije uneseno'}</p>
-          <p><strong>Telefon:</strong> ${phone ? phone : 'Nije uneseno'}</p>
-          
-          <br/>
-          <h3 style="color: #555;">Detalji projekta / Poruka:</h3>
-          <div style="background-color: #f9f9f9; padding: 15px; border-radius: 5px; color: #333;">
-            ${message}
-          </div>
-        </div>
-      `
+  const parsed = contactSchema.safeParse(body);
+  if (!parsed.success) {
+    return NextResponse.json(
+      { error: 'Some fields need attention.', fieldErrors: parsed.error.flatten().fieldErrors },
+      { status: 422 },
+    );
+  }
+  const data = parsed.data;
+  if (data.hp) return NextResponse.json({ ok: true }); // bot: pretend it worked
+
+  try {
+    const { error } = await getResend().emails.send({
+      from: MAIL_FROM,
+      to: MAIL_TO,
+      replyTo: data.email,
+      subject: `Novi upit: ${singleLine(data.name)}${data.company ? ` (${singleLine(data.company)})` : ''}`,
+      html: renderEmail({
+        heading: 'Novi upit sa kontakt forme',
+        rows: [
+          ['Tema', labelFor(TOPIC_OPTIONS, data.topic)],
+          ['Ime', data.name],
+          ['Email', data.email],
+          ['Kompanija', data.company || 'Nije uneseno'],
+          ['Telefon', data.phone || 'Nije uneseno'],
+        ],
+        sections: [['Poruka', data.message]],
+      }),
     });
-
-    return NextResponse.json({ success: true, data });
-  } catch (error) {
-    console.error('Resend error:', error);
-    return NextResponse.json({ error: 'Greška pri slanju' }, { status: 500 });
+    if (error) {
+      console.error('[contact] Resend rejected the email', error);
+      return NextResponse.json({ error: 'The message service is not responding.' }, { status: 502 });
+    }
+    return NextResponse.json({ ok: true });
+  } catch (err) {
+    console.error(err instanceof MailConfigError ? '[contact] RESEND_API_KEY is missing' : '[contact] send failed', err);
+    return NextResponse.json({ error: 'The message service is not responding.' }, { status: 500 });
   }
 }

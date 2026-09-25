@@ -1,155 +1,93 @@
-'use client';
+import type { Metadata } from 'next';
+import { MessageSquare, ShieldCheck, Zap } from 'lucide-react';
+import { ButtonLink } from '@/components/ui/Button';
+import { ValueEstimator } from '@/components/pricing/ValueEstimator';
+import { DEMO_HREF } from '@/lib/content';
 
-import { useState } from 'react';
-import { motion } from 'framer-motion';
-import { ArrowLeft, Sparkles, MessageSquare, Zap, ShieldCheck, CheckCircle2 } from 'lucide-react';
-import Link from 'next/link';
+export const metadata: Metadata = {
+  title: 'Pricing',
+  description:
+    'Wireish prices each AI agent to your scope instead of fixed tiers. Estimate the hours you get back, then book a call for a quote.',
+};
+
+const INCLUDED = [
+  {
+    title: 'Omnichannel sync',
+    body: 'One agent memory shared across your website widget, Instagram Direct and WhatsApp Business chats.',
+    Icon: MessageSquare,
+    gradient: 'var(--gradient-wire)',
+  },
+  {
+    title: 'Deep data training',
+    body: 'We ingest your product catalogs, PDF documentation and past transcripts so the agent speaks like your team.',
+    Icon: Zap,
+    gradient: 'var(--gradient-pulse)',
+  },
+  {
+    title: 'Dedicated partnership',
+    body: 'Ongoing optimization, conversation reviews and scaling as your traffic grows.',
+    Icon: ShieldCheck,
+    gradient: 'var(--gradient-link)',
+  },
+];
 
 export default function PricingPage() {
-  const [chatsPerMonth, setChatsPerMonth] = useState(3000);
-  
-  // Izračunavanje ušteđenog vremena i novca na bazi unosa
-  const estimatedHoursSaved = Math.round(chatsPerMonth * 0.15);
-  const estimatedValueGenerated = chatsPerMonth * 12;
-
   return (
-    <main className="min-h-screen pt-32 pb-24 px-6 relative z-10 bg-background">
-      <div className="max-w-6xl mx-auto">
-        {/* Dugme za povratak nazad */}
-        <div className="mb-8">
-          <Link href="/" className="inline-flex items-center gap-2 text-sm text-gray-400 hover:text-white transition-colors">
-            <ArrowLeft className="w-4 h-4" /> Back to Home
-          </Link>
-        </div>
-
-        {/* Naslov sekcije */}
-        <div className="text-center mb-16">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-          >
-            <span className="px-4 py-1.5 rounded-full border border-border bg-card text-primary text-sm font-medium mb-6 inline-block glass">
-              Tailored Architecture
-            </span>
-            <h1 className="font-display text-4xl md:text-6xl font-bold mb-6">
-              Custom Solutions, <span className="text-gradient">Custom Impact</span>
-            </h1>
-            <p className="text-gray-400 max-w-2xl mx-auto text-lg leading-relaxed">
-              Every business has unique workflows. We don&apos;t believe in rigid cookie-cutter tiers. Instead, we architect bespoke AI agents tailored specifically to your conversion goals.
-            </p>
-          </motion.div>
-        </div>
-
-        {/* Interaktivni ROI Simulator / Kalkulator */}
-        <motion.div 
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2, duration: 0.6 }}
-          className="glass p-8 md:p-12 mb-16 relative overflow-hidden border border-border/80"
-        >
-          <div className="absolute top-0 right-0 w-96 h-96 bg-primary/10 rounded-full blur-[120px] -z-10" />
-
-          <div className="grid md:grid-cols-2 gap-12 items-center">
-            <div>
-              <h3 className="text-2xl font-bold mb-3 flex items-center gap-2">
-                <Sparkles className="w-6 h-6 text-primary" /> Interactive Value Estimator
-              </h3>
-              <p className="text-gray-400 text-sm mb-8 leading-relaxed">
-                Estimate how much operational bandwidth your business can recover by automating repetitive inquiries across Website, Instagram, and WhatsApp.
-              </p>
-
-              <div className="space-y-6">
-                <div>
-                  <div className="flex justify-between text-sm mb-2">
-                    <span className="text-gray-300 font-medium">Estimated monthly customer chats:</span>
-                    <span className="text-primary font-bold">{chatsPerMonth.toLocaleString()} messages</span>
-                  </div>
-                  <input 
-                    type="range" 
-                    min="500" 
-                    max="20000" 
-                    step="500"
-                    value={chatsPerMonth} 
-                    onChange={(e) => setChatsPerMonth(Number(e.target.value))}
-                    className="w-full accent-primary bg-background/50 cursor-pointer h-2 rounded-lg"
-                  />
-                </div>
-              </div>
-            </div>
-
-            <div className="bg-background/40 p-8 rounded-2xl border border-border/60 flex flex-col justify-center space-y-6 text-center md:text-left">
-              <div>
-                <span className="text-xs uppercase tracking-wider text-gray-500 font-semibold">Estimated Human Hours Saved</span>
-                <div className="text-4xl md:text-5xl font-extrabold text-white mt-1">
-                  ~{estimatedHoursSaved} hrs <span className="text-primary text-2xl">/mo</span>
-                </div>
-              </div>
-
-              <div className="border-t border-border/50 pt-6">
-                <span className="text-xs uppercase tracking-wider text-gray-500 font-semibold">Potential Revenue Impact</span>
-                <div className="text-3xl md:text-4xl font-extrabold text-gradient mt-1">
-                  ${estimatedValueGenerated.toLocaleString()} <span className="text-sm font-normal text-gray-400">pipeline value</span>
-                </div>
-              </div>
-
-              <p className="text-xs text-gray-500 italic">
-                *Calculated based on average conversion lifts reported by automated support integrations.
-              </p>
-            </div>
-          </div>
-        </motion.div>
-
-        {/* Šta dobijate kroz personalizovani dogovor (Garantovane vrijednosti) */}
-        <div className="grid md:grid-cols-3 gap-8 mb-16">
-          <div className="glass p-8">
-            <div className="w-12 h-12 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center mb-6 text-primary">
-              <MessageSquare className="w-6 h-6" />
-            </div>
-            <h4 className="text-xl font-bold mb-3">Omnichannel Sync</h4>
-            <p className="text-gray-400 text-sm leading-relaxed">
-              Unified agent memory across website widgets, Instagram Direct Messages, and WhatsApp Business chats.
-            </p>
-          </div>
-
-          <div className="glass p-8">
-            <div className="w-12 h-12 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center mb-6 text-primary">
-              <Zap className="w-6 h-6" />
-            </div>
-            <h4 className="text-xl font-bold mb-3">Deep Data Training</h4>
-            <p className="text-gray-400 text-sm leading-relaxed">
-              We ingest your product catalogs, PDF documentation, and past transcripts so the AI speaks authentically.
-            </p>
-          </div>
-
-          <div className="glass p-8">
-            <div className="w-12 h-12 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center mb-6 text-primary">
-              <ShieldCheck className="w-6 h-6" />
-            </div>
-            <h4 className="text-xl font-bold mb-3">Dedicated Partnership</h4>
-            <p className="text-gray-400 text-sm leading-relaxed">
-              Ongoing optimization, conversation auditing, and instant scaling as your business traffic grows.
-            </p>
-          </div>
-        </div>
-
-        {/* Call to Action na dnu stranice */}
-        <div className="glass p-10 md:p-14 text-center relative overflow-hidden border border-primary/30">
-          <div className="absolute inset-0 bg-linear-to-r from-primary/10 via-transparent to-secondary/10 pointer-events-none" />
-          
-          <h3 className="text-3xl md:text-4xl font-bold mb-4">Let&apos;s discuss your custom scope</h3>
-          <p className="text-gray-400 max-w-xl mx-auto mb-8 text-lg">
-            Book a discovery call. We will examine your workflows and design a bespoke pricing structure that matches your exact ROI targets.
+    <main className="relative overflow-x-clip px-6 pb-28 pt-36">
+      <div
+        aria-hidden
+        className="pointer-events-none absolute left-1/2 top-0 -z-10 h-[420px] w-[760px] -translate-x-1/2 rounded-full opacity-25 blur-[120px]"
+        style={{ backgroundImage: 'var(--gradient-wire)' }}
+      />
+      <div className="mx-auto max-w-6xl">
+        <header className="max-w-2xl">
+          <h1 className="font-display text-4xl font-semibold tracking-[-0.03em] text-white md:text-6xl">
+            Priced to your scope, not a tier
+          </h1>
+          <p className="mt-6 text-lg leading-relaxed text-mist">
+            Every business has different workflows, so we don&apos;t sell fixed packages. We scope each agent around your
+            channels, volume and goals, and quote after a short call.
           </p>
+        </header>
 
-          <Link 
-            href="/#contact"
-            className="inline-block px-8 py-4 rounded-full bg-white text-black font-bold hover:bg-gray-200 transition-all shadow-[0_0_25px_var(--color-primary-glow)] hover:scale-105"
-          >
-            Schedule Discovery Call
-          </Link>
+        <div className="mt-14">
+          <ValueEstimator />
         </div>
 
+        <section aria-labelledby="included-title" className="mt-24">
+          <h2 id="included-title" className="font-display text-3xl font-semibold tracking-[-0.02em] text-white">
+            In every build
+          </h2>
+          <ul className="mt-10 grid gap-5 md:grid-cols-3">
+            {INCLUDED.map(({ title, body, Icon, gradient }) => (
+              <li key={title} className="glass rounded-3xl p-7">
+                <span className="grid h-11 w-11 place-items-center rounded-xl text-white" style={{ backgroundImage: gradient }}>
+                  <Icon className="h-5 w-5" />
+                </span>
+                <h3 className="mt-6 font-display text-lg font-semibold text-white">{title}</h3>
+                <p className="mt-2.5 text-[15px] leading-relaxed text-mist">{body}</p>
+              </li>
+            ))}
+          </ul>
+        </section>
+
+        <section className="glass-raised relative mt-24 overflow-hidden rounded-[2rem] px-8 py-14 text-center md:px-14">
+          <div className="wire-line absolute inset-x-0 top-0" aria-hidden />
+          <h2 className="font-display text-3xl font-semibold tracking-[-0.02em] text-white md:text-4xl">
+            Let&apos;s scope your agent
+          </h2>
+          <p className="mx-auto mt-4 max-w-xl text-lg text-mist">
+            In a 30-minute call we look at your workflows and send a quote that matches your goals.
+          </p>
+          <div className="mt-8 flex flex-wrap justify-center gap-3">
+            <ButtonLink href={DEMO_HREF} size="lg">
+              Book a demo
+            </ButtonLink>
+            <ButtonLink href="/contact" size="lg" variant="secondary">
+              Ask a question
+            </ButtonLink>
+          </div>
+        </section>
       </div>
     </main>
   );
