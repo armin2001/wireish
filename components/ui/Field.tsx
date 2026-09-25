@@ -117,7 +117,7 @@ export function TextArea({ label, error, hint, optional, className, id, ref, cou
 /** Visually hidden spam trap. Bots fill every input; people never see this one. */
 export function Honeypot(props: InputHTMLAttributes<HTMLInputElement> & { ref?: Ref<HTMLInputElement> }) {
   return (
-    <div aria-hidden className="absolute -left-[9999px] h-px w-px overflow-hidden">
+    <div aria-hidden className="absolute left-[-9999px] h-px w-px overflow-hidden">
       <label>
         Leave this empty
         {/* Password managers ignore autoComplete="off"; these opt-outs stop them filling the

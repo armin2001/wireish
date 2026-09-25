@@ -51,7 +51,7 @@ export default function Benefits() {
     <section className="px-6 py-28">
       <div className="mx-auto max-w-6xl">
         <div className="max-w-2xl">
-          <h2 className="font-display text-4xl font-semibold tracking-[-0.025em] text-white md:text-5xl">
+          <h2 className="font-display text-4xl font-semibold tracking-tight text-white md:text-5xl">
             Why businesses choose Wireish
           </h2>
           <p className="mt-5 text-lg text-mist">

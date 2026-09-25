@@ -125,7 +125,7 @@ export default function Navbar() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -12, scale: 0.98 }}
             transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
-            className="glass-overlay pointer-events-auto absolute inset-x-3 top-[84px] rounded-3xl p-3 md:hidden"
+            className="glass-overlay pointer-events-auto absolute inset-x-3 top-21 rounded-3xl p-3 md:hidden"
           >
             <ul className="flex flex-col">
               {NAV_LINKS.map((link, i) => (
@@ -139,7 +139,7 @@ export default function Navbar() {
                     href={link.href}
                     onClick={close}
                     aria-current={isActive(pathname, link.href) ? 'page' : undefined}
-                    className="flex items-center justify-between rounded-2xl px-4 py-3.5 font-display text-lg text-white transition-colors hover:bg-white/[0.06] aria-[current=page]:bg-white/[0.06]"
+                    className="flex items-center justify-between rounded-2xl px-4 py-3.5 font-display text-lg text-white transition-colors hover:bg-white/6 aria-[current=page]:bg-white/6"
                   >
                     {link.label}
                     {isActive(pathname, link.href) && <span className="h-1.5 w-1.5 rounded-full bg-signal shadow-glow-signal" />}

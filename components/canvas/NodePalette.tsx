@@ -69,7 +69,7 @@ export function NodePalette({ onAdd, onDrop }: NodePaletteProps) {
     <>
       <aside
         aria-label="Add to canvas"
-        className="glass-overlay absolute z-20 flex gap-4 overflow-auto rounded-3xl p-3 md:bottom-4 md:left-4 md:top-[92px] md:w-64 md:flex-col max-md:inset-x-3 max-md:bottom-3 max-md:items-start"
+        className="glass-overlay absolute z-20 flex gap-4 overflow-auto rounded-3xl p-3 md:bottom-4 md:left-4 md:top-23 md:w-64 md:flex-col max-md:inset-x-3 max-md:bottom-3 max-md:items-start"
       >
         <p className="px-2 pt-1 text-xs text-haze max-md:hidden">Drag onto the canvas, or click to add</p>
         {CATEGORIES.map((category) => (
@@ -90,7 +90,7 @@ export function NodePalette({ onAdd, onDrop }: NodePaletteProps) {
                       // detail === 0 means the click came from the keyboard.
                       onClick={(e) => e.detail === 0 && onAdd(kind)}
                       aria-label={`Add ${meta.label}`}
-                      className="group flex w-full touch-pan-x items-center gap-3 rounded-2xl p-2 text-left transition-colors duration-150 hover:bg-white/[0.06] active:scale-[0.98] max-md:w-auto max-md:pr-3"
+                      className="group flex w-full touch-pan-x items-center gap-3 rounded-2xl p-2 text-left transition-colors duration-150 hover:bg-white/6 active:scale-[0.98] max-md:w-auto max-md:pr-3"
                     >
                       <span
                         className="grid h-9 w-9 shrink-0 place-items-center rounded-xl text-white transition-transform duration-200 group-hover:scale-105"

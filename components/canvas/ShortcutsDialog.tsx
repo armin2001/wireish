@@ -58,7 +58,7 @@ export function ShortcutsDialog({ open, mod, onClose }: ShortcutsDialogProps) {
     <AnimatePresence>
       {open && (
         <motion.div
-          className="fixed inset-0 z-[80] grid place-items-center bg-night/60 p-4 backdrop-blur-sm"
+          className="fixed inset-0 z-80 grid place-items-center bg-night/60 p-4 backdrop-blur-sm"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
@@ -85,7 +85,7 @@ export function ShortcutsDialog({ open, mod, onClose }: ShortcutsDialogProps) {
                 type="button"
                 onClick={onClose}
                 aria-label="Close"
-                className="grid h-9 w-9 place-items-center rounded-full text-mist hover:bg-white/[0.08] hover:text-white"
+                className="grid h-9 w-9 place-items-center rounded-full text-mist hover:bg-white/8 hover:text-white"
               >
                 <X className="h-4 w-4" />
               </button>

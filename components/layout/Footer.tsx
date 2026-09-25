@@ -39,7 +39,7 @@ const SOCIAL = [
 
 export function Footer() {
   return (
-    <footer className="relative border-t border-white/[0.06] bg-night px-6 pb-10 pt-16">
+    <footer className="relative border-t border-white/6 bg-night px-6 pb-10 pt-16">
       <div className="wire-line absolute inset-x-0 top-0 opacity-40" aria-hidden />
       <div className="mx-auto grid max-w-6xl gap-12 md:grid-cols-[1.4fr_repeat(3,minmax(0,1fr))]">
         <div className="max-w-xs">
@@ -82,7 +82,7 @@ export function Footer() {
         ))}
       </div>
 
-      <div className="mx-auto mt-14 flex max-w-6xl flex-col gap-2 border-t border-white/[0.06] pt-6 text-xs text-haze sm:flex-row sm:justify-between">
+      <div className="mx-auto mt-14 flex max-w-6xl flex-col gap-2 border-t border-white/6 pt-6 text-xs text-haze sm:flex-row sm:justify-between">
         <p>© {new Date().getFullYear()} Wireish. All rights reserved.</p>
         <a href={`mailto:${SITE.email}`} className="transition-colors hover:text-white">
           {SITE.email}

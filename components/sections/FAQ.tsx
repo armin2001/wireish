@@ -55,7 +55,7 @@ export default function FAQ() {
 
       <div className="mx-auto grid max-w-6xl gap-12 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)]">
         <div className="self-start lg:sticky lg:top-32">
-          <h2 className="font-display text-4xl font-semibold tracking-[-0.025em] text-white md:text-5xl">
+          <h2 className="font-display text-4xl font-semibold tracking-tight text-white md:text-5xl">
             Questions, answered
           </h2>
           <p className="mt-5 max-w-sm text-lg text-mist">
@@ -76,7 +76,7 @@ export default function FAQ() {
                 key={faq.question}
                 className={cn(
                   'glass rounded-2xl transition-[border-color,background-color] duration-300',
-                  isOpen && 'border-white/15 bg-white/[0.05]',
+                  isOpen && 'border-white/15 bg-white/5',
                 )}
               >
                 <h3>

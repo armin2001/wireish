@@ -62,7 +62,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
       {children}
       <div
         aria-live="polite"
-        className="pointer-events-none fixed inset-x-0 bottom-5 z-[90] flex flex-col items-center gap-2 px-4"
+        className="pointer-events-none fixed inset-x-0 bottom-5 z-90 flex flex-col items-center gap-2 px-4"
       >
         <AnimatePresence initial={false}>
           {toasts.map((toast) => {
@@ -98,7 +98,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
                       toast.action?.onClick();
                       dismiss(toast.id);
                     }}
-                    className="rounded-full px-3 py-1 text-sm font-medium text-signal transition-colors hover:bg-white/[0.06]"
+                    className="rounded-full px-3 py-1 text-sm font-medium text-signal transition-colors hover:bg-white/6"
                   >
                     {toast.action.label}
                   </button>
@@ -107,7 +107,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
                   type="button"
                   onClick={() => dismiss(toast.id)}
                   aria-label="Dismiss notification"
-                  className="grid h-7 w-7 shrink-0 place-items-center rounded-full text-haze transition-colors hover:bg-white/[0.06] hover:text-white"
+                  className="grid h-7 w-7 shrink-0 place-items-center rounded-full text-haze transition-colors hover:bg-white/6 hover:text-white"
                 >
                   <X className="h-3.5 w-3.5" />
                 </button>

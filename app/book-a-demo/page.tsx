@@ -37,7 +37,7 @@ export default function BookDemoPage() {
             {FACTS.map(({ label, Icon }) => (
               <li
                 key={label}
-                className="inline-flex h-9 items-center gap-2 rounded-full border border-white/[0.08] bg-field px-3.5 text-sm text-white"
+                className="inline-flex h-9 items-center gap-2 rounded-full border border-white/8 bg-field px-3.5 text-sm text-white"
               >
                 <Icon className="h-4 w-4 text-signal" aria-hidden />
                 {label}
@@ -46,7 +46,7 @@ export default function BookDemoPage() {
           </ul>
 
           <h2 className="mt-12 text-sm font-semibold text-white">On the call</h2>
-          <ol className="relative mt-5 space-y-6 before:absolute before:bottom-3 before:left-[13px] before:top-3 before:w-px before:bg-white/10">
+          <ol className="relative mt-5 space-y-6 before:absolute before:bottom-3 before:left-3.25 before:top-3 before:w-px before:bg-white/10">
             {AGENDA.map((item, i) => (
               <li key={item} className="relative flex gap-4 text-mist">
                 <span
