@@ -192,24 +192,6 @@ function createResources(variant: SceneVariant): Resources {
   };
 }
 
-/**
- * Per-frame shader uniform writes. Kept outside the component so the React Compiler
- * doesn't treat these GPU-side updates as mutating a value its effects depend on.
- */
-function updateUniforms(r: Resources, t: number, dt: number, pulse: number, dpr: number, answer: boolean) {
-  for (const wire of r.wires) {
-    const u = wire.material.uniforms;
-    u.uTime.value = t;
-    u.uBoost.value = THREE.MathUtils.damp(u.uBoost.value, 0, 1.4, dt);
-    // The agent answers: route the message out to the tools.
-    if (answer && wire.direction === 'out') u.uBoost.value = 0.8;
-  }
-  r.core.material.uniforms.uTime.value = t;
-  r.core.material.uniforms.uPulse.value = pulse;
-  r.particles.material.uniforms.uTime.value = t;
-  r.particles.material.uniforms.uPixelRatio.value = dpr;
-}
-
 function disposeResources(r: Resources) {
   for (const wire of r.wires) {
     wire.geometry.dispose();
@@ -224,20 +206,42 @@ function disposeResources(r: Resources) {
   r.floorTexture?.dispose();
 }
 
+/*
+ * Uniforms are driven imperatively every frame, which is how three.js expects them to be
+ * updated. These live outside the component so the React Compiler doesn't read the writes
+ * as mutations of the memoized resources.
+ */
+function boostWire(r: Resources, id: string) {
+  const wire = r.wires.find((w) => w.id === id);
+  if (wire) wire.material.uniforms.uBoost.value = 1;
+}
+
+function tickResources(r: Resources, t: number, dt: number, pulse: number, dpr: number, routeOut: boolean) {
+  for (const wire of r.wires) {
+    const u = wire.material.uniforms;
+    u.uTime.value = t;
+    u.uBoost.value = THREE.MathUtils.damp(u.uBoost.value, 0, 1.4, dt);
+    if (routeOut && wire.direction === 'out') u.uBoost.value = 0.8;
+  }
+  r.core.material.uniforms.uTime.value = t;
+  r.core.material.uniforms.uPulse.value = pulse;
+  r.particles.material.uniforms.uTime.value = t;
+  r.particles.material.uniforms.uPixelRatio.value = dpr;
+}
+
+/** Translated hover labels keyed by endpoint id; the English labels above are the fallback. */
+export type SceneLabels = Partial<Record<string, string>>;
+
 interface WireNetworkProps {
   variant: SceneVariant;
   reduceMotion: boolean;
+  labels?: SceneLabels;
 }
 
-export function WireNetwork({ variant, reduceMotion }: WireNetworkProps) {
+export function WireNetwork({ variant, reduceMotion, labels }: WireNetworkProps) {
   const interactive = variant === 'hero';
   const resources = useMemo(() => createResources(variant), [variant]);
-  // Per-frame mutation goes through a ref (the React Compiler lint forbids mutating memo values).
-  const res = useRef(resources);
-  useEffect(() => {
-    res.current = resources;
-    return () => disposeResources(resources);
-  }, [resources]);
+  useEffect(() => () => disposeResources(resources), [resources]);
 
   const viewport = useThree((s) => s.viewport);
   const invalidate = useThree((s) => s.invalidate);
@@ -277,8 +281,7 @@ export function WireNetwork({ variant, reduceMotion }: WireNetworkProps) {
   }, [variant, viewport.width, viewport.height, viewport.aspect]);
 
   const fire = (id: string) => {
-    const wire = res.current.wires.find((w) => w.id === id);
-    if (wire) wire.material.uniforms.uBoost.value = 1;
+    boostWire(resources, id);
     pulseAt.current = clock.current + 0.6; // when the message reaches the core
     setActive(id);
     window.clearTimeout(labelTimer.current);
@@ -291,7 +294,6 @@ export function WireNetwork({ variant, reduceMotion }: WireNetworkProps) {
     if (!reduceMotion) clock.current += dt;
     const t = clock.current;
     const p = pointer.current;
-    const r = res.current;
 
     const group = sway.current;
     if (group) {
@@ -302,14 +304,14 @@ export function WireNetwork({ variant, reduceMotion }: WireNetworkProps) {
 
     pointerLight.current?.position.set(p.x * state.viewport.width * 0.5, p.y * state.viewport.height * 0.5, 2.4);
 
-    const answer = pulseAt.current > 0 && t >= pulseAt.current;
-    if (answer) {
+    // The agent answers: route the message out to the tools.
+    const routeOut = pulseAt.current > 0 && t >= pulseAt.current;
+    if (routeOut) {
       pulseAt.current = 0;
       pulse.current = 1;
     }
     pulse.current = THREE.MathUtils.damp(pulse.current, 0, 3, dt);
-    updateUniforms(r, t, dt, pulse.current, state.viewport.dpr, answer);
-
+    tickResources(resources, t, dt, pulse.current, state.viewport.dpr, routeOut);
     coreMesh.current?.scale.setScalar(1 + pulse.current * 0.08);
     if (latticeMesh.current) {
       latticeMesh.current.rotation.y = t * 0.25;
@@ -366,6 +368,7 @@ export function WireNetwork({ variant, reduceMotion }: WireNetworkProps) {
             <ChannelNode
               key={ep.id}
               endpoint={ep}
+              label={labels?.[ep.id] ?? ep.label}
               interactive={interactive}
               highlighted={hovered === ep.id || active === ep.id}
               showLabel={interactive && (hovered === ep.id || active === ep.id)}
@@ -384,6 +387,7 @@ export function WireNetwork({ variant, reduceMotion }: WireNetworkProps) {
 
 interface ChannelNodeProps {
   endpoint: Endpoint;
+  label: string;
   interactive: boolean;
   highlighted: boolean;
   showLabel: boolean;
@@ -391,7 +395,7 @@ interface ChannelNodeProps {
   onFire: (id: string) => void;
 }
 
-function ChannelNode({ endpoint, interactive, highlighted, showLabel, onHover, onFire }: ChannelNodeProps) {
+function ChannelNode({ endpoint, label, interactive, highlighted, showLabel, onHover, onFire }: ChannelNodeProps) {
   const scaleGroup = useRef<THREE.Group>(null);
   const ring = useRef<THREE.Mesh>(null);
 
@@ -442,7 +446,7 @@ function ChannelNode({ endpoint, interactive, highlighted, showLabel, onHover, o
       {showLabel && (
         <Html center position={[0, 0.46, 0]} zIndexRange={[20, 0]} style={{ pointerEvents: 'none' }}>
           <span className="glass-overlay whitespace-nowrap rounded-full px-3 py-1 text-xs font-medium text-white">
-            {endpoint.label}
+            {label}
           </span>
         </Html>
       )}

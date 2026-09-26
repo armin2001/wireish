@@ -1,33 +1,31 @@
 import { NextResponse } from 'next/server';
-import { contactSchema, labelFor, TOPIC_OPTIONS } from '@/lib/schema';
+import { LOCALE_META } from '@/lib/i18n/config';
+import { contactRequestSchema, labelFor, TOPIC_OPTIONS, type ApiError } from '@/lib/schema';
 import { clientIp, devDetail, getResend, MAIL_FROM, MAIL_TO, MailConfigError, rateLimit, renderEmail, singleLine } from '@/lib/server/mail';
 
 /*
- * Fixes vs. the previous handler:
- *  - input is validated with the shared zod schema (was trusted as-is)
- *  - every value is HTML-escaped before it goes into the email (was injectable)
- *  - Resend's { error } result is checked (send() doesn't throw, so failures used to report success)
+ * Contact form handler:
+ *  - input is validated with the shared zod schema; field errors are dictionary keys
+ *  - every value is HTML-escaped before it goes into the email
+ *  - Resend's { error } result is checked (send() doesn't throw)
  *  - Resend is created lazily, rate limited per IP, with a honeypot for bots
+ * Errors are codes (ApiErrorCode); the form turns them into text in the visitor's language.
  */
+const fail = (body: ApiError, status: number) => NextResponse.json(body, { status });
+
 export async function POST(req: Request) {
-  if (!rateLimit(`contact:${clientIp(req)}`)) {
-    return NextResponse.json({ error: 'Too many messages from this connection. Try again in a few minutes.' }, { status: 429 });
-  }
+  if (!rateLimit(`contact:${clientIp(req)}`)) return fail({ error: 'rate_limited' }, 429);
 
   let body: unknown;
   try {
     body = await req.json();
   } catch {
-    return NextResponse.json({ error: 'The request was not valid JSON.' }, { status: 400 });
+    return fail({ error: 'bad_request' }, 400);
   }
 
-  const parsed = contactSchema.safeParse(body);
-  if (!parsed.success) {
-    return NextResponse.json(
-      { error: 'Some fields need attention.', fieldErrors: parsed.error.flatten().fieldErrors },
-      { status: 422 },
-    );
-  }
+  const parsed = contactRequestSchema.safeParse(body);
+  if (!parsed.success) return fail({ error: 'invalid', fieldErrors: parsed.error.flatten().fieldErrors }, 422);
+
   const data = parsed.data;
   if (data.hp) {
     console.warn('[contact] spam trap field was filled; submission dropped without sending');
@@ -48,17 +46,18 @@ export async function POST(req: Request) {
           ['Email', data.email],
           ['Kompanija', data.company || 'Nije uneseno'],
           ['Telefon', data.phone || 'Nije uneseno'],
+          ['Jezik stranice', LOCALE_META[data.locale].english],
         ],
         sections: [['Poruka', data.message]],
       }),
     });
     if (error) {
       console.error('[contact] Resend rejected the email', error);
-      return NextResponse.json({ error: `The message service is not responding.${devDetail(error)}` }, { status: 502 });
+      return fail({ error: 'send_failed', detail: devDetail(error) }, 502);
     }
     return NextResponse.json({ ok: true });
   } catch (err) {
     console.error(err instanceof MailConfigError ? '[contact] RESEND_API_KEY is missing' : '[contact] send failed', err);
-    return NextResponse.json({ error: `The message service is not responding.${devDetail(err)}` }, { status: 500 });
+    return fail({ error: 'send_failed', detail: devDetail(err) }, 500);
   }
 }

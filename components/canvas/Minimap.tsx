@@ -4,6 +4,7 @@ import { memo, useState, type PointerEvent as ReactPointerEvent } from 'react';
 import { BRAND } from '@/lib/brand';
 import { KINDS, NODE_H, NODE_W, nodesBounds, type Bounds, type CanvasNode } from '@/lib/canvas/model';
 import type { Viewport } from './useViewport';
+import { useI18n } from '@/lib/i18n/client';
 
 const W = 184;
 const H = 116;
@@ -28,6 +29,7 @@ function union(a: Bounds | null, b: Bounds): Bounds {
 }
 
 export const Minimap = memo(function Minimap({ nodes, view, size, onNavigate }: MinimapProps) {
+  const { t } = useI18n();
   // Freeze the frame while dragging, otherwise the map rescales under the pointer.
   const [frozen, setFrozen] = useState<Bounds | null>(null);
 
@@ -54,7 +56,7 @@ export const Minimap = memo(function Minimap({ nodes, view, size, onNavigate }: 
         width={W}
         height={H}
         role="img"
-        aria-label="Minimap. Click or drag to move the view."
+        aria-label={t.canvas.minimap}
         className="block cursor-pointer touch-none"
         onPointerDown={(e) => {
           e.currentTarget.setPointerCapture(e.pointerId);

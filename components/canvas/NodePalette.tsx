@@ -4,6 +4,8 @@ import { useRef, useState, type PointerEvent as ReactPointerEvent } from 'react'
 import { AnimatePresence, motion, useMotionValue } from 'framer-motion';
 import { CATEGORIES, CATEGORY_GRADIENT, KINDS, type NodeKind } from '@/lib/canvas/model';
 import { KIND_ICONS } from './node-icons';
+import { useI18n } from '@/lib/i18n/client';
+import { format } from '@/lib/i18n/format';
 
 interface NodePaletteProps {
   /** Click or keyboard: add at the centre of the view. */
@@ -21,6 +23,8 @@ interface Press {
 }
 
 export function NodePalette({ onAdd, onDrop }: NodePaletteProps) {
+  const { t } = useI18n();
+  const pt = t.canvas.palette;
   const [ghost, setGhost] = useState<NodeKind | null>(null);
   const [rejected, setRejected] = useState(false);
   const ghostX = useMotionValue(0);
@@ -68,16 +72,17 @@ export function NodePalette({ onAdd, onDrop }: NodePaletteProps) {
   return (
     <>
       <aside
-        aria-label="Add to canvas"
-        className="glass-overlay absolute z-20 flex gap-4 overflow-auto rounded-3xl p-3 md:bottom-4 md:left-4 md:top-23 md:w-64 md:flex-col max-md:inset-x-3 max-md:bottom-3 max-md:items-start"
+        aria-label={pt.title}
+        className="glass-overlay absolute z-20 flex gap-4 overflow-auto rounded-3xl p-3 md:bottom-4 md:left-4 md:top-[92px] md:w-64 md:flex-col max-md:inset-x-3 max-md:bottom-3 max-md:items-start"
       >
-        <p className="px-2 pt-1 text-xs text-haze max-md:hidden">Drag onto the canvas, or click to add</p>
+        <p className="px-2 pt-1 text-xs text-haze max-md:hidden">{pt.hint}</p>
         {CATEGORIES.map((category) => (
           <section key={category.id} className="max-md:shrink-0">
-            <h2 className="px-2 pb-1.5 text-xs font-medium text-mist">{category.label}</h2>
+            <h2 className="px-2 pb-1.5 text-xs font-medium text-mist">{pt.categories[category.id]}</h2>
             <ul className="flex gap-1 md:flex-col">
               {category.kinds.map((kind) => {
                 const meta = KINDS[kind];
+                const copy = t.canvas.kinds[kind];
                 const Icon = KIND_ICONS[kind];
                 return (
                   <li key={kind}>
@@ -89,8 +94,8 @@ export function NodePalette({ onAdd, onDrop }: NodePaletteProps) {
                       onPointerCancel={onPointerCancel}
                       // detail === 0 means the click came from the keyboard.
                       onClick={(e) => e.detail === 0 && onAdd(kind)}
-                      aria-label={`Add ${meta.label}`}
-                      className="group flex w-full touch-pan-x items-center gap-3 rounded-2xl p-2 text-left transition-colors duration-150 hover:bg-white/6 active:scale-[0.98] max-md:w-auto max-md:pr-3"
+                      aria-label={format(pt.add, { name: copy.label })}
+                      className="group flex w-full touch-pan-x items-center gap-3 rounded-2xl p-2 text-left transition-colors duration-150 hover:bg-white/[0.06] active:scale-[0.98] max-md:w-auto max-md:pr-3"
                     >
                       <span
                         className="grid h-9 w-9 shrink-0 place-items-center rounded-xl text-white transition-transform duration-200 group-hover:scale-105"
@@ -99,8 +104,8 @@ export function NodePalette({ onAdd, onDrop }: NodePaletteProps) {
                         <Icon className="h-4 w-4" />
                       </span>
                       <span className="min-w-0">
-                        <span className="block truncate text-sm text-white">{meta.label}</span>
-                        <span className="block truncate text-xs text-haze max-md:hidden">{meta.hint}</span>
+                        <span className="block truncate text-sm text-white">{copy.label}</span>
+                        <span className="block truncate text-xs text-haze max-md:hidden">{copy.hint}</span>
                       </span>
                     </button>
                   </li>
@@ -131,7 +136,7 @@ export function NodePalette({ onAdd, onDrop }: NodePaletteProps) {
                   return <Icon className="h-4 w-4" />;
                 })()}
               </span>
-              <span className="text-sm font-medium text-white">{KINDS[ghost].label}</span>
+              <span className="text-sm font-medium text-white">{t.canvas.kinds[ghost].label}</span>
             </div>
           </motion.div>
         )}

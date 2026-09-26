@@ -1,12 +1,10 @@
-import type { Metadata } from 'next';
+'use client';
+
 import { ButtonLink } from '@/components/ui/Button';
 import { TransitionLink } from '@/components/layout/PageTransition';
 import { BRAND } from '@/lib/brand';
 import { DEMO_HREF, NAV_LINKS } from '@/lib/content';
-
-export const metadata: Metadata = {
-  title: 'Page not found',
-};
+import { useI18n } from '@/lib/i18n/client';
 
 /** A wire from the logo that stops short: the two ends spark across the gap. */
 function BrokenWire() {
@@ -40,7 +38,9 @@ function BrokenWire() {
   );
 }
 
+/** Rendered inside app/[locale]/layout.tsx, so it has the visitor's language. */
 export default function NotFound() {
+  const { t } = useI18n();
   return (
     <main className="relative grid flex-1 place-items-center overflow-hidden px-6 pb-24 pt-36">
       <div
@@ -50,27 +50,29 @@ export default function NotFound() {
       />
       <div className="w-full max-w-lg text-center">
         <BrokenWire />
-        <p className="mt-10 text-sm tabular-nums text-haze">Error 404</p>
+        <title>{`${t.notFound.code} | Wireish`}</title>
+        <meta name="robots" content="noindex" />
+        <p className="mt-10 text-sm tabular-nums text-haze">{t.notFound.code}</p>
         <h1 className="mt-2 font-display text-4xl font-semibold tracking-[-0.03em] text-white md:text-5xl">
-          This wire leads nowhere.
+          {t.notFound.title}
         </h1>
         <p className="mx-auto mt-4 max-w-sm text-lg text-mist">
-          The page you are looking for doesn&apos;t exist or has moved.
+          {t.notFound.body}
         </p>
         <div className="mt-8 flex flex-wrap justify-center gap-3">
           <ButtonLink href="/" size="lg">
-            Back to home
+            {t.common.backHome}
           </ButtonLink>
           <ButtonLink href={DEMO_HREF} size="lg" variant="secondary">
-            Book a demo
+            {t.common.bookDemo}
           </ButtonLink>
         </div>
-        <nav aria-label="Popular pages" className="mt-10">
+        <nav aria-label={t.notFound.popular} className="mt-10">
           <ul className="flex flex-wrap justify-center gap-x-6 gap-y-2 text-sm">
             {NAV_LINKS.map((link) => (
               <li key={link.href}>
                 <TransitionLink href={link.href} className="text-haze transition-colors hover:text-white">
-                  {link.label}
+                  {t.nav[link.key]}
                 </TransitionLink>
               </li>
             ))}

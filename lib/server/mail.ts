@@ -32,7 +32,7 @@ function sender(value: string | undefined, fallback: string): string {
 }
 
 export const MAIL_FROM = sender(process.env.MAIL_FROM, 'contact@wireish.com');
-export const MAIL_TO = (process.env.MAIL_TO?.trim() || 'armin@wireish.com')
+export const MAIL_TO = (process.env.MAIL_TO ?? 'armin@wireish.com')
   .split(',')
   .map((s) => s.trim())
   .filter(Boolean);
@@ -40,7 +40,7 @@ export const MAIL_TO = (process.env.MAIL_TO?.trim() || 'armin@wireish.com')
 /** Sender of the confirmation a visitor receives after booking a demo. */
 export const BOOKING_FROM = sender(process.env.BOOKING_FROM, 'booking@wireish.com');
 /** Where the visitor's reply to that confirmation goes. Must be an address that has an inbox. */
-export const BOOKING_REPLY_TO = sender(process.env.BOOKING_REPLY_TO, 'booking@wireish.com');
+export const BOOKING_REPLY_TO = process.env.BOOKING_REPLY_TO ?? 'booking@wireish.com';
 
 export function escapeHtml(value: string): string {
   return value
@@ -86,12 +86,14 @@ export function rateLimit(key: string, limit = 5, windowMs = 10 * 60 * 1000): bo
 interface EmailContent {
   heading: string;
   intro?: string;
+  /** BCP 47 language of the email body (defaults to Bosnian for team emails). */
+  lang?: string;
   rows: Array<[string, string]>;
   sections?: Array<[string, string | undefined]>;
 }
 
 /** Brand-styled, email-client-safe HTML. Every dynamic value is escaped. */
-export function renderEmail({ heading, intro, rows, sections = [] }: EmailContent): string {
+export function renderEmail({ heading, intro, rows, sections = [], lang = 'bs' }: EmailContent): string {
   const row = ([label, value]: [string, string]) =>
     `<tr><td style="padding:8px 16px 8px 0;color:#7A83A6;font-size:13px;white-space:nowrap;vertical-align:top">${escapeHtml(
       label,
@@ -105,7 +107,7 @@ export function renderEmail({ heading, intro, rows, sections = [] }: EmailConten
          )}</div>`
       : '';
 
-  return `<!doctype html><html><body style="margin:0;background:#F4F6FF;font-family:-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif">
+  return `<!doctype html><html lang="${escapeHtml(lang)}"><body style="margin:0;background:#F4F6FF;font-family:-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif">
   <div style="max-width:600px;margin:0 auto;padding:32px 20px">
     <div style="height:4px;border-radius:4px;background:linear-gradient(135deg,#15C3FF 0%,#4A50FC 50.53%,#5A41FD 100%)"></div>
     <div style="background:#ffffff;border:1px solid #E6E8F5;border-radius:16px;padding:28px;margin-top:16px">
@@ -119,14 +121,12 @@ export function renderEmail({ heading, intro, rows, sections = [] }: EmailConten
 }
 
 /**
- * During local development, appends the real reason a send failed to the error the form
- * shows, e.g. "(The wireish.com domain is not verified)". In production it adds nothing,
- * so visitors never see provider details.
+ * During local development, the real reason a send failed (e.g. "The wireish.com domain is
+ * not verified"), which the form shows in brackets. In production it is undefined, so
+ * visitors never see provider details.
  */
-export function devDetail(err: unknown): string {
-  if (process.env.NODE_ENV === 'production') return '';
-  if (err instanceof MailConfigError) return ' (RESEND_API_KEY is not set in .env.local)';
-  const message =
-    err && typeof err === 'object' && 'message' in err ? String((err as { message: unknown }).message) : String(err);
-  return ` (${message})`;
+export function devDetail(err: unknown): string | undefined {
+  if (process.env.NODE_ENV === 'production') return undefined;
+  if (err instanceof MailConfigError) return 'RESEND_API_KEY is not set in .env.local';
+  return err && typeof err === 'object' && 'message' in err ? String((err as { message: unknown }).message) : String(err);
 }

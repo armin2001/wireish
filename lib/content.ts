@@ -9,11 +9,13 @@ export const SITE = {
   x: 'https://x.com',
 } as const;
 
+/** Main navigation. Labels come from the dictionary (t.nav[key]); hrefs get the locale prefix automatically. */
 export const NAV_LINKS = [
-  { href: '/services', label: 'Services' },
-  { href: '/canvas', label: 'Canvas' },
-  { href: '/pricing', label: 'Pricing' },
-  { href: '/contact', label: 'Contact' },
+  { href: '/services', key: 'services' },
+  { href: '/canvas', key: 'canvas' },
+  { href: '/pricing', key: 'pricing' },
+  { href: '/team', key: 'team' },
+  { href: '/contact', key: 'contact' },
 ] as const;
 
 export const DEMO_HREF = '/book-a-demo';

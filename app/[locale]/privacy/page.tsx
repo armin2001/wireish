@@ -1,10 +1,14 @@
 import type { Metadata } from 'next';
 import { LegalPage, type LegalSection } from '@/components/legal/LegalPage';
+import { getDictionary } from '@/lib/i18n/get-dictionary';
+import { pageMetadata } from '@/lib/i18n/metadata';
+import { localeFrom, type LocaleParams } from '@/lib/i18n/server';
 
-export const metadata: Metadata = {
-  title: 'Privacy Policy',
-  description: 'How Wireish handles data across its website, AI agents and integrations.',
-};
+export async function generateMetadata({ params }: LocaleParams): Promise<Metadata> {
+  const locale = await localeFrom(params);
+  const t = await getDictionary(locale);
+  return pageMetadata(locale, '/privacy', t.legal.privacy);
+}
 
 // TODO: set to the date this text last actually changed (the old page showed today's date on every visit).
 const LAST_UPDATED = '2026-09-25';
@@ -91,6 +95,7 @@ const SECTIONS: LegalSection[] = [
   },
 ];
 
-export default function PrivacyPage() {
-  return <LegalPage title="Privacy Policy" updated={LAST_UPDATED} sections={SECTIONS} />;
+export default async function PrivacyPage({ params }: LocaleParams) {
+  const t = await getDictionary(await localeFrom(params));
+  return <LegalPage title={t.legal.privacy.title} updated={LAST_UPDATED} sections={SECTIONS} />;
 }

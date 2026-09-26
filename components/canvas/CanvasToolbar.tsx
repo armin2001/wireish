@@ -3,6 +3,8 @@
 import type { ReactNode } from 'react';
 import { Keyboard, Magnet, Minus, Plus, Redo2, RotateCcw, Scan, Undo2 } from 'lucide-react';
 import { cn } from '@/lib/cn';
+import { useI18n } from '@/lib/i18n/client';
+import { format } from '@/lib/i18n/format';
 
 interface ToolButtonProps {
   label: string;
@@ -23,7 +25,7 @@ function ToolButton({ label, shortcut, onClick, disabled, pressed, children }: T
       aria-pressed={pressed}
       className={cn(
         'group relative grid h-9 w-9 place-items-center rounded-xl text-mist transition-[color,background-color,transform] duration-150',
-        'hover:bg-white/8 hover:text-white active:scale-90 disabled:pointer-events-none disabled:opacity-30',
+        'hover:bg-white/[0.08] hover:text-white active:scale-90 disabled:pointer-events-none disabled:opacity-30',
         pressed && 'bg-signal/15 text-signal hover:text-signal',
       )}
     >
@@ -61,39 +63,41 @@ interface CanvasToolbarProps {
 
 export function CanvasToolbar(props: CanvasToolbarProps) {
   const { zoom, mod } = props;
+  const { t } = useI18n();
+  const tb = t.canvas.toolbar;
   return (
     <div className="glass-overlay flex items-center gap-1 rounded-2xl p-1.5 max-md:max-w-[calc(100vw-1.5rem)] max-md:overflow-x-auto">
-      <ToolButton label="Zoom out" shortcut="−" onClick={props.onZoomOut}>
+      <ToolButton label={tb.zoomOut} shortcut="−" onClick={props.onZoomOut}>
         <Minus className="h-4 w-4" />
       </ToolButton>
       <button
         type="button"
         onClick={props.onZoomReset}
-        aria-label={`Zoom ${Math.round(zoom * 100)}%. Reset to 100% (0)`}
-        className="h-9 w-14 rounded-xl text-sm tabular-nums text-white transition-colors hover:bg-white/8 active:scale-95"
+        aria-label={`${format(tb.zoomLevel, { n: Math.round(zoom * 100) })} (0)`}
+        className="h-9 w-14 rounded-xl text-sm tabular-nums text-white transition-colors hover:bg-white/[0.08] active:scale-95"
       >
         {Math.round(zoom * 100)}%
       </button>
-      <ToolButton label="Zoom in" shortcut="+" onClick={props.onZoomIn}>
+      <ToolButton label={tb.zoomIn} shortcut="+" onClick={props.onZoomIn}>
         <Plus className="h-4 w-4" />
       </ToolButton>
-      <ToolButton label="Fit to content" shortcut="F" onClick={props.onFit}>
+      <ToolButton label={tb.fit} shortcut="F" onClick={props.onFit}>
         <Scan className="h-4 w-4" />
       </ToolButton>
       <Divider />
-      <ToolButton label="Undo" shortcut={`${mod}Z`} onClick={props.onUndo} disabled={!props.canUndo}>
+      <ToolButton label={tb.undo} shortcut={`${mod}Z`} onClick={props.onUndo} disabled={!props.canUndo}>
         <Undo2 className="h-4 w-4" />
       </ToolButton>
-      <ToolButton label="Redo" shortcut={`${mod}⇧Z`} onClick={props.onRedo} disabled={!props.canRedo}>
+      <ToolButton label={tb.redo} shortcut={`${mod}⇧Z`} onClick={props.onRedo} disabled={!props.canRedo}>
         <Redo2 className="h-4 w-4" />
       </ToolButton>
-      <ToolButton label={props.snapping ? 'Snapping on' : 'Snapping off'} shortcut="G" onClick={props.onToggleSnap} pressed={props.snapping}>
+      <ToolButton label={props.snapping ? tb.snapOn : tb.snapOff} shortcut="G" onClick={props.onToggleSnap} pressed={props.snapping}>
         <Magnet className="h-4 w-4" />
       </ToolButton>
-      <ToolButton label="Load example setup" onClick={props.onLoadExample}>
+      <ToolButton label={tb.example} onClick={props.onLoadExample}>
         <RotateCcw className="h-4 w-4" />
       </ToolButton>
-      <ToolButton label="Keyboard shortcuts" shortcut="?" onClick={props.onHelp}>
+      <ToolButton label={tb.shortcuts} shortcut="?" onClick={props.onHelp}>
         <Keyboard className="h-4 w-4" />
       </ToolButton>
       <Divider />

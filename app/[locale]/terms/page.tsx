@@ -1,10 +1,14 @@
 import type { Metadata } from 'next';
 import { LegalPage, type LegalSection } from '@/components/legal/LegalPage';
+import { getDictionary } from '@/lib/i18n/get-dictionary';
+import { pageMetadata } from '@/lib/i18n/metadata';
+import { localeFrom, type LocaleParams } from '@/lib/i18n/server';
 
-export const metadata: Metadata = {
-  title: 'Terms of Service',
-  description: 'The terms that govern use of the Wireish website, AI agents and integrations.',
-};
+export async function generateMetadata({ params }: LocaleParams): Promise<Metadata> {
+  const locale = await localeFrom(params);
+  const t = await getDictionary(locale);
+  return pageMetadata(locale, '/terms', t.legal.terms);
+}
 
 // TODO: set to the date this text last actually changed (the old page showed today's date on every visit).
 const LAST_UPDATED = '2026-09-25';
@@ -91,6 +95,7 @@ const SECTIONS: LegalSection[] = [
   },
 ];
 
-export default function TermsPage() {
-  return <LegalPage title="Terms of Service" updated={LAST_UPDATED} sections={SECTIONS} />;
+export default async function TermsPage({ params }: LocaleParams) {
+  const t = await getDictionary(await localeFrom(params));
+  return <LegalPage title={t.legal.terms.title} updated={LAST_UPDATED} sections={SECTIONS} />;
 }

@@ -5,6 +5,8 @@ import { motion } from 'framer-motion';
 import { cn } from '@/lib/cn';
 import { SITE } from '@/lib/content';
 import { TransitionLink } from '@/components/layout/PageTransition';
+import { useI18n } from '@/lib/i18n/client';
+import { intlLocale } from '@/lib/i18n/config';
 
 export interface LegalSection {
   id: string;
@@ -20,6 +22,7 @@ interface LegalPageProps {
 }
 
 export function LegalPage({ title, updated, sections }: LegalPageProps) {
+  const { t, locale } = useI18n();
   const [active, setActive] = useState(sections[0]?.id ?? '');
 
   // Scroll-spy: highlight the section whose heading most recently crossed the top third of the screen.
@@ -38,15 +41,15 @@ export function LegalPage({ title, updated, sections }: LegalPageProps) {
     return () => observer.disconnect();
   }, [sections]);
 
-  const updatedLabel = new Intl.DateTimeFormat('en-US', { dateStyle: 'long', timeZone: 'UTC' }).format(
+  const updatedLabel = new Intl.DateTimeFormat(intlLocale(locale), { dateStyle: 'long', timeZone: 'UTC' }).format(
     new Date(`${updated}T00:00:00Z`),
   );
 
   return (
     <main className="px-6 pb-28 pt-36">
       <div className="mx-auto grid max-w-6xl gap-12 lg:grid-cols-[220px_minmax(0,1fr)]">
-        <nav aria-label="On this page" className="hidden self-start lg:sticky lg:top-32 lg:block">
-          <p className="mb-3 text-xs font-medium text-haze">On this page</p>
+        <nav aria-label={t.legal.onThisPage} className="hidden self-start lg:sticky lg:top-32 lg:block">
+          <p className="mb-3 text-xs font-medium text-haze">{t.legal.onThisPage}</p>
           <ol className="space-y-0.5 border-l border-white/10">
             {sections.map((section, i) => {
               const isActive = active === section.id;
@@ -80,11 +83,17 @@ export function LegalPage({ title, updated, sections }: LegalPageProps) {
           <header className="border-b border-white/[0.07] pb-10">
             <h1 className="font-display text-4xl font-semibold tracking-[-0.03em] text-white md:text-5xl">{title}</h1>
             <p className="mt-4 text-sm text-haze">
-              Last updated <time dateTime={updated}>{updatedLabel}</time>
+              {t.legal.lastUpdated} <time dateTime={updated}>{updatedLabel}</time>
             </p>
+            {locale !== 'en' && (
+              <p className="mt-6 rounded-2xl border border-signal/25 bg-signal/[0.06] px-4 py-3 text-sm text-white">
+                {t.legal.englishOnly}
+              </p>
+            )}
           </header>
 
-          <div className="space-y-12 pt-10">
+          {/* The legal text itself is English; lang tells screen readers and translators so. */}
+          <div lang="en" className="space-y-12 pt-10">
             {sections.map((section, i) => (
               <section key={section.id} id={section.id} className="scroll-mt-28">
                 <h2 className="flex items-baseline gap-3 font-display text-xl font-semibold text-white">
@@ -99,13 +108,13 @@ export function LegalPage({ title, updated, sections }: LegalPageProps) {
           </div>
 
           <p className="mt-14 rounded-2xl border border-white/10 p-5 text-sm text-mist">
-            Questions about this page? Email{' '}
+            {t.legal.questions}{' '}
             <a href={`mailto:${SITE.email}`} className="text-white underline underline-offset-2">
               {SITE.email}
             </a>{' '}
-            or use the{' '}
+            {t.legal.orUse}{' '}
             <TransitionLink href="/contact" className="text-white underline underline-offset-2">
-              contact form
+              {t.legal.form}
             </TransitionLink>
             .
           </p>

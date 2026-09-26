@@ -12,12 +12,15 @@ import {
   CHANNEL_OPTIONS,
   GOAL_OPTIONS,
   VOLUME_OPTIONS,
-  labelFor,
   type BookingDetails,
   type Channel,
   type Goal,
   type Volume,
 } from '@/lib/schema';
+import { useI18n } from '@/lib/i18n/client';
+import { intlLocale } from '@/lib/i18n/config';
+import { fieldError } from '@/lib/i18n/errors';
+import { format } from '@/lib/i18n/format';
 
 export interface NeedsDraft {
   channels: Channel[];
@@ -68,6 +71,8 @@ interface NeedsStepProps {
 }
 
 export function NeedsStep({ value, onChange, showErrors, blueprint }: NeedsStepProps) {
+  const { t } = useI18n();
+  const n = t.booking.needs;
   const toggleChannel = (channel: Channel) =>
     onChange({
       channels: value.channels.includes(channel)
@@ -83,15 +88,19 @@ export function NeedsStep({ value, onChange, showErrors, blueprint }: NeedsStepP
   return (
     <div className="space-y-8">
       {hasMap && blueprint && (
-        <div className="rounded-2xl border border-white/8 bg-field p-4">
+        <div className="rounded-2xl border border-white/[0.08] bg-field p-4">
           <div className="flex items-start gap-3">
             <span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl text-white" style={{ backgroundImage: 'var(--gradient-wire)' }}>
               <MapIcon className="h-4 w-4" aria-hidden />
             </span>
             <div className="min-w-0 flex-1">
-              <p className="font-medium text-white">Your canvas map</p>
+              <p className="font-medium text-white">{n.mapTitle}</p>
               <ul className="mt-1 space-y-0.5 text-sm text-mist">
-                {summarizeDoc(blueprint)
+                {summarizeDoc(
+                  blueprint,
+                  (kind) => t.canvas.kinds[kind].label,
+                  (list) => format(t.canvas.notConnected, { list }),
+                )
                   .slice(0, 4)
                   .map((line) => (
                     <li key={line} className="truncate">
@@ -107,7 +116,7 @@ export function NeedsStep({ value, onChange, showErrors, blueprint }: NeedsStepP
                     onChange={(e) => onChange({ attachMap: e.target.checked })}
                     className="h-4 w-4 accent-signal"
                   />
-                  Attach it to this booking
+                  {n.attach}
                 </label>
                 {mapChannels.length > 0 && (
                   <button
@@ -115,11 +124,11 @@ export function NeedsStep({ value, onChange, showErrors, blueprint }: NeedsStepP
                     onClick={() => onChange({ channels: [...new Set([...value.channels, ...mapChannels])] })}
                     className="font-medium text-signal hover:text-white"
                   >
-                    Use channels from the map
+                    {n.useChannels}
                   </button>
                 )}
                 <TransitionLink href="/canvas" className="text-mist hover:text-white">
-                  Edit map
+                  {n.editMap}
                 </TransitionLink>
               </div>
             </div>
@@ -128,8 +137,8 @@ export function NeedsStep({ value, onChange, showErrors, blueprint }: NeedsStepP
       )}
 
       <Question
-        title="Which channels should the agent answer?"
-        error={showErrors && value.channels.length === 0 && 'Pick at least one channel.'}
+        title={n.channels}
+        error={showErrors && value.channels.length === 0 && t.errors.pickChannel}
       >
         {CHANNEL_OPTIONS.map((option) => (
           <Chip
@@ -138,14 +147,14 @@ export function NeedsStep({ value, onChange, showErrors, blueprint }: NeedsStepP
             onToggle={() => toggleChannel(option.value)}
             icon={CHANNEL_ICONS[option.value]}
           >
-            {option.label}
+            {t.channels[option.value]}
           </Chip>
         ))}
       </Question>
 
       <Question
-        title="Customer conversations per month"
-        error={showErrors && !value.volume && 'Pick the closest range.'}
+        title={n.volume}
+        error={showErrors && !value.volume && t.errors.pickVolume}
       >
         {VOLUME_OPTIONS.map((option) => (
           <Chip
@@ -154,12 +163,12 @@ export function NeedsStep({ value, onChange, showErrors, blueprint }: NeedsStepP
             selected={value.volume === option.value}
             onToggle={() => onChange({ volume: option.value })}
           >
-            {option.label}
+            {t.booking.volumes[option.value]}
           </Chip>
         ))}
       </Question>
 
-      <Question title="What should it handle first?" error={showErrors && !value.goal && 'Pick one to continue.'}>
+      <Question title={n.goal} error={showErrors && !value.goal && t.errors.pickGoal}>
         {GOAL_OPTIONS.map((option) => (
           <Chip
             key={option.value}
@@ -167,18 +176,18 @@ export function NeedsStep({ value, onChange, showErrors, blueprint }: NeedsStepP
             selected={value.goal === option.value}
             onToggle={() => onChange({ goal: option.value })}
           >
-            {option.label}
+            {t.booking.goals[option.value]}
           </Chip>
         ))}
       </Question>
 
       {!hasMap && (
         <p className="text-sm text-haze">
-          Want to show us your setup?{' '}
+          {n.mapPrompt}{' '}
           <TransitionLink href="/canvas" className="text-signal hover:text-white">
-            Map it on the canvas
+            {n.mapLink}
           </TransitionLink>{' '}
-          and it will be attached here.
+          {n.mapSuffix}
         </p>
       )}
     </div>
@@ -194,36 +203,38 @@ interface DetailsStepProps {
 }
 
 export function DetailsStep({ register, errors, notesLength }: DetailsStepProps) {
+  const { t } = useI18n();
+  const d = t.booking.details;
   return (
     <div className="space-y-5">
       <div className="grid gap-5 sm:grid-cols-2">
-        <TextField label="Your name" autoComplete="name" error={errors.name?.message} {...register('name')} />
+        <TextField label={d.name} autoComplete="name" error={fieldError(t, errors.name?.message)} {...register('name')} />
         <TextField
-          label="Work email"
+          label={d.email}
           type="email"
           inputMode="email"
           autoComplete="email"
-          error={errors.email?.message}
+          error={fieldError(t, errors.email?.message)}
           {...register('email')}
         />
-        <TextField label="Company" autoComplete="organization" error={errors.company?.message} {...register('company')} />
+        <TextField label={d.company} autoComplete="organization" error={fieldError(t, errors.company?.message)} {...register('company')} />
         <TextField
-          label="Phone"
+          label={d.phone}
           optional
           type="tel"
           inputMode="tel"
           autoComplete="tel"
-          error={errors.phone?.message}
+          error={fieldError(t, errors.phone?.message)}
           {...register('phone')}
         />
       </div>
       <TextArea
-        label="Anything we should know"
+        label={d.notes}
         optional
         maxLength={2000}
         count={notesLength}
-        hint="Your website address, tools you use, questions customers ask most."
-        error={errors.notes?.message}
+        hint={d.notesHint}
+        error={fieldError(t, errors.notes?.message)}
         {...register('notes')}
       />
       <Honeypot {...register('hp')} />
@@ -243,7 +254,9 @@ interface ReviewStepProps {
 }
 
 export function ReviewStep({ needs, slot, timeZone, details, mapLines, onEdit }: ReviewStepProps) {
-  const when = new Intl.DateTimeFormat(undefined, {
+  const { t, locale } = useI18n();
+  const r = t.booking.review;
+  const when = new Intl.DateTimeFormat(intlLocale(locale), {
     weekday: 'long',
     month: 'long',
     day: 'numeric',
@@ -253,35 +266,38 @@ export function ReviewStep({ needs, slot, timeZone, details, mapLines, onEdit }:
   }).format(new Date(slot));
 
   const rows: Array<{ label: string; value: ReactNode; step: number }> = [
-    { label: 'When', value: `${when} (${timeZone.replace(/_/g, ' ')})`, step: 1 },
-    { label: 'Channels', value: needs.channels.map((c) => labelFor(CHANNEL_OPTIONS, c)).join(', '), step: 0 },
+    { label: r.when, value: `${when} (${timeZone.replace(/_/g, ' ')})`, step: 1 },
+    { label: r.channels, value: needs.channels.map((c) => t.channels[c]).join(', '), step: 0 },
     {
-      label: 'Volume and focus',
-      value: `${labelFor(VOLUME_OPTIONS, needs.volume ?? '')} conversations a month. ${labelFor(GOAL_OPTIONS, needs.goal ?? '')}.`,
+      label: r.volumeGoal,
+      value: format(r.volumeLine, {
+        volume: needs.volume ? t.booking.volumes[needs.volume] : '',
+        goal: needs.goal ? t.booking.goals[needs.goal] : '',
+      }),
       step: 0,
     },
     {
-      label: 'You',
+      label: r.you,
       value: [details.name, details.email, details.company, details.phone].filter(Boolean).join(', '),
       step: 2,
     },
   ];
-  if (details.notes) rows.push({ label: 'Notes', value: details.notes, step: 2 });
-  if (mapLines?.length) rows.push({ label: 'Canvas map', value: mapLines.join('; '), step: 0 });
+  if (details.notes) rows.push({ label: r.notes, value: details.notes, step: 2 });
+  if (mapLines?.length) rows.push({ label: r.map, value: mapLines.join('; '), step: 0 });
 
   return (
-    <dl className="divide-y divide-white/[0.07] rounded-2xl border border-white/8 bg-field">
+    <dl className="divide-y divide-white/[0.07] rounded-2xl border border-white/[0.08] bg-field">
       {rows.map((row) => (
         <div key={row.label} className="flex items-start gap-4 p-4">
           <dt className="w-32 shrink-0 text-sm text-haze">{row.label}</dt>
-          <dd className="min-w-0 flex-1 whitespace-pre-line wrap-break-word text-sm text-white">{row.value}</dd>
+          <dd className="min-w-0 flex-1 whitespace-pre-line break-words text-sm text-white">{row.value}</dd>
           <button
             type="button"
             onClick={() => onEdit(row.step)}
             className="shrink-0 rounded-full px-2 text-sm text-signal hover:text-white"
-            aria-label={`Change ${row.label.toLowerCase()}`}
+            aria-label={format(r.changeLabel, { item: row.label })}
           >
-            Change
+            {r.change}
           </button>
         </div>
       ))}

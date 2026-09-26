@@ -57,8 +57,8 @@
   --color-border: rgb(255 255 255 / 0.08);
   --color-border-strong: rgb(255 255 255 / 0.16);
 
-  --font-sans: var(--font-instrument), ui-sans-serif, system-ui, sans-serif;
-  --font-display: var(--font-sora), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-instrument), var(--font-cjk, ui-sans-serif), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-sora), var(--font-cjk, ui-sans-serif), ui-sans-serif, system-ui, sans-serif;
 
   --shadow-glow: 0 0 44px -10px rgb(90 65 253 / 0.6);
   --shadow-glow-signal: 0 0 28px -6px rgb(21 195 255 / 0.65);
@@ -293,5 +293,48 @@
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
+  }
+}
+
+/* ─── Languages ────────────────────────────────────────────────────────────────
+ * The brand fonts have no Hangul or Kana, so Korean and Japanese pages use the
+ * best system font for that script (no extra download). The lang attribute keeps
+ * shared Han characters in the right regional form. */
+html:lang(ja) {
+  --font-cjk: 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', 'Yu Gothic UI', 'Yu Gothic', Meiryo, 'Noto Sans JP';
+  line-break: strict;
+}
+html:lang(ko) {
+  --font-cjk: 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', 'Nanum Gothic';
+  word-break: keep-all;
+}
+
+/* ─── Splash screen ────────────────────────────────────────────────────────────
+ * Rendered in the server HTML so it covers the first paint. A script in <head>
+ * sets data-splash="done" for visitors who already saw it this session, and the
+ * failsafe animation hides it even if JavaScript never runs. */
+#splash {
+  animation: splash-failsafe 0.4s ease 6s forwards;
+}
+html[data-splash='done'] #splash {
+  display: none;
+}
+html[data-splash='active'] {
+  overflow: hidden;
+}
+@keyframes splash-failsafe {
+  to {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+  }
+}
+@keyframes splash-pulse {
+  0%,
+  100% {
+    opacity: 0.55;
+  }
+  50% {
+    opacity: 1;
   }
 }

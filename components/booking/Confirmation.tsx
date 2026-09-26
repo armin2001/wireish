@@ -7,6 +7,9 @@ import { Button, ButtonLink, buttonStyles } from '@/components/ui/Button';
 import { SuccessMark } from '@/components/ui/SuccessMark';
 import { MEETING_MINUTES } from '@/lib/availability';
 import { buildIcs, googleCalendarUrl, type CalendarEvent } from '@/lib/ics';
+import { useI18n } from '@/lib/i18n/client';
+import { intlLocale } from '@/lib/i18n/config';
+import { format } from '@/lib/i18n/format';
 
 interface ConfirmationProps {
   slot: string;
@@ -17,18 +20,20 @@ interface ConfirmationProps {
 }
 
 export function Confirmation({ slot, timeZone, email, confirmationSent, onBookAnother }: ConfirmationProps) {
+  const { t, locale } = useI18n();
+  const d = t.booking.done;
   const event: CalendarEvent = useMemo(
     () => ({
       uid: `demo-${slot}-${email}@wireish.com`,
       start: new Date(slot),
       durationMinutes: MEETING_MINUTES,
-      title: 'Wireish demo',
-      description: 'Demo call with the Wireish team. We email you the video call link before the meeting.',
+      title: d.eventTitle,
+      description: d.eventBody,
     }),
-    [slot, email],
+    [slot, email, d.eventTitle, d.eventBody],
   );
 
-  const when = new Intl.DateTimeFormat(undefined, {
+  const when = new Intl.DateTimeFormat(intlLocale(locale), {
     weekday: 'long',
     month: 'long',
     day: 'numeric',
@@ -58,18 +63,16 @@ export function Confirmation({ slot, timeZone, email, confirmationSent, onBookAn
       role="status"
     >
       <SuccessMark />
-      <h2 className="mt-6 font-display text-3xl font-semibold tracking-[-0.02em] text-white">Booking confirmed</h2>
+      <h2 className="mt-6 font-display text-3xl font-semibold tracking-[-0.02em] text-white">{d.title}</h2>
       <p className="mt-3 text-lg text-white">{when}</p>
       <p className="text-sm text-haze">{timeZone.replace(/_/g, ' ')}</p>
       <p className="mt-5 max-w-sm text-mist">
-        {confirmationSent
-          ? `We sent the details to ${email}. The video call link follows before the meeting.`
-          : `We have your booking. The video call link will be sent to ${email}.`}
+        {format(confirmationSent ? d.sent : d.notSent, { email })}
       </p>
 
       <div className="mt-8 flex flex-wrap justify-center gap-3">
         <Button onClick={downloadIcs}>
-          <Download className="h-4 w-4" aria-hidden /> Add to calendar (.ics)
+          <Download className="h-4 w-4" aria-hidden /> {d.ics}
         </Button>
         <a
           href={googleCalendarUrl(event)}
@@ -77,15 +80,15 @@ export function Confirmation({ slot, timeZone, email, confirmationSent, onBookAn
           rel="noreferrer"
           className={buttonStyles({ variant: 'secondary' })}
         >
-          <CalendarPlus className="h-4 w-4" aria-hidden /> Google Calendar
+          <CalendarPlus className="h-4 w-4" aria-hidden /> {d.google}
         </a>
       </div>
       <div className="mt-6 flex gap-5 text-sm">
         <button type="button" onClick={onBookAnother} className="text-mist hover:text-white">
-          Book another time
+          {d.another}
         </button>
         <ButtonLink href="/" variant="ghost" size="sm">
-          Back to home
+          {t.common.backHome}
         </ButtonLink>
       </div>
     </motion.div>

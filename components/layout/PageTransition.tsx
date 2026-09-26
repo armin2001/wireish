@@ -22,6 +22,8 @@ import {
 } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
+import { useLocale } from '@/lib/i18n/client';
+import { localizeHref } from '@/lib/i18n/config';
 import { motion, useReducedMotion } from 'framer-motion';
 import { Logo } from '@/components/ui/Logo';
 import { BRAND } from '@/lib/brand';
@@ -30,16 +32,28 @@ type Phase = 'idle' | 'covering' | 'covered';
 
 const TransitionContext = createContext<((href: string) => void) | null>(null);
 
-/** Programmatic navigation with the curtain (falls back to plain push). */
+/**
+ * Programmatic navigation with the curtain (falls back to plain push). Internal hrefs are
+ * written without a language ("/contact") and get the current one added ("/de/contact").
+ */
 export function useTransitionRouter() {
   const navigate = useContext(TransitionContext);
   const router = useRouter();
-  return useCallback((href: string) => (navigate ? navigate(href) : router.push(href)), [navigate, router]);
+  const locale = useLocale();
+  return useCallback(
+    (href: string) => {
+      const localized = localizeHref(href, locale);
+      if (navigate) navigate(localized);
+      else router.push(localized);
+    },
+    [navigate, router, locale],
+  );
 }
 
 export function TransitionProvider({ children }: { children: ReactNode }) {
   const router = useRouter();
   const pathname = usePathname();
+  const locale = useLocale();
   const reduceMotion = useReducedMotion();
   const [phase, setPhase] = useState<Phase>('idle');
   const [origin, setOrigin] = useState<string | null>(null);
@@ -48,7 +62,7 @@ export function TransitionProvider({ children }: { children: ReactNode }) {
 
   const navigate = useCallback(
     (href: string) => {
-      const url = new URL(href, window.location.href);
+      const url = new URL(localizeHref(href, locale), window.location.href);
       if (url.origin !== window.location.origin) {
         window.location.assign(url.href);
         return;
@@ -62,7 +76,7 @@ export function TransitionProvider({ children }: { children: ReactNode }) {
       setOrigin(window.location.pathname);
       setPhase('covering');
     },
-    [phase, reduceMotion, router],
+    [phase, reduceMotion, router, locale],
   );
 
   // Derived, not stored: once the router lands on a new path, the curtain lifts.
@@ -97,7 +111,7 @@ export function TransitionProvider({ children }: { children: ReactNode }) {
           reveal: { clipPath: 'inset(0% 0% 100% 0%)', transition: { duration: 0.46, ease: [0.22, 1, 0.36, 1] } },
         }}
         onAnimationComplete={onAnimationComplete}
-        className="fixed inset-0 z-100 grid place-items-center bg-night"
+        className="fixed inset-0 z-[100] grid place-items-center bg-night"
         style={{ pointerEvents: phase === 'idle' ? 'none' : 'auto' }}
       >
         <svg className="absolute inset-0 h-full w-full" viewBox="0 0 100 100" preserveAspectRatio="none">
@@ -134,9 +148,11 @@ export function TransitionProvider({ children }: { children: ReactNode }) {
 
 type LinkProps = ComponentProps<typeof Link>;
 
-/** Drop-in replacement for next/link that plays the page transition. */
-export function TransitionLink({ href, onClick, target, ...rest }: LinkProps) {
+/** Drop-in replacement for next/link that plays the page transition and adds the language prefix. */
+export function TransitionLink({ href: rawHref, onClick, target, ...rest }: LinkProps) {
   const navigate = useContext(TransitionContext);
+  const locale = useLocale();
+  const href = typeof rawHref === 'string' ? localizeHref(rawHref, locale) : rawHref;
 
   const handleClick = (event: MouseEvent<HTMLAnchorElement>) => {
     onClick?.(event);

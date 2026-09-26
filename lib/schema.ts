@@ -1,6 +1,11 @@
 import { z } from 'zod';
+import { LOCALES } from '@/lib/i18n/config';
 
-/* Option lists are shared by the forms, the API routes and the notification emails. */
+/*
+ * Shared by the forms (client-side validation) and the API routes (server-side validation).
+ * Error messages are dictionary keys (t.errors[key]), so every language gets its own text.
+ * Option labels here are English and only used in the internal team emails.
+ */
 export const CHANNEL_OPTIONS = [
   { value: 'website', label: 'Website chat' },
   { value: 'instagram', label: 'Instagram DMs' },
@@ -27,6 +32,7 @@ export const TOPIC_OPTIONS = [
   { value: 'project', label: 'New project' },
   { value: 'client', label: 'Existing agent' },
   { value: 'partnership', label: 'Partnership' },
+  { value: 'careers', label: 'Careers' },
   { value: 'press', label: 'Press' },
 ] as const;
 
@@ -44,59 +50,86 @@ export function labelFor(options: readonly Option[], value: string): string {
 export type Channel = ValueOf<typeof CHANNEL_OPTIONS>;
 export type Volume = ValueOf<typeof VOLUME_OPTIONS>;
 export type Goal = ValueOf<typeof GOAL_OPTIONS>;
+export type Topic = ValueOf<typeof TOPIC_OPTIONS>;
 
-const name = z.string().trim().min(2, 'Enter at least 2 characters').max(80, 'Keep it under 80 characters');
-const email = z
-  .string()
-  .trim()
-  .min(1, 'Enter your email address')
-  .email('Enter a valid email, like you@company.com')
-  .max(160, 'Keep it under 160 characters');
+export function isTopic(value: unknown): value is Topic {
+  return TOPIC_OPTIONS.some((o) => o.value === value);
+}
+
+/** Keys of t.errors. */
+export type ErrorKey =
+  | 'nameShort'
+  | 'tooLong'
+  | 'emailRequired'
+  | 'emailInvalid'
+  | 'phoneInvalid'
+  | 'messageShort'
+  | 'companyRequired'
+  | 'pickChannel'
+  | 'invalid';
+
+const E = (key: ErrorKey) => key;
+
+const name = z.string().trim().min(2, E('nameShort')).max(80, E('tooLong'));
+const email = z.string().trim().min(1, E('emailRequired')).email(E('emailInvalid')).max(160, E('tooLong'));
 const phone = z
   .string()
   .trim()
-  .max(40, 'Keep it under 40 characters')
-  .regex(/^[+()\d\s.-]*$/, 'Use digits, spaces and + ( ) - only');
+  .max(40, E('tooLong'))
+  .regex(/^[+()\d\s.-]*$/, E('phoneInvalid'));
 /** Honeypot. Real people never see or fill it; the API silently drops submissions that do. */
 const hp = z.string().optional();
+const locale = z.enum(LOCALES).default('en');
 
 export const contactSchema = z.object({
-  topic: z.enum(values(TOPIC_OPTIONS)),
+  topic: z.enum(values(TOPIC_OPTIONS), { message: E('invalid') }),
   name,
   email,
-  company: z.string().trim().max(120, 'Keep it under 120 characters'),
+  company: z.string().trim().max(120, E('tooLong')),
   phone,
-  message: z
-    .string()
-    .trim()
-    .min(20, 'Add a few more details (20 characters minimum)')
-    .max(4000, 'Keep it under 4,000 characters'),
+  message: z.string().trim().min(20, E('messageShort')).max(4000, E('tooLong')),
   hp,
 });
 export type ContactInput = z.infer<typeof contactSchema>;
+/** What the API accepts: the form fields plus the page language. */
+export const contactRequestSchema = contactSchema.extend({ locale });
 
 export const bookingDetailsSchema = z.object({
   name,
   email,
-  company: z.string().trim().min(2, 'Enter your company name').max(120, 'Keep it under 120 characters'),
+  company: z.string().trim().min(2, E('companyRequired')).max(120, E('tooLong')),
   phone,
-  notes: z.string().trim().max(2000, 'Keep it under 2,000 characters'),
+  notes: z.string().trim().max(2000, E('tooLong')),
   hp,
 });
 export type BookingDetails = z.infer<typeof bookingDetailsSchema>;
 
-export const bookingSchema = bookingDetailsSchema.extend({
-  channels: z.array(z.enum(values(CHANNEL_OPTIONS))).min(1, 'Pick at least one channel').max(CHANNEL_OPTIONS.length),
-  volume: z.enum(values(VOLUME_OPTIONS)),
-  goal: z.enum(values(GOAL_OPTIONS)),
-  slotStart: z.string().datetime({ message: 'Pick a time slot' }),
-  timeZone: z.string().min(1).max(64),
-  blueprint: z.string().max(2000).optional(),
+/** The canvas map as sent by the booking page; the server re-validates it with parseDoc. */
+const blueprintSchema = z.object({
+  nodes: z
+    .array(z.object({ id: z.string().max(64), kind: z.string().max(32), x: z.number(), y: z.number() }))
+    .max(300),
+  edges: z.array(z.object({ id: z.string().max(64), from: z.string().max(64), to: z.string().max(64) })).max(900),
 });
-export type BookingInput = z.infer<typeof bookingSchema>;
 
-/** Shape of every JSON error the API routes return. */
+export const bookingSchema = bookingDetailsSchema.extend({
+  channels: z.array(z.enum(values(CHANNEL_OPTIONS))).min(1, E('pickChannel')).max(CHANNEL_OPTIONS.length),
+  volume: z.enum(values(VOLUME_OPTIONS), { message: E('invalid') }),
+  goal: z.enum(values(GOAL_OPTIONS), { message: E('invalid') }),
+  slotStart: z.string().datetime({ message: E('invalid') }),
+  timeZone: z.string().min(1).max(64),
+  locale,
+  blueprint: blueprintSchema.optional(),
+});
+export type BookingInput = z.input<typeof bookingSchema>;
+
+/** Error codes the API routes return; the forms turn them into translated text. */
+export type ApiErrorCode = 'rate_limited' | 'bad_request' | 'invalid' | 'send_failed' | 'slot_taken';
+
 export interface ApiError {
-  error?: string;
+  error?: ApiErrorCode;
+  /** Development only: the underlying reason, e.g. a Resend error message. */
+  detail?: string;
+  /** Field name → list of ErrorKey. */
   fieldErrors?: Record<string, string[] | undefined>;
 }

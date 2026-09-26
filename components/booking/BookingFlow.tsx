@@ -16,17 +16,17 @@ import { summarizeDoc } from '@/lib/canvas/model';
 import { cn } from '@/lib/cn';
 import { SITE } from '@/lib/content';
 import { bookingDetailsSchema, type ApiError, type BookingDetails, type BookingInput } from '@/lib/schema';
+import { useI18n } from '@/lib/i18n/client';
+import { apiErrorText } from '@/lib/i18n/errors';
+import { format } from '@/lib/i18n/format';
 
-const STEPS = [
-  { title: 'Your setup', heading: 'Tell us what the agent should cover' },
-  { title: 'Time', heading: 'Pick a time' },
-  { title: 'Details', heading: 'Where should we send the invite?' },
-  { title: 'Confirm', heading: 'Check and confirm' },
-] as const;
+const STEP_COUNT = 4; // headings and titles: t.booking.steps
 
 const EMPTY_DETAILS: BookingDetails = { name: '', email: '', company: '', phone: '', notes: '', hp: '' };
 
 export function BookingFlow() {
+  const { t, locale } = useI18n();
+  const b = t.booking;
   const [step, setStep] = useState(0);
   const [direction, setDirection] = useState(1);
   const [needs, setNeeds] = useState<NeedsDraft>({ channels: [], volume: null, goal: null, attachMap: true });
@@ -55,7 +55,10 @@ export function BookingFlow() {
     heading.current?.focus({ preventScroll: true });
   }, [step]);
 
-  const mapLines = needs.attachMap && blueprint?.nodes.length ? summarizeDoc(blueprint) : null;
+  const attachDoc = needs.attachMap && blueprint?.nodes.length ? blueprint : null;
+  const mapLines = attachDoc
+    ? summarizeDoc(attachDoc, (kind) => t.canvas.kinds[kind].label, (list) => format(t.canvas.notConnected, { list }))
+    : null;
 
   const goTo = (next: number) => {
     stepChanged.current = true;
@@ -83,7 +86,14 @@ export function BookingFlow() {
       goal: needs.goal,
       slotStart: time.slot,
       timeZone: time.timeZone ?? 'UTC',
-      blueprint: mapLines ? mapLines.join('\n').slice(0, 2000) : undefined,
+      locale,
+      // The structured map; the server re-validates it and describes it for the team in English.
+      blueprint: attachDoc
+        ? {
+            nodes: attachDoc.nodes.map(({ id, kind, x, y }) => ({ id, kind, x, y })),
+            edges: attachDoc.edges.map(({ id, from, to }) => ({ id, from, to })),
+          }
+        : undefined,
     };
     try {
       const res = await fetch('/api/book-demo', {
@@ -99,16 +109,28 @@ export function BookingFlow() {
       }
       setStatus('editing');
       if (res.status === 409) {
-        setTime((t) => ({ ...t, slot: null }));
+        setTime((prev) => ({ ...prev, slot: null }));
         goTo(1);
-        toast({ tone: 'error', title: 'That time is no longer available', description: 'Pick another slot to continue.' });
+        toast({ tone: 'error', title: b.takenTitle, description: b.takenBody });
         return;
       }
-      setServerError(body.error ?? 'The booking did not go through. Try again in a moment.');
+      if (res.status === 422 && body.fieldErrors) {
+        const detailFields = ['name', 'email', 'company', 'phone', 'notes'] as const;
+        let detailError = false;
+        for (const field of detailFields) {
+          const key = body.fieldErrors[field]?.[0];
+          if (key) {
+            form.setError(field, { message: key });
+            detailError = true;
+          }
+        }
+        if (detailError) goTo(2);
+      }
+      setServerError(apiErrorText(t, body, b.errorGeneric));
       shake();
     } catch {
       setStatus('editing');
-      setServerError('The booking did not go through because the connection dropped. Check your internet and try again.');
+      setServerError(b.errorNetwork);
       shake();
     }
   };
@@ -136,10 +158,10 @@ export function BookingFlow() {
     setStep(1);
   };
 
-  const primaryLabel = ['Continue', 'Continue', 'Review booking', 'Confirm booking'][step];
+  const primaryLabel = [b.continue, b.continue, b.reviewCta, b.confirm][step];
 
   return (
-    <div className="panel relative overflow-hidden rounded-4xl">
+    <div className="panel relative overflow-hidden rounded-[2rem]">
       <div className="wire-line absolute inset-x-0 top-0" aria-hidden />
 
       <AnimatePresence mode="wait" initial={false}>
@@ -179,7 +201,7 @@ export function BookingFlow() {
                     tabIndex={-1}
                     className="mb-7 font-display text-2xl font-semibold tracking-[-0.02em] text-white outline-none"
                   >
-                    {STEPS[step].heading}
+                    {b.steps[step].heading}
                   </h2>
 
                   {step === 0 && (
@@ -218,7 +240,7 @@ export function BookingFlow() {
                   >
                     <CircleAlert className="mt-0.5 h-4 w-4 shrink-0 text-danger" aria-hidden />
                     <span>
-                      {serverError} You can also email{' '}
+                      {serverError} {t.contact.form.alsoEmail}{' '}
                       <a className="underline underline-offset-2" href={`mailto:${SITE.email}`}>
                         {SITE.email}
                       </a>
@@ -237,22 +259,22 @@ export function BookingFlow() {
                 aria-hidden={step === 0}
                 tabIndex={step === 0 ? -1 : 0}
               >
-                <ArrowLeft className="h-4 w-4" aria-hidden /> Back
+                <ArrowLeft className="h-4 w-4" aria-hidden /> {b.back}
               </Button>
               <div className="flex items-center gap-4">
                 {step === 3 && (
                   <p className="hidden text-xs text-haze sm:block">
-                    By confirming you agree to our{' '}
+                    {b.consentBefore}{' '}
                     <TransitionLink href="/privacy" className="underline underline-offset-2 hover:text-white">
-                      privacy policy
+                      {b.consentLink}
                     </TransitionLink>
-                    .
+                    {b.consentAfter}
                   </p>
                 )}
                 <Button size="lg" onClick={next} disabled={status === 'submitting'}>
                   {status === 'submitting' ? (
                     <>
-                      <Spinner /> Booking
+                      <Spinner /> {b.booking}
                     </>
                   ) : (
                     primaryLabel
@@ -268,9 +290,11 @@ export function BookingFlow() {
 }
 
 function StepIndicator({ current, onSelect }: { current: number; onSelect: (step: number) => void }) {
-  const progress = current / (STEPS.length - 1);
+  const { t } = useI18n();
+  const b = t.booking;
+  const progress = current / (STEP_COUNT - 1);
   return (
-    <nav aria-label="Booking progress" className="px-6 pb-6 pt-7 sm:px-10">
+    <nav aria-label={b.progress} className="px-6 pb-6 pt-7 sm:px-10">
       <div className="relative">
       <div className="absolute left-4 right-4 top-4 h-px bg-white/10" aria-hidden>
         <motion.div
@@ -282,7 +306,7 @@ function StepIndicator({ current, onSelect }: { current: number; onSelect: (step
         />
       </div>
       <ol className="relative flex justify-between">
-        {STEPS.map((s, i) => {
+        {b.steps.map((s, i) => {
           const done = i < current;
           const active = i === current;
           return (
@@ -292,7 +316,7 @@ function StepIndicator({ current, onSelect }: { current: number; onSelect: (step
                 onClick={() => onSelect(i)}
                 disabled={!done}
                 aria-current={active ? 'step' : undefined}
-                aria-label={`Step ${i + 1}: ${s.title}${done ? ', completed' : ''}`}
+                aria-label={`${format(b.stepLabel, { n: i + 1, title: s.title })}${done ? `, ${b.completed}` : ''}`}
                 className={cn(
                   'relative grid h-8 w-8 place-items-center rounded-full border text-xs font-semibold tabular-nums transition-all duration-300',
                   active && 'border-transparent text-white shadow-glow-signal',

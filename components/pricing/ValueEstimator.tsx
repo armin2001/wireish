@@ -3,6 +3,9 @@
 import { useEffect, useId, useState } from 'react';
 import { motion, useSpring, useTransform, type MotionValue } from 'framer-motion';
 import { cn } from '@/lib/cn';
+import { useI18n } from '@/lib/i18n/client';
+import { intlLocale } from '@/lib/i18n/config';
+import { format } from '@/lib/i18n/format';
 
 /*
  * Replaces the old calculator, whose "pipeline value" was chats × $12 with no stated basis.
@@ -68,9 +71,13 @@ function AnimatedNumber({ value, format }: { value: number; format: (v: number) 
   return <motion.span className="tabular-nums">{text}</motion.span>;
 }
 
-const whole = (v: number) => Math.round(v).toLocaleString('en-US');
 
 export function ValueEstimator() {
+  const { t, locale } = useI18n();
+  const e = t.pricing.estimator;
+  const numberLocale = intlLocale(locale);
+  const whole = (v: number) => Math.round(v).toLocaleString(numberLocale);
+  const [fteBefore, fteAfter = ''] = e.fte.split('{n}');
   const [chats, setChats] = useState(3000);
   const [share, setShare] = useState(60);
   const [minutes, setMinutes] = useState(6);
@@ -81,10 +88,10 @@ export function ValueEstimator() {
   const cost = hours * hourly;
   const fte = hours / 160;
   const money = (v: number) =>
-    new Intl.NumberFormat('en-US', { style: 'currency', currency: CURRENCY, maximumFractionDigits: 0 }).format(Math.round(v));
+    new Intl.NumberFormat(numberLocale, { style: 'currency', currency: CURRENCY, maximumFractionDigits: 0 }).format(Math.round(v));
 
   return (
-    <section aria-labelledby="estimator-title" className="glass-raised relative overflow-hidden rounded-4xl">
+    <section aria-labelledby="estimator-title" className="glass-raised relative overflow-hidden rounded-[2rem]">
       <div className="wire-line absolute inset-x-0 top-0" aria-hidden />
       <div
         aria-hidden
@@ -94,15 +101,15 @@ export function ValueEstimator() {
       <div className="relative grid gap-10 p-7 sm:p-10 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)]">
         <div>
           <h2 id="estimator-title" className="font-display text-2xl font-semibold text-white">
-            Estimate the time you get back
+            {e.title}
           </h2>
           <p className="mt-2 max-w-md text-sm leading-relaxed text-mist">
-            Move the sliders to match your business. The result only uses the numbers you set.
+            {e.body}
           </p>
 
           <div className="mt-8 space-y-7">
             <Slider
-              label="Customer conversations per month"
+              label={e.chats}
               value={chats}
               min={500}
               max={20000}
@@ -111,29 +118,29 @@ export function ValueEstimator() {
               onChange={setChats}
             />
             <Slider
-              label="Share the agent resolves on its own"
+              label={e.share}
               value={share}
               min={20}
               max={90}
               step={5}
               format={(v) => `${v}%`}
               onChange={setShare}
-              hint="Routine questions (prices, hours, order status) are the easiest to automate."
+              hint={e.shareHint}
             />
             <Slider
-              label="Minutes a person spends per conversation"
+              label={e.minutes}
               value={minutes}
               min={1}
               max={20}
               step={1}
-              format={(v) => `${v} min`}
+              format={(v) => format(e.minutesValue, { n: v })}
               onChange={setMinutes}
             />
             <div className="flex items-center justify-between gap-4">
               <label htmlFor={costId} className="text-sm text-mist">
-                Hourly cost of a support person
+                {e.hourly}
               </label>
-              <div className="flex h-11 items-center rounded-full border border-white/10 bg-white/3 px-4 transition-colors focus-within:border-signal/60 hover:border-white/20">
+              <div className="flex h-11 items-center rounded-full border border-white/10 bg-white/[0.03] px-4 transition-colors focus-within:border-signal/60 hover:border-white/20">
                 <span className="text-sm text-haze">{CURRENCY}</span>
                 <input
                   id={costId}
@@ -151,27 +158,30 @@ export function ValueEstimator() {
         </div>
 
         <div className="flex flex-col justify-center rounded-3xl border border-white/10 bg-night/50 p-7" aria-live="polite">
-          <p className="text-sm text-haze">Team hours freed each month</p>
+          <p className="text-sm text-haze">{e.hours}</p>
           <p className="mt-1 font-display text-5xl font-semibold tracking-[-0.03em] text-white">
             <AnimatedNumber value={hours} format={whole} />
-            <span className="ml-2 text-lg font-normal text-mist">hours</span>
+            <span className="ml-2 text-lg font-normal text-mist">{e.hoursUnit}</span>
           </p>
           <p className="mt-2 text-sm text-mist">
-            About <AnimatedNumber value={fte} format={(v) => v.toFixed(1)} /> full-time{' '}
-            {fte >= 0.95 && fte < 1.05 ? 'person' : 'people'} at 160 hours a month.
+            {fteBefore}
+            <AnimatedNumber
+              value={fte}
+              format={(v) => v.toLocaleString(numberLocale, { minimumFractionDigits: 1, maximumFractionDigits: 1 })}
+            />
+            {fteAfter}
           </p>
 
           <div className="wire-line my-6 opacity-40" aria-hidden />
 
-          <p className="text-sm text-haze">Support cost that covers</p>
+          <p className="text-sm text-haze">{e.cost}</p>
           <p className="mt-1 font-display text-4xl font-semibold tracking-[-0.03em] text-white">
             <AnimatedNumber value={cost} format={money} />
-            <span className="ml-2 text-lg font-normal text-mist">/ month</span>
+            <span className="ml-2 text-lg font-normal text-mist">{e.perMonth}</span>
           </p>
 
           <p className="mt-6 text-xs leading-relaxed text-haze">
-            Estimate only: conversations × share resolved × minutes ÷ 60, then × hourly cost. Your real numbers depend
-            on your content and channels; we measure them with you after launch.
+            {e.note}
           </p>
         </div>
       </div>

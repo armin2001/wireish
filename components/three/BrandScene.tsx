@@ -15,14 +15,16 @@ import { PerformanceMonitor } from '@react-three/drei';
 import { useReducedMotion } from 'framer-motion';
 import { cn } from '@/lib/cn';
 import { SceneFallback } from './SceneFallback';
-import { WireNetwork, type SceneVariant } from './WireNetwork';
+import { WireNetwork, type SceneLabels, type SceneVariant } from './WireNetwork';
 
 interface BrandSceneProps {
   variant?: SceneVariant;
   className?: string;
+  /** Translated channel labels shown on hover. */
+  labels?: SceneLabels;
 }
 
-export default function BrandScene({ variant = 'hero', className }: BrandSceneProps) {
+export default function BrandScene({ variant = 'hero', className, labels }: BrandSceneProps) {
   const wrapper = useRef<HTMLDivElement>(null);
   const [inView, setInView] = useState(true);
   const [pageVisible, setPageVisible] = useState(true);
@@ -60,7 +62,7 @@ export default function BrandScene({ variant = 'hero', className }: BrandScenePr
           onDecline={() => setDpr(1)}
           onFallback={() => setDpr(1)}
         />
-        <WireNetwork variant={variant} reduceMotion={reduceMotion} />
+        <WireNetwork variant={variant} reduceMotion={reduceMotion} labels={labels} />
       </Canvas>
     </div>
   );

@@ -139,8 +139,15 @@ export function createTemplate(): CanvasDoc {
   };
 }
 
-/** Plain-language description of the map, used in the demo request and the email. */
-export function summarizeDoc(doc: CanvasDoc): string[] {
+/**
+ * Plain-language description of the map. Defaults to English (used in the team email);
+ * the booking page passes translated labels for what the visitor sees.
+ */
+export function summarizeDoc(
+  doc: CanvasDoc,
+  label: (kind: NodeKind) => string = (kind) => KINDS[kind].label,
+  notConnected: (list: string) => string = (list) => `Not connected yet: ${list}`,
+): string[] {
   const byId = new Map(doc.nodes.map((n) => [n.id, n]));
   const lines: string[] = [];
   for (const node of doc.nodes) {
@@ -148,11 +155,11 @@ export function summarizeDoc(doc: CanvasDoc): string[] {
       .filter((e) => e.from === node.id)
       .map((e) => byId.get(e.to))
       .filter((n): n is CanvasNode => Boolean(n))
-      .map((n) => KINDS[n.kind].label);
-    if (targets.length) lines.push(`${KINDS[node.kind].label} → ${targets.join(', ')}`);
+      .map((n) => label(n.kind));
+    if (targets.length) lines.push(`${label(node.kind)} → ${targets.join(', ')}`);
   }
   const loose = doc.nodes.filter((n) => !doc.edges.some((e) => e.from === n.id || e.to === n.id));
-  if (loose.length) lines.push(`Not connected yet: ${loose.map((n) => KINDS[n.kind].label).join(', ')}`);
+  if (loose.length) lines.push(notConnected(loose.map((n) => label(n.kind)).join(', ')));
   return lines;
 }
 

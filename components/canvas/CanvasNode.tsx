@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 import { cn } from '@/lib/cn';
 import { CATEGORY_GRADIENT, KINDS, NODE_H, NODE_W, type CanvasNode } from '@/lib/canvas/model';
 import { KIND_ICONS } from './node-icons';
+import { useI18n } from '@/lib/i18n/client';
 
 interface CanvasNodeProps {
   node: CanvasNode;
@@ -32,6 +33,8 @@ export const CanvasNodeView = memo(function CanvasNodeView({
   targeted,
 }: CanvasNodeProps) {
   const meta = KINDS[node.kind];
+  const { t } = useI18n();
+  const copy = t.canvas.kinds[node.kind];
   const Icon = KIND_ICONS[node.kind];
 
   return (
@@ -47,8 +50,8 @@ export const CanvasNodeView = memo(function CanvasNodeView({
     >
       <motion.div
         role="group"
-        aria-roledescription="node"
-        aria-label={`${meta.label}${selected ? ', selected' : ''}`}
+        aria-roledescription={t.canvas.node}
+        aria-label={`${copy.label}${selected ? `, ${t.canvas.selected}` : ''}`}
         initial={{ opacity: 0, scale: 0.86 }}
         animate={{ opacity: connecting && !accepts && !targeted ? 0.5 : 1, scale: dragging ? 1.035 : 1 }}
         exit={{ opacity: 0, scale: 0.86, transition: { duration: 0.16 } }}
@@ -65,11 +68,11 @@ export const CanvasNodeView = memo(function CanvasNodeView({
           className="grid h-10 w-10 shrink-0 place-items-center rounded-xl text-white"
           style={{ backgroundImage: CATEGORY_GRADIENT[meta.category] }}
         >
-          <Icon className="h-4.5 w-4.5" />
+          <Icon className="h-[18px] w-[18px]" />
         </span>
         <span className="min-w-0">
-          <span className="block truncate text-sm font-semibold text-white">{meta.label}</span>
-          <span className="block truncate text-xs text-haze">{meta.hint}</span>
+          <span className="block truncate text-sm font-semibold text-white">{copy.label}</span>
+          <span className="block truncate text-xs text-haze">{copy.hint}</span>
         </span>
 
         {meta.inputs && (
@@ -90,7 +93,7 @@ export const CanvasNodeView = memo(function CanvasNodeView({
             aria-hidden
             className="absolute -right-3 top-1/2 grid h-6 w-6 -translate-y-1/2 cursor-crosshair place-items-center"
           >
-            <span className="h-3 w-3 rounded-full border-2 border-night bg-signal transition-transform duration-150 group-hover:scale-125 hover:scale-150!" />
+            <span className="h-3 w-3 rounded-full border-2 border-night bg-signal transition-transform duration-150 group-hover:scale-125 hover:!scale-150" />
           </span>
         )}
       </motion.div>

@@ -1,5 +1,9 @@
 import { NextResponse } from 'next/server';
-import { bookingSchema, CHANNEL_OPTIONS, GOAL_OPTIONS, labelFor, VOLUME_OPTIONS } from '@/lib/schema';
+import { bookingSchema, CHANNEL_OPTIONS, GOAL_OPTIONS, labelFor, VOLUME_OPTIONS, type ApiError } from '@/lib/schema';
+import { parseDoc, summarizeDoc } from '@/lib/canvas/model';
+import { intlLocale, LOCALE_META } from '@/lib/i18n/config';
+import { format as fill } from '@/lib/i18n/format';
+import { getDictionary } from '@/lib/i18n/get-dictionary';
 import { HOST_TIME_ZONE, isBookableSlot, isValidTimeZone, MEETING_MINUTES } from '@/lib/availability';
 import { buildIcs } from '@/lib/ics';
 import {
@@ -23,25 +27,20 @@ import {
  * Note: nothing is stored, so two people can pick the same slot. To prevent that, check
  * and write busy times here (Google Calendar API, Cal.com, or a small database table).
  */
+const fail = (body: ApiError, status: number) => NextResponse.json(body, { status });
+
 export async function POST(req: Request) {
-  if (!rateLimit(`book:${clientIp(req)}`)) {
-    return NextResponse.json({ error: 'Too many booking attempts from this connection. Try again in a few minutes.' }, { status: 429 });
-  }
+  if (!rateLimit(`book:${clientIp(req)}`)) return fail({ error: 'rate_limited' }, 429);
 
   let body: unknown;
   try {
     body = await req.json();
   } catch {
-    return NextResponse.json({ error: 'The request was not valid JSON.' }, { status: 400 });
+    return fail({ error: 'bad_request' }, 400);
   }
 
   const parsed = bookingSchema.safeParse(body);
-  if (!parsed.success) {
-    return NextResponse.json(
-      { error: 'Some booking details need attention.', fieldErrors: parsed.error.flatten().fieldErrors },
-      { status: 422 },
-    );
-  }
+  if (!parsed.success) return fail({ error: 'invalid', fieldErrors: parsed.error.flatten().fieldErrors }, 422);
   const data = parsed.data;
   if (data.hp) {
     console.warn('[book-demo] spam trap field was filled; booking dropped without sending');
@@ -50,7 +49,7 @@ export async function POST(req: Request) {
 
   const start = new Date(data.slotStart);
   if (!isBookableSlot(start)) {
-    return NextResponse.json({ error: 'That time is no longer available. Pick another slot.' }, { status: 409 });
+    return fail({ error: 'slot_taken' }, 409);
   }
 
   const visitorZone = isValidTimeZone(data.timeZone) ? data.timeZone : 'UTC';
@@ -66,6 +65,21 @@ export async function POST(req: Request) {
   });
   const attachment = { filename: 'wireish-demo.ics', content: Buffer.from(ics, 'utf-8') };
   const channels = data.channels.map((c) => labelFor(CHANNEL_OPTIONS, c)).join(', ');
+  // The canvas map arrives as structured data: re-validate it and describe it in English for the team.
+  const doc = data.blueprint ? parseDoc(data.blueprint) : null;
+  const mapSummary = doc?.nodes.length ? summarizeDoc(doc).join('\n').slice(0, 2000) : '';
+
+  // The visitor's confirmation (email and calendar file) is written in the language they booked in.
+  const t = await getDictionary(data.locale);
+  const visitorIcs = buildIcs({
+    uid: `demo-${start.getTime()}-${crypto.randomUUID()}@wireish.com`,
+    start,
+    durationMinutes: MEETING_MINUTES,
+    title: t.booking.done.eventTitle,
+    description: t.booking.done.eventBody,
+  });
+  const visitorAttachment = { filename: 'wireish-demo.ics', content: Buffer.from(visitorIcs, 'utf-8') };
+  const visitorChannels = data.channels.map((c) => t.channels[c]).join(', ');
 
   try {
     const resend = getResend();
@@ -87,16 +101,17 @@ export async function POST(req: Request) {
           ['Kanali', channels],
           ['Mjesečni obim', labelFor(VOLUME_OPTIONS, data.volume)],
           ['Cilj', labelFor(GOAL_OPTIONS, data.goal)],
+          ['Jezik stranice', LOCALE_META[data.locale].english],
         ],
         sections: [
           ['Napomene', data.notes],
-          ['Mapa sa canvasa', data.blueprint],
+          ['Mapa sa canvasa', mapSummary],
         ],
       }),
     });
     if (team.error) {
       console.error('[book-demo] Resend rejected the team email', team.error);
-      return NextResponse.json({ error: `The booking service is not responding.${devDetail(team.error)}` }, { status: 502 });
+      return fail({ error: 'send_failed', detail: devDetail(team.error) }, 502);
     }
 
     // Visitor confirmation is best-effort: the booking already reached the team.
@@ -106,15 +121,16 @@ export async function POST(req: Request) {
         from: BOOKING_FROM,
         replyTo: BOOKING_REPLY_TO,
         to: [data.email],
-        subject: 'Your Wireish demo is booked',
-        attachments: [attachment],
+        subject: t.booking.email.subject,
+        attachments: [visitorAttachment],
         html: renderEmail({
-          heading: 'Your Wireish demo is booked',
-          intro: `Thanks, ${data.name}. We will email you the video call link before the meeting. The attached file adds it to your calendar.`,
+          heading: t.booking.email.subject,
+          lang: LOCALE_META[data.locale].htmlLang,
+          intro: fill(t.booking.email.intro, { name: data.name }),
           rows: [
-            ['When', `${format(visitorZone, 'en-GB')} (${visitorZone})`],
-            ['Length', `${MEETING_MINUTES} minutes`],
-            ['Channels', channels],
+            [t.booking.email.when, `${format(visitorZone, intlLocale(data.locale))} (${visitorZone})`],
+            [t.booking.email.length, fill(t.booking.email.lengthValue, { n: MEETING_MINUTES })],
+            [t.booking.email.channels, visitorChannels],
           ],
         }),
       });
@@ -127,6 +143,6 @@ export async function POST(req: Request) {
     return NextResponse.json({ ok: true, confirmationSent });
   } catch (err) {
     console.error(err instanceof MailConfigError ? '[book-demo] RESEND_API_KEY is missing' : '[book-demo] send failed', err);
-    return NextResponse.json({ error: `The booking service is not responding.${devDetail(err)}` }, { status: 500 });
+    return fail({ error: 'send_failed', detail: devDetail(err) }, 500);
   }
 }

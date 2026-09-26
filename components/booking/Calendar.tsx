@@ -1,9 +1,11 @@
 'use client';
 
-import { useEffect, useRef, useState, type KeyboardEvent } from 'react';
+import { useEffect, useMemo, useRef, useState, type KeyboardEvent } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { cn } from '@/lib/cn';
+import { useI18n } from '@/lib/i18n/client';
+import { intlLocale } from '@/lib/i18n/config';
 
 interface CalendarProps {
   /** Visitor-local days with at least one free slot, as YYYY-MM-DD. */
@@ -37,12 +39,22 @@ const addDays = (key: string, days: number) => {
 };
 const compareMonth = (a: Month, b: Month) => a.year * 12 + a.month - (b.year * 12 + b.month);
 
-// 2024-01-01 was a Monday; weeks start on Monday.
-const WEEKDAYS = Array.from({ length: 7 }, (_, i) =>
-  new Intl.DateTimeFormat(undefined, { weekday: 'short', timeZone: 'UTC' }).format(new Date(Date.UTC(2024, 0, 1 + i))),
-);
-
 export function Calendar({ availableDays, selected, todayKey, onSelect }: CalendarProps) {
+  const { t, locale } = useI18n();
+  const tt = t.booking.time;
+  const intl = intlLocale(locale);
+  // 2024-01-01 was a Monday; weeks start on Monday. Same locale on server and client, so no hydration mismatch.
+  const weekdays = useMemo(
+    () =>
+      Array.from({ length: 7 }, (_, i) =>
+        new Intl.DateTimeFormat(intl, { weekday: 'short', timeZone: 'UTC' }).format(new Date(Date.UTC(2024, 0, 1 + i))),
+      ),
+    [intl],
+  );
+  const dayLabel = useMemo(
+    () => new Intl.DateTimeFormat(intl, { weekday: 'long', month: 'long', day: 'numeric', timeZone: 'UTC' }),
+    [intl],
+  );
   const sorted = [...availableDays].sort();
   const first = sorted[0] ?? todayKey;
   const last = sorted[sorted.length - 1] ?? todayKey;
@@ -110,7 +122,7 @@ export function Calendar({ availableDays, selected, todayKey, onSelect }: Calend
     ...Array.from({ length: firstWeekday }, () => null),
     ...Array.from({ length: daysInMonth }, (_, i) => toKey(cursor.year, cursor.month, i + 1)),
   ];
-  const monthLabel = new Intl.DateTimeFormat(undefined, { month: 'long', year: 'numeric', timeZone: 'UTC' }).format(
+  const monthLabel = new Intl.DateTimeFormat(intl, { month: 'long', year: 'numeric', timeZone: 'UTC' }).format(
     new Date(Date.UTC(cursor.year, cursor.month, 1)),
   );
   const canPrev = compareMonth(cursor, minMonth) > 0;
@@ -127,7 +139,7 @@ export function Calendar({ availableDays, selected, todayKey, onSelect }: Calend
             type="button"
             onClick={() => goToMonth(monthOf(toKey(cursor.year, cursor.month - 1, 1)))}
             disabled={!canPrev}
-            aria-label="Previous month"
+            aria-label={tt.prevMonth}
             className="grid h-9 w-9 place-items-center rounded-full text-mist transition-colors hover:bg-white/[0.07] hover:text-white disabled:opacity-30"
           >
             <ChevronLeft className="h-4 w-4" />
@@ -136,7 +148,7 @@ export function Calendar({ availableDays, selected, todayKey, onSelect }: Calend
             type="button"
             onClick={() => goToMonth(monthOf(toKey(cursor.year, cursor.month + 1, 1)))}
             disabled={!canNext}
-            aria-label="Next month"
+            aria-label={tt.nextMonth}
             className="grid h-9 w-9 place-items-center rounded-full text-mist transition-colors hover:bg-white/[0.07] hover:text-white disabled:opacity-30"
           >
             <ChevronRight className="h-4 w-4" />
@@ -145,7 +157,7 @@ export function Calendar({ availableDays, selected, todayKey, onSelect }: Calend
       </div>
 
       <div className="grid grid-cols-7 gap-1 text-center text-xs text-haze" aria-hidden>
-        {WEEKDAYS.map((day) => (
+        {weekdays.map((day) => (
           <span key={day} className="py-1">
             {day}
           </span>
@@ -157,7 +169,7 @@ export function Calendar({ availableDays, selected, todayKey, onSelect }: Calend
           <motion.div
             key={`${cursor.year}-${cursor.month}`}
             role="group"
-            aria-label={`${monthLabel}. Use arrow keys to move between days.`}
+            aria-label={`${monthLabel}. ${tt.monthHelp}`}
             onKeyDown={onKeyDown}
             custom={direction}
             variants={{
@@ -175,12 +187,7 @@ export function Calendar({ availableDays, selected, todayKey, onSelect }: Calend
               if (!key) return <span key={`blank-${i}`} aria-hidden />;
               const available = availableDays.has(key);
               const isSelected = key === selected;
-              const label = new Intl.DateTimeFormat(undefined, {
-                weekday: 'long',
-                month: 'long',
-                day: 'numeric',
-                timeZone: 'UTC',
-              }).format(new Date(`${key}T00:00:00Z`));
+              const label = dayLabel.format(new Date(`${key}T00:00:00Z`));
               return (
                 <span key={key}>
                   <button
@@ -193,7 +200,7 @@ export function Calendar({ availableDays, selected, todayKey, onSelect }: Calend
                       setFocusKey(key);
                       if (available) onSelect(key);
                     }}
-                    aria-label={`${label}${available ? '' : ', no times available'}`}
+                    aria-label={available ? label : `${label}, ${tt.unavailable}`}
                     className={cn(
                       'relative grid aspect-square w-full place-items-center rounded-xl text-sm tabular-nums transition-colors duration-150',
                       available ? 'bg-field text-white hover:bg-field-hover' : 'cursor-default text-white/20',

@@ -45,11 +45,14 @@ import { canvasReducer, createInitialState, duplicateSelection } from '@/lib/can
 import { cn } from '@/lib/cn';
 import { DEMO_HREF } from '@/lib/content';
 import { useIsMac } from '@/lib/hooks';
+import { useI18n } from '@/lib/i18n/client';
+import { format } from '@/lib/i18n/format';
 import { CanvasNodeView } from './CanvasNode';
 import { CanvasToolbar } from './CanvasToolbar';
 import { EdgeLayer, type Guide, type PendingEdge } from './EdgeLayer';
 import { Minimap } from './Minimap';
 import { NodePalette } from './NodePalette';
+import { SelectionBar } from './SelectionBar';
 import { ShortcutsDialog } from './ShortcutsDialog';
 import { useViewport, type Insets } from './useViewport';
 
@@ -69,13 +72,7 @@ interface Rect {
   h: number;
 }
 
-const HINTS: Record<Mode, string> = {
-  idle: 'Drag from a blue dot to connect. Hold Space to pan, Shift-drag to select.',
-  panning: 'Moving the view',
-  dragging: 'Hold Alt to place freely',
-  connecting: 'Release on a violet dot to connect',
-  selecting: 'Release to select',
-};
+
 
 function fitInsets(): Insets {
   const wide = window.innerWidth >= 768;
@@ -96,6 +93,8 @@ export default function CanvasWorkspace() {
   const toast = useToast();
   const navigate = useTransitionRouter();
   const isMac = useIsMac();
+  const { t } = useI18n();
+  const c = t.canvas;
   const mod = isMac ? '⌘' : 'Ctrl+';
 
   const [mode, setMode] = useState<Mode>('idle');
@@ -115,11 +114,9 @@ export default function CanvasWorkspace() {
   /* ------------------------------------------------------------ persistence */
 
   // Save after edits only: merely opening the canvas shouldn't attach the example to a booking.
-  // Cleared on the first edit, so undoing back to the opening map is saved too.
-  const initialDoc = useRef<typeof doc | null>(doc);
+  const initialDoc = useRef(doc);
   useEffect(() => {
     if (doc === initialDoc.current) return;
-    initialDoc.current = null;
     const t = window.setTimeout(() => blueprintStore.set(doc), 250);
     return () => window.clearTimeout(t);
   }, [doc]);
@@ -235,8 +232,8 @@ export default function CanvasWorkspace() {
     if (!selectedEdge && !count) return;
     dispatch({ type: 'delete' });
     toast({
-      title: selectedEdge ? 'Connection deleted' : `Deleted ${count} ${count === 1 ? 'node' : 'nodes'}`,
-      action: { label: 'Undo', onClick: () => dispatch({ type: 'undo' }) },
+      title: selectedEdge ? c.toasts.edgeDeleted : `${c.toasts.deleted}: ${count}`,
+      action: { label: t.common.undo, onClick: () => dispatch({ type: 'undo' }) },
     });
   };
 
@@ -247,7 +244,7 @@ export default function CanvasWorkspace() {
 
   const loadExample = () => {
     dispatch({ type: 'replace', doc: createTemplate() });
-    toast({ title: 'Example setup loaded', action: { label: 'Undo', onClick: () => dispatch({ type: 'undo' }) } });
+    toast({ title: c.toasts.example, action: { label: t.common.undo, onClick: () => dispatch({ type: 'undo' }) } });
     window.requestAnimationFrame(() => {
       const bounds = nodesBounds(createTemplate().nodes);
       if (bounds) viewport.fitBounds(bounds, fitInsets());
@@ -259,7 +256,10 @@ export default function CanvasWorkspace() {
   const toggleSnapping = () => {
     const next = !snapping;
     setSnapping(next);
-    toast({ title: next ? 'Snapping on' : 'Snapping off', description: next ? 'Nodes snap to a 24px grid.' : 'Nodes move freely.' });
+    toast({
+      title: next ? c.toolbar.snapOn : c.toolbar.snapOff,
+      description: next ? c.toasts.snapOnBody : c.toasts.snapOffBody,
+    });
   };
 
   const bookWithMap = () => {
@@ -293,7 +293,7 @@ export default function CanvasWorkspace() {
   const onPointerDown = (e: ReactPointerEvent<HTMLDivElement>) => {
     if (e.pointerType === 'mouse' && e.button !== 0 && e.button !== 1) return;
     // Controls on the canvas handle their own clicks; capturing the pointer would swallow them.
-    if ((e.target as Element).closest('button, a, input, select, textarea')) return;
+    if ((e.target as Element).closest('button, a, input, select, textarea, [role="toolbar"]')) return;
     container.current?.setPointerCapture(e.pointerId);
     pointers.current.set(e.pointerId, { x: e.clientX, y: e.clientY });
     if (pointers.current.size === 2) return beginPinch();
@@ -557,7 +557,7 @@ export default function CanvasWorkspace() {
       } else if (key === 's') {
         e.preventDefault();
         blueprintStore.set(doc);
-        toast({ tone: 'success', title: 'Saved in this browser', description: 'Your map is also attached when you book a demo.' });
+        toast({ tone: 'success', title: c.toasts.saved, description: c.toasts.savedBody });
       }
       return;
     }
@@ -682,18 +682,18 @@ export default function CanvasWorkspace() {
       {doc.nodes.length === 0 && (
         <div className="pointer-events-none absolute inset-0 z-10 grid place-items-center p-6">
           <div className="glass-overlay pointer-events-auto max-w-sm rounded-3xl p-7 text-center">
-            <p className="font-display text-lg font-semibold text-white">The canvas is empty</p>
+            <p className="font-display text-lg font-semibold text-white">{c.empty.title}</p>
             <p className="mt-2 text-sm text-mist">
-              Drag a channel from the panel onto the canvas, or start from the example setup.
+              {c.empty.body}
             </p>
             <Button className="mt-5" onClick={loadExample}>
-              Load example setup
+              {c.toolbar.example}
             </Button>
           </div>
         </div>
       )}
 
-      <div className="pointer-events-none absolute inset-x-0 top-23 z-20 flex justify-center px-3 md:pl-72 md:pr-55">
+      <div className="pointer-events-none absolute inset-x-0 top-[92px] z-20 flex justify-center px-3 md:pl-[288px] md:pr-[220px]">
         <div className="pointer-events-auto">
           <CanvasToolbar
             zoom={viewport.view.zoom}
@@ -712,16 +712,28 @@ export default function CanvasWorkspace() {
             onHelp={() => setHelpOpen(true)}
             action={
               <Button size="sm" onClick={bookWithMap} disabled={!doc.nodes.length} className="ml-1">
-                Book a demo with this map
+                <span className="md:hidden">{c.toolbar.bookShort}</span>
+                <span className="max-md:hidden">{c.toolbar.book}</span>
               </Button>
             }
           />
         </div>
       </div>
 
+      <SelectionBar
+        nodeCount={selection.length}
+        edgeSelected={Boolean(selectedEdge)}
+        onDuplicate={duplicate}
+        onDelete={deleteSelection}
+        onClear={() => {
+          dispatch({ type: 'select', ids: [] });
+          dispatch({ type: 'selectEdge', id: null });
+        }}
+      />
+
       <NodePalette onAdd={addAtCenter} onDrop={dropFromPalette} />
 
-      <div className="absolute right-4 top-23 z-20 hidden md:block">
+      <div className="absolute right-4 top-[92px] z-20 hidden md:block">
         <Minimap
           nodes={doc.nodes}
           view={viewport.view}
@@ -733,7 +745,7 @@ export default function CanvasWorkspace() {
         />
       </div>
 
-      <div className="pointer-events-none absolute bottom-4 left-72 z-10 hidden items-center gap-3 md:flex">
+      <div className="pointer-events-none absolute bottom-4 left-[288px] z-10 hidden items-center gap-3 md:flex">
         <motion.p
           key={mode}
           initial={{ opacity: 0, y: 4 }}
@@ -741,11 +753,10 @@ export default function CanvasWorkspace() {
           className="glass-overlay rounded-full px-4 py-2 text-xs text-mist"
           aria-live="polite"
         >
-          {HINTS[mode]}
+          {c.hints[mode]}
         </motion.p>
         <p className="text-xs tabular-nums text-haze">
-          {doc.nodes.length} {doc.nodes.length === 1 ? 'node' : 'nodes'}, {doc.edges.length}{' '}
-          {doc.edges.length === 1 ? 'connection' : 'connections'}
+          {format(c.stats, { nodes: doc.nodes.length, edges: doc.edges.length })}
         </p>
       </div>
 

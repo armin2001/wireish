@@ -1,6 +1,7 @@
 import { useId, type InputHTMLAttributes, type Ref, type TextareaHTMLAttributes } from 'react';
 import { CircleAlert } from 'lucide-react';
 import { cn } from '@/lib/cn';
+import { useI18n } from '@/lib/i18n/client';
 
 interface BaseProps {
   label: string;
@@ -47,10 +48,11 @@ function Message({ id, error, hint, counter }: { id: string; error?: string; hin
 }
 
 function LabelText({ label, optional }: { label: string; optional?: boolean }) {
+  const { t } = useI18n();
   return (
     <>
       {label}
-      {optional && <span className="text-haze"> (optional)</span>}
+      {optional && <span className="text-haze"> ({t.common.optional})</span>}
     </>
   );
 }
@@ -117,21 +119,10 @@ export function TextArea({ label, error, hint, optional, className, id, ref, cou
 /** Visually hidden spam trap. Bots fill every input; people never see this one. */
 export function Honeypot(props: InputHTMLAttributes<HTMLInputElement> & { ref?: Ref<HTMLInputElement> }) {
   return (
-    <div aria-hidden className="absolute left-[-9999px] h-px w-px overflow-hidden">
+    <div aria-hidden className="absolute -left-[9999px] h-px w-px overflow-hidden">
       <label>
         Leave this empty
-        {/* Password managers ignore autoComplete="off"; these opt-outs stop them filling the
-            trap, which would make the API silently drop a real person's submission. */}
-        <input
-          type="text"
-          tabIndex={-1}
-          autoComplete="off"
-          data-1p-ignore
-          data-lpignore="true"
-          data-bwignore
-          data-form-type="other"
-          {...props}
-        />
+        <input type="text" tabIndex={-1} autoComplete="off" {...props} />
       </label>
     </div>
   );

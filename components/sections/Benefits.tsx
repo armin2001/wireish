@@ -3,64 +3,33 @@
 import type { ComponentType } from 'react';
 import { motion } from 'framer-motion';
 import { Clock, DollarSign, ShieldCheck, Sparkles, TrendingUp, Zap } from 'lucide-react';
+import { useI18n } from '@/lib/i18n/client';
 
-interface Benefit {
-  title: string;
-  description: string;
-  Icon: ComponentType<{ className?: string }>;
-}
-
-const BENEFITS: Benefit[] = [
-  {
-    title: 'Available around the clock',
-    description: 'Your agent answers questions, qualifies leads and books appointments at any hour, so no inquiry waits for Monday.',
-    Icon: Clock,
-  },
-  {
-    title: 'Answers in seconds',
-    description: 'Customers get precise answers right away on every channel instead of waiting in a queue.',
-    Icon: Zap,
-  },
-  {
-    title: 'Lower support costs',
-    description: 'Repetitive questions are handled for you, so your team can focus on complex cases and closing deals.',
-    Icon: DollarSign,
-  },
-  {
-    title: 'Sounds like your brand',
-    description: 'Trained on your tone of voice, product catalog and guidelines, so replies read like your team wrote them.',
-    Icon: Sparkles,
-  },
-  {
-    title: 'Handles peak traffic',
-    description: 'Hundreds of conversations at once during launches or sales, without adding support staff.',
-    Icon: TrendingUp,
-  },
-  {
-    title: 'Enterprise-grade security',
-    description: "Your data and your customers' conversations are protected with industry-leading security and privacy protocols.",
-    Icon: ShieldCheck,
-  },
-];
+/** Icons in the same order as t.home.benefits.items. */
+const ICONS: ComponentType<{ className?: string }>[] = [Clock, Zap, DollarSign, Sparkles, TrendingUp, ShieldCheck];
 
 // Cycle through the four logo gradients so the grid carries the whole mark.
 const GRADIENTS = ['var(--gradient-wire)', 'var(--gradient-pulse)', 'var(--gradient-current)', 'var(--gradient-link)'];
 
 export default function Benefits() {
+  const { t } = useI18n();
+  const copy = t.home.benefits;
   return (
     <section className="px-6 py-28">
       <div className="mx-auto max-w-6xl">
         <div className="max-w-2xl">
-          <h2 className="font-display text-4xl font-semibold tracking-tight text-white md:text-5xl">
-            Why businesses choose Wireish
+          <h2 className="font-display text-4xl font-semibold tracking-[-0.025em] text-white md:text-5xl">
+            {copy.title}
           </h2>
           <p className="mt-5 text-lg text-mist">
-            Automation that answers faster, costs less than hiring for every peak, and still sounds like you.
+            {copy.body}
           </p>
         </div>
 
         <ul className="mt-14 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
-          {BENEFITS.map(({ title, description, Icon }, i) => (
+          {copy.items.map(({ title, body }, i) => {
+            const Icon = ICONS[i % ICONS.length];
+            return (
             <motion.li
               key={title}
               initial={{ opacity: 0, y: 18 }}
@@ -76,9 +45,10 @@ export default function Benefits() {
                 <Icon className="h-5 w-5" />
               </span>
               <h3 className="mt-6 font-display text-lg font-semibold text-white">{title}</h3>
-              <p className="mt-2.5 text-[15px] leading-relaxed text-mist">{description}</p>
+              <p className="mt-2.5 text-[15px] leading-relaxed text-mist">{body}</p>
             </motion.li>
-          ))}
+            );
+          })}
         </ul>
       </div>
     </section>
