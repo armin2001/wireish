@@ -30,7 +30,7 @@ export default async function CareersPage({ params }: LocaleParams) {
     <main className="relative overflow-x-clip px-6 pb-28 pt-36">
       <div
         aria-hidden
-        className="pointer-events-none absolute -top-32 left-[-10%] -z-10 h-[520px] w-[620px] rounded-full opacity-25 blur-[130px]"
+        className="pointer-events-none absolute -top-32 left-[-10%] -z-10 h-130 w-155 rounded-full opacity-25 blur-[130px]"
         style={{ backgroundImage: 'var(--gradient-pulse)' }}
       />
       <div className="mx-auto max-w-6xl">
@@ -134,7 +134,7 @@ export default async function CareersPage({ params }: LocaleParams) {
           </h2>
           <ol className="mt-10 grid gap-5 md:grid-cols-3">
             {c.process.map((step, i) => (
-              <li key={step} className="relative rounded-3xl border border-white/[0.08] p-7">
+              <li key={step} className="relative rounded-3xl border border-white/8 p-7">
                 <span
                   className="grid h-8 w-8 place-items-center rounded-full text-sm font-semibold tabular-nums text-white"
                   style={{ backgroundImage: 'var(--gradient-wire)' }}
