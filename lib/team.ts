@@ -120,7 +120,7 @@ export const TEAM: TeamMember[] = [
         'Wireish의 제품 로드맵을 수립하고, 리걸테크 측면의 탄탄한 준비를 갖추며, 강력한 기능과 명확성을 균형 있게 담은 직관적인 사용자 중심 경험을 설계합니다. ' +
         '법과 기술의 교차점에서 동기를 얻어, 안전하고 규정을 준수하며 누구나 접근할 수 있는 디지털 제품을 만듭니다.',
     },
-    photo: '/team/ahmed-2.jpg',
+    photo: '/team/ahmed.jpg',
     linkedin: 'https://www.linkedin.com/in/ahmed-ma%C5%A1ala-b97524261/',
   },
 ];
