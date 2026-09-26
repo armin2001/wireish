@@ -82,5 +82,23 @@ export function localizeHref(href: string, locale: Locale): string {
 
 /** Locale for Intl date and number formatting (English uses day-month order and a 24-hour clock). */
 export function intlLocale(locale: Locale): string {
-  return locale === 'en' ? 'en-GB' : LOCALE_META[locale].htmlLang;
+  if (locale === 'en') return 'en-GB';
+  if (locale === 'bs') return bosnianIntlLocale();
+  return LOCALE_META[locale].htmlLang;
+}
+
+let bosnian: string | undefined;
+
+/**
+ * Chrome and Edge report `bs` as supported but ship no data for it, so it formats in the root
+ * locale ("2026 M09", "Mon"). There we fall back to Serbian Latin for Bosnia: same ijekavian day
+ * names, date order and number format; only jun/jul/avgust differ from juni/juli/august.
+ */
+function bosnianIntlLocale(): string {
+  if (bosnian === undefined) {
+    // Real data gives a month name ("septembar"); the root locale gives "M09".
+    const month = new Intl.DateTimeFormat('bs', { month: 'long', timeZone: 'UTC' }).format(Date.UTC(2026, 8, 1));
+    bosnian = /\d/.test(month) ? 'sr-Latn-BA' : 'bs';
+  }
+  return bosnian;
 }

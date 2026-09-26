@@ -26,8 +26,9 @@ export default async function BookDemoPage({ params }: LocaleParams) {
   return (
     <main className="relative isolate overflow-x-clip px-6 pb-28 pt-36">
       <BookingBackdrop />
-      <div className="mx-auto grid max-w-6xl items-start gap-12 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)] lg:gap-16">
-        <aside>
+      {/* grid-cols-1 (minmax(0,1fr)) pins the mobile column to the screen, so nowrap content can't widen the card. */}
+      <div className="mx-auto grid max-w-6xl grid-cols-1 items-start gap-12 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)] lg:gap-16">
+        <aside className="min-w-0">
           <h1 className="font-display text-4xl font-semibold tracking-[-0.03em] text-white md:text-6xl">{t.booking.title}</h1>
           <p className="mt-6 max-w-sm text-lg leading-relaxed text-mist">{t.booking.lead}</p>
 
@@ -63,7 +64,7 @@ export default async function BookDemoPage({ params }: LocaleParams) {
           </div>
         </aside>
 
-        <div className="relative">
+        <div className="relative min-w-0">
           {/* Soft brand glow around the card; the card itself is opaque. */}
           <div
             aria-hidden

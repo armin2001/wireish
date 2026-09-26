@@ -226,6 +226,7 @@ export function BookingFlow() {
                       onEdit={goTo}
                     />
                   )}
+                  {step === 3 && <ConsentNote className="mt-4 sm:hidden" />}
                 </motion.section>
               </AnimatePresence>
 
@@ -255,23 +256,21 @@ export function BookingFlow() {
               <Button
                 variant="ghost"
                 onClick={() => goTo(step - 1)}
-                className={cn(step === 0 && 'invisible')}
+                className={cn('shrink-0 max-sm:w-11 max-sm:px-0', step === 0 && 'invisible max-sm:hidden')}
                 aria-hidden={step === 0}
                 tabIndex={step === 0 ? -1 : 0}
               >
-                <ArrowLeft className="h-4 w-4" aria-hidden /> {b.back}
+                <ArrowLeft className="h-4 w-4" aria-hidden /> <span className="max-sm:sr-only">{b.back}</span>
               </Button>
-              <div className="flex items-center gap-4">
-                {step === 3 && (
-                  <p className="hidden text-xs text-haze sm:block">
-                    {b.consentBefore}{' '}
-                    <TransitionLink href="/privacy" className="underline underline-offset-2 hover:text-white">
-                      {b.consentLink}
-                    </TransitionLink>
-                    {b.consentAfter}
-                  </p>
-                )}
-                <Button size="lg" onClick={next} disabled={status === 'submitting'}>
+              <div className="flex items-center gap-4 max-sm:min-w-0 max-sm:flex-1">
+                {step === 3 && <ConsentNote className="hidden sm:block" />}
+                {/* On phones the primary action fills the row and may wrap, so long translations never overflow. */}
+                <Button
+                  size="lg"
+                  onClick={next}
+                  disabled={status === 'submitting'}
+                  className="max-sm:h-auto max-sm:min-h-13 max-sm:min-w-0 max-sm:flex-1 max-sm:whitespace-normal max-sm:px-5 max-sm:py-2 max-sm:text-center max-sm:leading-tight"
+                >
                   {status === 'submitting' ? (
                     <>
                       <Spinner /> {b.booking}
@@ -286,6 +285,20 @@ export function BookingFlow() {
         )}
       </AnimatePresence>
     </div>
+  );
+}
+
+function ConsentNote({ className }: { className?: string }) {
+  const { t } = useI18n();
+  const b = t.booking;
+  return (
+    <p className={cn('text-xs text-haze', className)}>
+      {b.consentBefore}{' '}
+      <TransitionLink href="/privacy" className="underline underline-offset-2 hover:text-white">
+        {b.consentLink}
+      </TransitionLink>
+      {b.consentAfter}
+    </p>
   );
 }
 
@@ -327,12 +340,16 @@ function StepIndicator({ current, onSelect }: { current: number; onSelect: (step
               >
                 {done ? <Check className="h-3.5 w-3.5" strokeWidth={3} aria-hidden /> : i + 1}
               </button>
-              <span className={cn('text-xs', active ? 'text-white' : 'text-haze')}>{s.title}</span>
+              <span className={cn('text-xs max-sm:hidden', active ? 'text-white' : 'text-haze')}>{s.title}</span>
             </li>
           );
         })}
       </ol>
       </div>
+      {/* Four labels don't fit side by side on phones in every language, so phones show only the current one. */}
+      <p aria-hidden className="mt-3 text-center text-xs text-white sm:hidden">
+        {format(b.stepLabel, { n: current + 1, title: b.steps[current].title })}
+      </p>
     </nav>
   );
 }

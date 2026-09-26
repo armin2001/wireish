@@ -83,7 +83,8 @@ export function LegalPage({ title, updated, sections }: LegalPageProps) {
           <header className="border-b border-white/[0.07] pb-10">
             <h1 className="font-display text-4xl font-semibold tracking-[-0.03em] text-white md:text-5xl">{title}</h1>
             <p className="mt-4 text-sm text-haze">
-              {t.legal.lastUpdated} <time dateTime={updated}>{updatedLabel}</time>
+              {/* Bosnian can format differently on the server than in Chrome (see intlLocale). */}
+              {t.legal.lastUpdated} <time dateTime={updated} suppressHydrationWarning>{updatedLabel}</time>
             </p>
             {locale !== 'en' && (
               <p className="mt-6 rounded-2xl border border-signal/25 bg-signal/[0.06] px-4 py-3 text-sm text-white">

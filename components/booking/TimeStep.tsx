@@ -74,7 +74,7 @@ export function TimeStep({ value, onChange, showError }: TimeStepProps) {
 
   return (
     <div>
-      <div className="grid gap-8 md:grid-cols-[minmax(0,1fr)_minmax(0,0.9fr)]">
+      <div className="grid grid-cols-1 gap-8 md:grid-cols-[minmax(0,1fr)_minmax(0,0.9fr)]">
         <Calendar
           availableDays={availableDays}
           selected={selectedDay}
@@ -148,7 +148,7 @@ export function TimeStep({ value, onChange, showError }: TimeStepProps) {
             setPickedDay(null);
             onChange({ slot: value.slot, timeZone: e.target.value });
           }}
-          className="h-9 max-w-[16rem] rounded-full border border-white/[0.08] bg-field px-3 text-sm text-white outline-none transition-colors hover:border-white/25 focus-visible:border-signal/60"
+          className="h-9 max-w-full rounded-full border border-white/[0.08] bg-field px-3 text-sm text-white outline-none transition-colors hover:border-white/25 focus-visible:border-signal/60 sm:max-w-[16rem]"
         >
           {zones.map((zone) => (
             <option key={zone} value={zone}>

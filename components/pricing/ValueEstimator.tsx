@@ -87,8 +87,15 @@ export function ValueEstimator() {
   const hours = (chats * (share / 100) * minutes) / 60;
   const cost = hours * hourly;
   const fte = hours / 160;
+  // Bosnian already writes the code ("12.345 USD"); asking for it keeps Chrome's fallback locale
+  // (see intlLocale) identical to the server, which would otherwise print "US$" and break hydration.
   const money = (v: number) =>
-    new Intl.NumberFormat(numberLocale, { style: 'currency', currency: CURRENCY, maximumFractionDigits: 0 }).format(Math.round(v));
+    new Intl.NumberFormat(numberLocale, {
+      style: 'currency',
+      currency: CURRENCY,
+      currencyDisplay: locale === 'bs' ? 'code' : 'symbol',
+      maximumFractionDigits: 0,
+    }).format(Math.round(v));
 
   return (
     <section aria-labelledby="estimator-title" className="glass-raised relative overflow-hidden rounded-[2rem]">

@@ -288,13 +288,19 @@ export function ReviewStep({ needs, slot, timeZone, details, mapLines, onEdit }:
   return (
     <dl className="divide-y divide-white/[0.07] rounded-2xl border border-white/[0.08] bg-field">
       {rows.map((row) => (
-        <div key={row.label} className="flex items-start gap-4 p-4">
-          <dt className="w-32 shrink-0 text-sm text-haze">{row.label}</dt>
-          <dd className="min-w-0 flex-1 whitespace-pre-line break-words text-sm text-white">{row.value}</dd>
+        // Phones: label and "Change" share the top line, the value spans below. Wider: one row.
+        <div
+          key={row.label}
+          className="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-x-4 gap-y-1 p-4 sm:grid-cols-[8rem_minmax(0,1fr)_auto]"
+        >
+          <dt className="col-1 row-1 text-sm text-haze">{row.label}</dt>
+          <dd className="col-span-full row-2 min-w-0 whitespace-pre-line break-words text-sm text-white sm:col-2 sm:row-1">
+            {row.value}
+          </dd>
           <button
             type="button"
             onClick={() => onEdit(row.step)}
-            className="shrink-0 rounded-full px-2 text-sm text-signal hover:text-white"
+            className="col-2 row-1 rounded-full px-2 text-sm text-signal hover:text-white sm:col-3"
             aria-label={format(r.changeLabel, { item: row.label })}
           >
             {r.change}
