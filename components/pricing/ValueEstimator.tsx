@@ -98,7 +98,7 @@ export function ValueEstimator() {
     }).format(Math.round(v));
 
   return (
-    <section aria-labelledby="estimator-title" className="glass-raised relative overflow-hidden rounded-[2rem]">
+    <section aria-labelledby="estimator-title" className="glass-raised relative overflow-hidden rounded-4xl">
       <div className="wire-line absolute inset-x-0 top-0" aria-hidden />
       <div
         aria-hidden
@@ -147,7 +147,7 @@ export function ValueEstimator() {
               <label htmlFor={costId} className="text-sm text-mist">
                 {e.hourly}
               </label>
-              <div className="flex h-11 items-center rounded-full border border-white/10 bg-white/[0.03] px-4 transition-colors focus-within:border-signal/60 hover:border-white/20">
+              <div className="flex h-11 items-center rounded-full border border-white/10 bg-white/3 px-4 transition-colors focus-within:border-signal/60 hover:border-white/20">
                 <span className="text-sm text-haze">{CURRENCY}</span>
                 <input
                   id={costId}

@@ -64,7 +64,7 @@ export function TeamShowcase({ members }: { members: TeamCardData[] }) {
     <section aria-label={t.team.title} className="mt-14">
       <ul
         ref={trackRef}
-        className="mx-auto flex max-w-6xl snap-x snap-mandatory gap-4 overflow-x-auto overscroll-x-contain scroll-px-6 px-6 pb-4 [scrollbar-width:none] md:grid md:grid-cols-2 md:gap-5 md:overflow-visible md:pb-0 lg:grid-cols-3 [&::-webkit-scrollbar]:hidden"
+        className="mx-auto flex max-w-6xl snap-x snap-mandatory gap-4 overflow-x-auto overscroll-x-contain scroll-px-6 px-6 pb-4 scrollbar-none md:grid md:grid-cols-2 md:gap-5 md:overflow-visible md:pb-0 lg:grid-cols-3 [&::-webkit-scrollbar]:hidden"
       >
         {members.map((member, i) => (
           <li key={member.id} className="w-[84%] shrink-0 snap-center sm:w-[60%] md:w-auto">
@@ -128,7 +128,7 @@ function TiltCard({ member, gradient }: { member: TeamCardData; gradient: string
   };
 
   return (
-    <div className="h-full [perspective:1000px]">
+    <div className="h-full perspective-[1000px]">
       <motion.article
         onPointerMove={onMove}
         onPointerLeave={reset}

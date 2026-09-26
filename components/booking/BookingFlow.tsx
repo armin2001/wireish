@@ -161,7 +161,7 @@ export function BookingFlow() {
   const primaryLabel = [b.continue, b.continue, b.reviewCta, b.confirm][step];
 
   return (
-    <div className="panel relative overflow-hidden rounded-[2rem]">
+    <div className="panel relative overflow-hidden rounded-4xl">
       <div className="wire-line absolute inset-x-0 top-0" aria-hidden />
 
       <AnimatePresence mode="wait" initial={false}>

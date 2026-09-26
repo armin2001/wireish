@@ -87,7 +87,7 @@ export function LegalPage({ title, updated, sections }: LegalPageProps) {
               {t.legal.lastUpdated} <time dateTime={updated} suppressHydrationWarning>{updatedLabel}</time>
             </p>
             {locale !== 'en' && (
-              <p className="mt-6 rounded-2xl border border-signal/25 bg-signal/[0.06] px-4 py-3 text-sm text-white">
+              <p className="mt-6 rounded-2xl border border-signal/25 bg-signal/6 px-4 py-3 text-sm text-white">
                 {t.legal.englishOnly}
               </p>
             )}

@@ -88,9 +88,9 @@ export function TimeStep({ value, onChange, showError }: TimeStepProps) {
           </p>
           <p className="mt-1 text-sm text-haze">{format(tt.length, { n: MEETING_MINUTES })}</p>
 
-          <div className="mt-4 max-h-[340px] space-y-5 overflow-y-auto pr-1">
+          <div className="mt-4 max-h-85 space-y-5 overflow-y-auto pr-1">
             {daySlots.length === 0 && (
-              <p className="rounded-2xl border border-white/[0.08] bg-field p-4 text-sm text-mist">
+              <p className="rounded-2xl border border-white/8 bg-field p-4 text-sm text-mist">
                 {tt.noSlots}
               </p>
             )}
@@ -116,7 +116,7 @@ export function TimeStep({ value, onChange, showError }: TimeStepProps) {
                             'relative h-10 rounded-xl border text-sm tabular-nums transition-colors duration-150',
                             selected
                               ? 'border-transparent font-semibold text-white'
-                              : 'border-white/[0.08] bg-field text-mist hover:border-signal/50 hover:bg-field-hover hover:text-white',
+                              : 'border-white/8 bg-field text-mist hover:border-signal/50 hover:bg-field-hover hover:text-white',
                           )}
                         >
                           {selected && (
@@ -148,7 +148,7 @@ export function TimeStep({ value, onChange, showError }: TimeStepProps) {
             setPickedDay(null);
             onChange({ slot: value.slot, timeZone: e.target.value });
           }}
-          className="h-9 max-w-full rounded-full border border-white/[0.08] bg-field px-3 text-sm text-white outline-none transition-colors hover:border-white/25 focus-visible:border-signal/60 sm:max-w-[16rem]"
+          className="h-9 max-w-full rounded-full border border-white/8 bg-field px-3 text-sm text-white outline-none transition-colors hover:border-white/25 focus-visible:border-signal/60 sm:max-w-[16rem]"
         >
           {zones.map((zone) => (
             <option key={zone} value={zone}>
