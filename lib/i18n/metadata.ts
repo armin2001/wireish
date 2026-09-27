@@ -3,9 +3,13 @@ import { LOCALES, LOCALE_META, type Locale } from './config';
 
 export const SITE_URL = 'https://wireish.com';
 
+/** Share image for every page. Set here, not as a file convention: a page's openGraph would replace the layout's. */
+const SHARE_IMAGE = { url: '/og-image.jpg', width: 3000, height: 2000, alt: 'Wireish' };
+
 /**
  * Canonical URL plus hreflang alternates for every language, so search engines show
- * each visitor the version in their language.
+ * each visitor the version in their language. Metadata merges shallowly, so the share
+ * image and Twitter card are repeated per page instead of inherited from the layout.
  */
 export function pageMetadata(
   locale: Locale,
@@ -27,6 +31,13 @@ export function pageMetadata(
       locale: LOCALE_META[locale].ogLocale,
       siteName: 'Wireish',
       type: 'website',
+      images: [SHARE_IMAGE],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      ...(title ? { title } : {}),
+      description,
+      images: [SHARE_IMAGE],
     },
   };
 }

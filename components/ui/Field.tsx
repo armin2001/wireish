@@ -2,6 +2,7 @@ import { useId, type InputHTMLAttributes, type Ref, type TextareaHTMLAttributes 
 import { CircleAlert } from 'lucide-react';
 import { cn } from '@/lib/cn';
 import { useI18n } from '@/lib/i18n/client';
+import { intlLocale } from '@/lib/i18n/config';
 
 interface BaseProps {
   label: string;
@@ -91,9 +92,12 @@ type AreaProps = BaseProps &
   };
 
 export function TextArea({ label, error, hint, optional, className, id, ref, count, maxLength, ...props }: AreaProps) {
+  const { locale } = useI18n();
   const autoId = useId();
   const fieldId = id ?? autoId;
-  const counter = maxLength !== undefined && count !== undefined ? `${count.toLocaleString()} / ${maxLength.toLocaleString()}` : undefined;
+  // The page's language, not the browser's: the server renders this too, and they must match.
+  const number = (n: number) => n.toLocaleString(intlLocale(locale));
+  const counter = maxLength !== undefined && count !== undefined ? `${number(count)} / ${number(maxLength)}` : undefined;
   return (
     <div className={className}>
       <div className={shell(Boolean(error))}>

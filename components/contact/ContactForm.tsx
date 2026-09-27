@@ -17,7 +17,13 @@ import { contactSchema, TOPIC_OPTIONS, type ApiError, type ContactInput, type To
 
 const MESSAGE_MAX = 4000;
 
-export function ContactForm({ initialTopic }: { initialTopic?: Topic }) {
+interface ContactFormProps {
+  initialTopic?: Topic;
+  /** The open role a careers link applied for, with its title in the page language. */
+  role?: { id: string; title: string };
+}
+
+export function ContactForm({ initialTopic, role }: ContactFormProps) {
   const { t, locale } = useI18n();
   const f = t.contact.form;
   const [scope, animate] = useAnimate<HTMLFormElement>();
@@ -49,7 +55,7 @@ export function ContactForm({ initialTopic }: { initialTopic?: Topic }) {
       const res = await fetch('/api/contact', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...values, locale }),
+        body: JSON.stringify({ ...values, locale, role: values.topic === 'careers' ? role?.id : undefined }),
       });
       if (res.ok) {
         setSentTo(values.name.split(' ')[0] ?? values.name);
@@ -128,6 +134,11 @@ export function ContactForm({ initialTopic }: { initialTopic?: Topic }) {
                   </label>
                 ))}
               </div>
+              {role && topic === 'careers' && (
+                <p className="mt-3 text-sm text-mist">
+                  {t.careers.applyRole}: <span className="text-white">{role.title}</span>
+                </p>
+              )}
             </fieldset>
 
             <div className="grid gap-5 sm:grid-cols-2">

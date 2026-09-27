@@ -3,11 +3,13 @@ import { Mail } from 'lucide-react';
 import { FaInstagram, FaLinkedin } from 'react-icons/fa';
 import { ContactForm } from '@/components/contact/ContactForm';
 import { TransitionLink } from '@/components/layout/PageTransition';
+import { OPEN_ROLES } from '@/lib/careers';
 import { DEMO_HREF, SITE } from '@/lib/content';
 import { getDictionary } from '@/lib/i18n/get-dictionary';
 import { pageMetadata } from '@/lib/i18n/metadata';
 import { localeFrom, type LocaleParams } from '@/lib/i18n/server';
 import { isTopic } from '@/lib/schema';
+import { localized } from '@/lib/team';
 
 export async function generateMetadata({ params }: LocaleParams): Promise<Metadata> {
   const locale = await localeFrom(params);
@@ -16,14 +18,16 @@ export async function generateMetadata({ params }: LocaleParams): Promise<Metada
 }
 
 interface ContactPageProps extends LocaleParams {
-  searchParams: Promise<{ topic?: string | string[] }>;
+  searchParams: Promise<{ topic?: string | string[]; role?: string | string[] }>;
 }
 
 export default async function ContactPage({ params, searchParams }: ContactPageProps) {
-  const t = await getDictionary(await localeFrom(params));
-  // /contact?topic=careers (from the careers page) preselects the matching topic.
-  const { topic } = await searchParams;
+  const locale = await localeFrom(params);
+  const t = await getDictionary(locale);
+  // /contact?topic=careers&role=… (from the careers page) preselects the topic and names the role.
+  const { topic, role } = await searchParams;
   const initialTopic = isTopic(topic) ? topic : undefined;
+  const openRole = OPEN_ROLES.find((r) => r.id === role);
 
   const direct = [
     { label: t.contact.email, value: SITE.email, href: `mailto:${SITE.email}`, Icon: Mail },
@@ -73,7 +77,10 @@ export default async function ContactPage({ params, searchParams }: ContactPageP
           </div>
         </section>
 
-        <ContactForm initialTopic={initialTopic} />
+        <ContactForm
+          initialTopic={initialTopic}
+          role={openRole && { id: openRole.id, title: localized(openRole.title, locale) }}
+        />
       </div>
     </main>
   );

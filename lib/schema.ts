@@ -91,8 +91,8 @@ export const contactSchema = z.object({
   hp,
 });
 export type ContactInput = z.infer<typeof contactSchema>;
-/** What the API accepts: the form fields plus the page language. */
-export const contactRequestSchema = contactSchema.extend({ locale });
+/** What the API accepts: the form fields, the page language and the role applied for (careers links). */
+export const contactRequestSchema = contactSchema.extend({ locale, role: z.string().max(80).optional() });
 
 export const bookingDetailsSchema = z.object({
   name,

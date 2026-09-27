@@ -37,6 +37,7 @@ import {
   nodesBounds,
   snap,
   uid,
+  type CanvasDoc,
   type CanvasNode,
   type NodeKind,
   type Point,
@@ -114,12 +115,33 @@ export default function CanvasWorkspace() {
   /* ------------------------------------------------------------ persistence */
 
   // Save after edits only: merely opening the canvas shouldn't attach the example to a booking.
-  const initialDoc = useRef(doc);
+  // Once edited, undoing back to the opening state is saved too: it restores what was stored
+  // on opening (nothing, if the canvas opened on the example).
+  const opened = useRef({ doc, stored: blueprintStore.get() !== null });
+  const edited = useRef(false);
+  const pendingSave = useRef<{ timer: number; doc: CanvasDoc | null } | null>(null);
+
+  const save = useCallback((next: CanvasDoc | null) => {
+    if (pendingSave.current) window.clearTimeout(pendingSave.current.timer);
+    pendingSave.current = null;
+    blueprintStore.set(next);
+  }, []);
+
   useEffect(() => {
-    if (doc === initialDoc.current) return;
-    const t = window.setTimeout(() => blueprintStore.set(doc), 250);
-    return () => window.clearTimeout(t);
-  }, [doc]);
+    if (doc === opened.current.doc && !edited.current) return;
+    edited.current = true;
+    const next = doc === opened.current.doc && !opened.current.stored ? null : doc;
+    if (pendingSave.current) window.clearTimeout(pendingSave.current.timer);
+    pendingSave.current = { doc: next, timer: window.setTimeout(() => save(next), 250) };
+  }, [doc, save]);
+
+  // Leaving within the debounce (e.g. straight to the booking page) must not drop the last edit.
+  useEffect(
+    () => () => {
+      if (pendingSave.current) save(pendingSave.current.doc);
+    },
+    [save],
+  );
 
   /* ------------------------------------------------------------ layout */
 
@@ -263,7 +285,7 @@ export default function CanvasWorkspace() {
   };
 
   const bookWithMap = () => {
-    blueprintStore.set(doc);
+    save(doc);
     navigate(DEMO_HREF);
   };
 
@@ -556,7 +578,7 @@ export default function CanvasWorkspace() {
         duplicate();
       } else if (key === 's') {
         e.preventDefault();
-        blueprintStore.set(doc);
+        save(doc);
         toast({ tone: 'success', title: c.toasts.saved, description: c.toasts.savedBody });
       }
       return;
@@ -693,7 +715,7 @@ export default function CanvasWorkspace() {
         </div>
       )}
 
-      <div className="pointer-events-none absolute inset-x-0 top-[92px] z-20 flex justify-center px-3 md:pl-[288px] md:pr-[220px]">
+      <div className="pointer-events-none absolute inset-x-0 top-23 z-20 flex justify-center px-3 md:pl-72 md:pr-55">
         <div className="pointer-events-auto">
           <CanvasToolbar
             zoom={viewport.view.zoom}
@@ -733,7 +755,7 @@ export default function CanvasWorkspace() {
 
       <NodePalette onAdd={addAtCenter} onDrop={dropFromPalette} />
 
-      <div className="absolute right-4 top-[92px] z-20 hidden md:block">
+      <div className="absolute right-4 top-23 z-20 hidden md:block">
         <Minimap
           nodes={doc.nodes}
           view={viewport.view}
@@ -745,7 +767,7 @@ export default function CanvasWorkspace() {
         />
       </div>
 
-      <div className="pointer-events-none absolute bottom-4 left-[288px] z-10 hidden items-center gap-3 md:flex">
+      <div className="pointer-events-none absolute bottom-4 left-72 z-10 hidden items-center gap-3 md:flex">
         <motion.p
           key={mode}
           initial={{ opacity: 0, y: 4 }}

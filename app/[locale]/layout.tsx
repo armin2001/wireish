@@ -33,10 +33,10 @@ export async function generateMetadata({ params }: LocaleParams): Promise<Metada
   const t = await getDictionary(locale);
   return {
     metadataBase: new URL(SITE_URL),
+    ...pageMetadata(locale, '/', { title: t.meta.title, description: t.meta.description }),
+    // After the spread: pageMetadata's plain title would otherwise drop the template for every page.
     title: { default: t.meta.title, template: '%s | Wireish' },
     keywords: ['AI chatbot', 'WhatsApp automation', 'Instagram DM bot', 'Customer support AI', 'Wireish'],
-    twitter: { card: 'summary_large_image', title: t.meta.title, description: t.meta.description },
-    ...pageMetadata(locale, '/', { title: t.meta.title, description: t.meta.description }),
   };
 }
 

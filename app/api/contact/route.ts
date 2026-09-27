@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { OPEN_ROLES } from '@/lib/careers';
 import { LOCALE_META } from '@/lib/i18n/config';
 import { contactRequestSchema, labelFor, TOPIC_OPTIONS, type ApiError } from '@/lib/schema';
 import { clientIp, devDetail, getResend, MAIL_FROM, MAIL_TO, MailConfigError, rateLimit, renderEmail, singleLine } from '@/lib/server/mail';
@@ -31,6 +32,8 @@ export async function POST(req: Request) {
     console.warn('[contact] spam trap field was filled; submission dropped without sending');
     return NextResponse.json({ ok: true }); // bot: pretend it worked
   }
+  // Only a role that is actually open counts; anything else is dropped.
+  const role = data.topic === 'careers' ? OPEN_ROLES.find((r) => r.id === data.role) : undefined;
 
   try {
     const { error } = await getResend().emails.send({
@@ -42,6 +45,7 @@ export async function POST(req: Request) {
         heading: 'Novi upit sa kontakt forme',
         rows: [
           ['Tema', labelFor(TOPIC_OPTIONS, data.topic)],
+          ...(role ? [['Pozicija', role.title.en] as [string, string]] : []),
           ['Ime', data.name],
           ['Email', data.email],
           ['Kompanija', data.company || 'Nije uneseno'],

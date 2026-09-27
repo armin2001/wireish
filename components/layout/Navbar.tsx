@@ -70,6 +70,8 @@ export default function Navbar() {
     <header className="pointer-events-none fixed inset-x-0 top-0 z-50 flex justify-center px-3 pt-[max(0.75rem,env(safe-area-inset-top))]">
       <motion.nav
         aria-label={t.nav.main}
+        // Start at the target width: animating from the computed `none` is impossible and warns.
+        initial={false}
         animate={{ maxWidth: scrolled ? 1000 : 1152 }}
         transition={{ type: 'spring', stiffness: 260, damping: 32 }}
         className={cn(
