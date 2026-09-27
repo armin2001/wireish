@@ -1,5 +1,9 @@
-import type { ButtonHTMLAttributes, ComponentProps } from 'react';
+'use client';
+
+import type { ComponentProps } from 'react';
+import { motion, type HTMLMotionProps } from 'framer-motion';
 import { cn } from '@/lib/cn';
+import { HOVER_SPRING } from '@/lib/motion';
 import { TransitionLink } from '@/components/layout/PageTransition';
 
 type Variant = 'primary' | 'secondary' | 'ghost';
@@ -11,10 +15,16 @@ interface StyleOptions {
   className?: string;
 }
 
+/*
+ * Hover scale comes from framer-motion (a spring on `transform`); the press comes from CSS
+ * (`active:scale`, which Tailwind v4 writes to the separate `scale` property), so the two
+ * compose instead of fighting. `transform` stays out of the CSS transition list on purpose:
+ * a CSS transition would smooth every spring frame a second time and make hover feel laggy.
+ */
 export function buttonStyles({ variant = 'primary', size = 'md', className }: StyleOptions = {}) {
   return cn(
     'inline-flex select-none items-center justify-center gap-2 whitespace-nowrap rounded-full font-medium',
-    'transition-[transform,background-color,border-color,color,box-shadow] duration-300 ease-wire',
+    'transition-[scale,background-color,border-color,color,box-shadow] duration-300 ease-wire',
     'active:scale-[0.97] disabled:pointer-events-none disabled:opacity-50',
     size === 'sm' && 'h-9 px-4 text-sm',
     size === 'md' && 'h-11 px-5 text-[15px]',
@@ -27,16 +37,36 @@ export function buttonStyles({ variant = 'primary', size = 'md', className }: St
   );
 }
 
-type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & StyleOptions;
+/** Ghost buttons sit inline with text; scaling them would nudge the words around them. */
+const hoverFor = (variant: Variant) => (variant === 'ghost' ? undefined : { scale: 1.05 });
 
-export function Button({ variant, size, className, type = 'button', ...props }: ButtonProps) {
-  return <button type={type} className={buttonStyles({ variant, size, className })} {...props} />;
+type ButtonProps = HTMLMotionProps<'button'> & StyleOptions;
+
+export function Button({ variant = 'primary', size, className, type = 'button', ...props }: ButtonProps) {
+  return (
+    <motion.button
+      type={type}
+      whileHover={hoverFor(variant)}
+      transition={HOVER_SPRING}
+      className={buttonStyles({ variant, size, className })}
+      {...props}
+    />
+  );
 }
 
-type ButtonLinkProps = ComponentProps<typeof TransitionLink> & StyleOptions;
+const MotionLink = motion.create(TransitionLink);
 
-export function ButtonLink({ variant, size, className, ...props }: ButtonLinkProps) {
-  return <TransitionLink className={buttonStyles({ variant, size, className })} {...props} />;
+type ButtonLinkProps = ComponentProps<typeof MotionLink> & StyleOptions;
+
+export function ButtonLink({ variant = 'primary', size, className, ...props }: ButtonLinkProps) {
+  return (
+    <MotionLink
+      whileHover={hoverFor(variant)}
+      transition={HOVER_SPRING}
+      className={buttonStyles({ variant, size, className })}
+      {...props}
+    />
+  );
 }
 
 export function Spinner({ className }: { className?: string }) {

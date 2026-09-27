@@ -1,0 +1,261 @@
+/*
+ * Dark Wireish theme for the Voiceflow chat embedded in the home page's #demo section.
+ * Loaded by components/home/VoiceflowChat.tsx and injected into the widget's shadow root,
+ * after Voiceflow's own stylesheet.
+ *
+ * - Selectors use the documented, stable `.vfrc-*` class names; Voiceflow's own CSS variables
+ *   are hashed per release, so they are not overridden.
+ * - Custom properties inherit into shadow trees, so the site's tokens from app/globals.css
+ *   (colors, gradients, the Sora font variable) work here; each has a fallback anyway.
+ * - `!important` is deliberate: Voiceflow's rules can outrank a single class selector.
+ *
+ * Class reference: https://www.voiceflow.com/docs/documentation/deploy/widget/custom-web-chat-styling
+ */
+
+.vfrc-chat {
+  /* The page's color-scheme is dark; declaring it here keeps native controls consistent. */
+  color-scheme: dark;
+  background: transparent !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+
+/* ─── Header ─────────────────────────────────────────────────────────────────── */
+
+.vfrc-header {
+  background: transparent !important;
+  border-bottom: 1px solid rgb(255 255 255 / 0.06) !important;
+}
+.vfrc-header--title {
+  color: #fff !important;
+  font-family: var(--font-sora, inherit), var(--font-instrument, inherit), sans-serif !important;
+  font-weight: 600 !important;
+}
+.vfrc-header--button {
+  color: var(--color-mist, #a7aecb) !important;
+}
+.vfrc-header--button:hover {
+  background: rgb(255 255 255 / 0.08) !important;
+  color: #fff !important;
+}
+.vfrc-header--icon {
+  color: inherit !important;
+}
+
+/* ─── Welcome banner ─────────────────────────────────────────────────────────── */
+
+.vfrc-assistant-info--avatar {
+  box-shadow:
+    0 0 0 1px rgb(255 255 255 / 0.12),
+    0 0 44px -10px rgb(90 65 253 / 0.6) !important;
+}
+.vfrc-assistant-info--title {
+  color: #fff !important;
+  font-family: var(--font-sora, inherit), var(--font-instrument, inherit), sans-serif !important;
+  font-weight: 600 !important;
+  letter-spacing: -0.02em;
+}
+.vfrc-assistant-info--description {
+  color: var(--color-mist, #a7aecb) !important;
+}
+
+/* ─── Messages ───────────────────────────────────────────────────────────────── */
+
+.vfrc-system-response .vfrc-message {
+  background: rgb(255 255 255 / 0.06) !important;
+  border: 1px solid rgb(255 255 255 / 0.06) !important;
+  color: rgb(255 255 255 / 0.9) !important;
+  border-radius: 16px 16px 16px 6px !important;
+  line-height: 1.6 !important;
+}
+.vfrc-user-response .vfrc-message {
+  background: var(--gradient-wire, linear-gradient(135deg, #15c3ff, #4a50fc 50.53%, #5a41fd)) !important;
+  border: 0 !important;
+  color: #fff !important;
+  border-radius: 16px 16px 6px 16px !important;
+  line-height: 1.6 !important;
+}
+.vfrc-message a {
+  color: var(--color-signal, #15c3ff) !important;
+}
+.vfrc-user-response .vfrc-message a {
+  color: #fff !important;
+  text-decoration: underline;
+}
+
+.vfrc-typing-indicator {
+  background: rgb(255 255 255 / 0.06) !important;
+  border: 1px solid rgb(255 255 255 / 0.06) !important;
+}
+
+/*
+ * Status dividers such as "Chat has ended": a line, a label, a line. The inner classes are hashed
+ * per release, so they are matched by shape: the lines are the empty elements.
+ */
+.vfrc-chat--status > div > div:empty {
+  background: rgb(255 255 255 / 0.1) !important;
+}
+.vfrc-chat--status > div > div:not(:empty) {
+  background: transparent !important;
+  color: var(--color-haze, #7a83a6) !important;
+}
+
+.vfrc-card,
+.vfrc-carousel .vfrc-card {
+  background: var(--color-surface, #0c1130) !important;
+  border: 1px solid rgb(255 255 255 / 0.1) !important;
+  color: #fff !important;
+}
+.vfrc-image {
+  border-radius: 12px;
+}
+
+/* ─── Buttons ────────────────────────────────────────────────────────────────── */
+
+/* Choice buttons inside the conversation: quiet, like the site's secondary buttons. */
+.vfrc-system-response .vfrc-button,
+.vfrc-card .vfrc-button {
+  background: rgb(255 255 255 / 0.04) !important;
+  border: 1px solid rgb(255 255 255 / 0.12) !important;
+  color: #fff !important;
+  border-radius: 999px !important;
+  transition:
+    background-color 0.2s,
+    border-color 0.2s !important;
+}
+.vfrc-system-response .vfrc-button:hover,
+.vfrc-card .vfrc-button:hover {
+  background: rgb(21 195 255 / 0.1) !important;
+  border-color: rgb(21 195 255 / 0.5) !important;
+}
+
+/* "Start new chat": the one primary action, styled like the site's primary button. */
+.vfrc-footer__start-button {
+  background: transparent !important;
+}
+.vfrc-footer__start-button .vfrc-button {
+  background: #fff !important;
+  color: var(--color-night, #050716) !important;
+  border-radius: 999px !important;
+  font-weight: 600 !important;
+  box-shadow:
+    0 0 0 1px rgb(255 255 255 / 0.6),
+    -6px 4px 22px -6px rgb(21 195 255 / 0.55),
+    6px 6px 26px -6px rgb(90 65 253 / 0.65) !important;
+}
+.vfrc-footer__start-button .vfrc-button:hover {
+  box-shadow:
+    0 0 0 1px rgb(255 255 255 / 0.9),
+    -8px 4px 30px -4px rgb(21 195 255 / 0.75),
+    8px 8px 36px -4px rgb(156 41 254 / 0.6) !important;
+}
+
+/* ─── Composer ───────────────────────────────────────────────────────────────── */
+
+.vfrc-footer {
+  background: transparent !important;
+}
+/* Voiceflow fades messages out under the composer with a white gradient; fade to the dark frame instead. */
+.vfrc-footer__content {
+  background-image: linear-gradient(to bottom, rgb(10 14 36 / 0), rgb(10 14 36 / 0.92) 30%) !important;
+}
+.vfrc-input-container {
+  background: rgb(255 255 255 / 0.04) !important;
+  border: 1px solid rgb(255 255 255 / 0.08) !important;
+  border-radius: 999px !important;
+  transition:
+    border-color 0.2s,
+    box-shadow 0.2s;
+}
+.vfrc-input-container:focus-within {
+  border-color: rgb(21 195 255 / 0.6) !important;
+  box-shadow: 0 0 0 4px rgb(21 195 255 / 0.12) !important;
+}
+.vfrc-chat-focus-ring {
+  box-shadow: none !important;
+}
+.vfrc-chat-input {
+  background: transparent !important;
+  color: #fff !important;
+  /* 16px keeps iOS Safari from zooming into the field. */
+  font-size: 16px !important;
+}
+.vfrc-chat-input::placeholder {
+  color: var(--color-haze, #7a83a6) !important;
+}
+.vfrc-chat-input__send {
+  background: var(--gradient-wire, linear-gradient(135deg, #15c3ff, #4a50fc 50.53%, #5a41fd)) !important;
+  color: #fff !important;
+}
+.vfrc-chat-input__send:disabled {
+  opacity: 0.4;
+}
+.vfrc-chat-input__send-icon {
+  color: #fff !important;
+}
+
+.vfrc-footer__links,
+.vfrc-footer__links a {
+  color: var(--color-haze, #7a83a6) !important;
+}
+.vfrc-footer__links a:hover {
+  color: #fff !important;
+}
+
+.vfrc-footer__content-scroll-to-bottom-button {
+  background: var(--color-surface, #0c1130) !important;
+  border-color: rgb(255 255 255 / 0.12) !important;
+  color: #fff !important;
+}
+
+/* ─── Menus and dialogs ──────────────────────────────────────────────────────── */
+
+.vfrc-prompt,
+.vfrc-more-menu,
+.vfrc-privacy {
+  background: var(--color-surface, #0c1130) !important;
+  border: 1px solid rgb(255 255 255 / 0.1) !important;
+  box-shadow: 0 30px 80px -30px rgb(0 0 0 / 0.9) !important;
+}
+.vfrc-more-menu .vfrc-button {
+  background: transparent !important;
+}
+.vfrc-more-menu .vfrc-button:hover {
+  background: rgb(255 255 255 / 0.06) !important;
+}
+.vfrc-button--label,
+.vfrc-button--icon-container,
+.vfrc-button--icon,
+.vfrc-privacy__title {
+  color: #fff !important;
+}
+.vfrc-privacy__description {
+  color: var(--color-mist, #a7aecb) !important;
+}
+.vfrc-prompt .vfrc-button:not(.vfrc-privacy__secondary-button),
+.vfrc-privacy__primary-button {
+  background: var(--gradient-wire, linear-gradient(135deg, #15c3ff, #4a50fc 50.53%, #5a41fd)) !important;
+  color: #fff !important;
+  border-radius: 999px !important;
+}
+.vfrc-privacy__secondary-button {
+  background: rgb(255 255 255 / 0.08) !important;
+  border-radius: 999px !important;
+}
+.vfrc-privacy__secondary-button-content,
+.vfrc-privacy__secondary-button-label,
+.vfrc-privacy__secondary-button-icon {
+  color: #fff !important;
+}
+
+.vfrc-chat--overlay {
+  background: rgb(5 7 22 / 0.6) !important;
+}
+.vfrc-file-drop-overlay {
+  background: rgb(5 7 22 / 0.85) !important;
+  color: #fff !important;
+}
+
+.vfrc-icon {
+  color: inherit;
+}

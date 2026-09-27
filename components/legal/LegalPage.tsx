@@ -81,7 +81,9 @@ export function LegalPage({ title, updated, sections }: LegalPageProps) {
 
         <article className="max-w-3xl">
           <header className="border-b border-white/[0.07] pb-10">
-            <h1 className="font-display text-4xl font-semibold tracking-[-0.03em] text-white md:text-5xl">{title}</h1>
+            {/* Single-word titles such as "Datenschutzerklärung" are wider than a phone screen: hyphenate
+                where the browser knows the language, otherwise break the word rather than widen the page. */}
+            <h1 className="hyphens-auto wrap-anywhere font-display text-4xl font-semibold tracking-[-0.03em] text-white md:text-5xl">{title}</h1>
             <p className="mt-4 text-sm text-haze">
               {/* Bosnian can format differently on the server than in Chrome (see intlLocale). */}
               {t.legal.lastUpdated} <time dateTime={updated} suppressHydrationWarning>{updatedLabel}</time>

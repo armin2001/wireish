@@ -12,7 +12,7 @@ const SERVICE_VISUALS: Array<{ Icon: ComponentType<{ className?: string }>; grad
   { Icon: Workflow, gradient: 'var(--gradient-link)' },
 ];
 
-/** Single source for the home section and /services. */
+/** The service cards on /services. (The home page covers the same ground in BentoFeatures.) */
 export function ServiceGrid({ t, className }: { t: Dictionary; className?: string }) {
   return (
     <ul className={cn('grid gap-5 md:grid-cols-2', className)}>
@@ -35,23 +35,5 @@ export function ServiceGrid({ t, className }: { t: Dictionary; className?: strin
         );
       })}
     </ul>
-  );
-}
-
-export default function Services({ t }: { t: Dictionary }) {
-  return (
-    <section id="services" className="scroll-mt-24 px-6 py-28">
-      <div className="mx-auto max-w-6xl">
-        <div className="max-w-2xl">
-          <h2 className="font-display text-4xl font-semibold tracking-[-0.025em] text-white md:text-5xl">
-            {t.home.services.title}
-          </h2>
-          <p className="mt-5 text-lg text-mist">
-            {t.home.services.body}
-          </p>
-        </div>
-        <ServiceGrid t={t} className="mt-14" />
-      </div>
-    </section>
   );
 }

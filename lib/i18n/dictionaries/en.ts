@@ -38,6 +38,7 @@ const en = {
     company: 'Company',
     legal: 'Legal',
     howItWorks: 'How it works',
+    liveDemo: 'Live demo',
     faq: 'FAQ',
     team: 'Our team',
     careers: 'Careers',
@@ -48,6 +49,10 @@ const en = {
     instagram: 'Wireish on Instagram',
     linkedin: 'Wireish on LinkedIn',
     x: 'Wireish on X',
+    cta: {
+      title: 'Ready to put your customer service on autopilot?',
+      body: 'Book a 30-minute call. We show you an agent trained on your own website, then scope your build with you.',
+    },
   },
   loader: {
     label: 'Loading Wireish',
@@ -62,23 +67,43 @@ const en = {
   },
   home: {
     hero: {
-      lines: ['Your AI agent,', 'wired into every', 'channel.'],
-      body: 'Wireish builds and runs AI agents that answer customers on your website, Instagram and WhatsApp. They are trained on your business and hand the conversation to your team when a person is needed.',
-      secondary: 'Map your setup',
+      eyebrow: 'Built, trained and run by our team',
+      lines: ['Automate support.', 'Scale your sales.'],
+      highlight: '24/7.',
+      body: 'Wireish AI agents answer every customer on your website, Instagram and WhatsApp in seconds. They qualify leads, book meetings and pass the tricky conversations to your team, so you win back hours every week and no inquiry waits until Monday.',
+      primary: 'Get started',
+      secondary: 'View live demo',
       answersOn: 'Answers on',
-      hint: 'Click a channel to send a test message',
-      scene: {
-        website: 'Website chat',
-        instagram: 'Instagram DMs',
-        whatsapp: 'WhatsApp Business',
-        knowledge: 'Knowledge base',
-        crm: 'CRM',
-        team: 'Your team',
+      mockup: {
+        label:
+          'Preview: at 21:47 a Wireish agent answers a WhatsApp message, books an appointment and adds the new patient to the CRM.',
+        title: 'Live inbox',
+        online: 'Online',
+        channel: 'WhatsApp',
+        time: '21:47',
+        agent: 'Wireish Agent',
+        customer: 'Hi! Any time for a cleaning this week? After 5 pm if possible.',
+        reply: 'Yes! Thursday at 17:30 or Friday at 18:00 are free. Which one should I book for you?',
+        customer2: 'Thursday, please!',
+        autopilot: 'Your agent is handling this chat',
+        booked: 'Appointment booked',
+        bookedDetail: 'Thursday · 17:30',
+        lead: 'New patient',
+        leadDetail: 'Added to your CRM',
       },
     },
-    services: {
-      title: 'One agent, on the channels your customers already use.',
-      body: 'We set it up, train it on your business and keep improving it. You get the conversations, the leads and the bookings.',
+    demo: {
+      title: 'Ask it a question. See how it answers.',
+      body: 'This is a live Wireish agent, the same kind we build for you. Ask it about our services, pricing or how fast you can go live. Yours would be trained on your own website, catalog and policies.',
+      points: [
+        'Answers from your content, in your brand voice',
+        'Asks the right follow-up questions to qualify each lead',
+        'Hands the conversation to your team when a person is needed',
+      ],
+      label: 'Chat with the Wireish agent',
+      loading: 'Connecting to the agent',
+      error: 'The chat could not load. A browser extension or network setting may be blocking it.',
+      note: 'Live AI agent. Please keep sensitive personal information out of the chat.',
     },
     teaser: {
       title: 'Sketch your setup before we build it.',
@@ -115,32 +140,45 @@ const en = {
         },
       ],
     },
-    benefits: {
-      title: 'Why businesses choose Wireish',
-      body: 'Automation that answers faster, costs less than hiring for every peak, and still sounds like you.',
-      items: [
-        {
-          title: 'Available around the clock',
-          body: 'Your agent answers questions, qualifies leads and books appointments at any hour, so no inquiry waits for Monday.',
-        },
-        { title: 'Answers in seconds', body: 'Customers get precise answers right away on every channel instead of waiting in a queue.' },
-        {
-          title: 'Lower support costs',
-          body: 'Repetitive questions are handled for you, so your team can focus on complex cases and closing deals.',
-        },
-        {
-          title: 'Sounds like your brand',
-          body: 'Trained on your tone of voice, product catalog and guidelines, so replies read like your team wrote them.',
-        },
-        {
-          title: 'Handles peak traffic',
-          body: 'Hundreds of conversations at once during launches or sales, without adding support staff.',
-        },
-        {
-          title: 'Enterprise-grade security',
-          body: "Your data and your customers' conversations are protected with industry-leading security and privacy protocols.",
-        },
-      ],
+    features: {
+      title: 'Everything a great support team does. Minus the queue.',
+      body: 'One agent that knows your business, answers on every channel and knows when to bring in a person.',
+      training: {
+        title: 'Trained on your business',
+        body: 'We train your agent on your website, product catalog, PDFs and past conversations, so it answers with your facts and in your tone of voice.',
+        sources: ['Website', 'Product catalog', 'PDF docs', 'Past chats'],
+        agent: 'Your agent',
+      },
+      always: {
+        title: 'Awake at 3 a.m.',
+        body: 'Nights, weekends and holidays: every message gets an answer in seconds.',
+        time: '03:12',
+        event: 'Lead captured',
+      },
+      handoff: {
+        title: 'Seamless handoff to humans',
+        body: 'A complex case or a high-value customer? The agent alerts your team by email or Slack and passes on the full context.',
+        bubble: 'This one needs a specialist. Connecting you with our team now.',
+        alert: 'New handoff',
+        alertDetail: 'Sent to Slack and email',
+      },
+      channels: {
+        title: 'Omnichannel from day one',
+        body: 'Website chat, Instagram DMs and WhatsApp share one memory of every customer, so nobody repeats themselves.',
+      },
+      security: {
+        title: 'Private by default',
+        body: 'Conversations and training data are encrypted in transit and at rest, and never shared.',
+        transit: 'In transit',
+        rest: 'At rest',
+      },
+      analytics: {
+        title: 'Analytics dashboard',
+        body: 'See what customers ask, how many conversations the agent resolves on its own and which ones turn into leads.',
+        resolved: 'Resolved by the agent',
+        team: 'Handed to your team',
+        example: 'Example data',
+      },
     },
     faq: {
       title: 'Questions, answered',
@@ -168,10 +206,6 @@ const en = {
           a: 'None at all. We handle 100% of the technical setup, maintenance, and ongoing optimization. You get a simple dashboard or direct reports on performance.',
         },
       ],
-    },
-    cta: {
-      title: 'See it answer your customers.',
-      body: 'Pick a 30-minute slot. We show you an agent trained on your own website, then scope the build with you.',
     },
   },
   services: {
@@ -450,9 +484,61 @@ const en = {
   pricing: {
     metaTitle: 'Pricing',
     metaDescription:
-      'Wireish prices each AI agent to your scope instead of fixed tiers. Estimate the hours you get back, then book a call for a quote.',
-    title: 'Priced to your scope, not a tier',
-    body: "Every business has different workflows, so we don't sell fixed packages. We scope each agent around your channels, volume and goals, and quote after a short call.",
+      'Three Wireish plans, each tailored to your channels and conversation volume and quoted after a short call. Estimate the hours you get back.',
+    title: 'Plans scoped to your business',
+    body: 'Start from the plan closest to your channels and volume. We tailor it to your workflows on a 30-minute call, then send you a written quote.',
+    plans: {
+      title: 'Plans that grow with your conversations',
+      body: 'Every plan is built, trained and run by our team. Pick the scope that fits today; we tailor it on a 30-minute call and quote it in writing.',
+      billing: 'Billing period',
+      monthly: 'Monthly',
+      yearly: 'Yearly',
+      popular: 'Most popular',
+      price: 'Custom quote',
+      cadence: { monthly: 'Quoted as a monthly retainer', yearly: 'Quoted as an annual plan' },
+      volume: 'conversations a month',
+      cta: 'Get a quote',
+      includes: 'Includes',
+      compare: 'Not sure which plan fits?',
+      compareLink: 'Estimate the hours you get back',
+      tiers: {
+        starter: {
+          name: 'Starter',
+          tagline: "Take your busiest channel off your team's plate.",
+          volume: 'Up to 1,000',
+          features: [
+            'One channel: website chat, Instagram or WhatsApp',
+            'Trained on your website and FAQs',
+            'Handoff to your team by email',
+            'Monthly performance report',
+          ],
+        },
+        growth: {
+          name: 'Growth',
+          tagline: 'One agent answering customers wherever they write to you.',
+          volume: '1,000 to 5,000',
+          features: [
+            'Website, Instagram and WhatsApp with one shared memory',
+            'Trained on your catalog, documents and past chats',
+            'Qualified leads and bookings sent to your CRM and calendar',
+            'Handoff to your team by email or Slack',
+            'Monthly conversation review and improvements',
+          ],
+        },
+        enterprise: {
+          name: 'Enterprise',
+          tagline: 'For high volume, custom workflows and strict requirements.',
+          volume: '5,000+',
+          features: [
+            'Every channel, including Facebook Messenger',
+            'Custom integrations with your internal tools and APIs',
+            'A dedicated contact on our team',
+            'Ongoing optimization as your traffic grows',
+            'Security and data review with your IT team',
+          ],
+        },
+      },
+    },
     estimator: {
       title: 'Estimate the time you get back',
       body: 'Move the sliders to match your business. The result only uses the numbers you set.',
@@ -478,9 +564,6 @@ const en = {
       },
       { title: 'Dedicated partnership', body: 'Ongoing optimization, conversation reviews and scaling as your traffic grows.' },
     ],
-    ctaTitle: "Let's scope your agent",
-    ctaBody: 'In a 30-minute call we look at your workflows and send a quote that matches your goals.',
-    ctaSecondary: 'Ask a question',
   },
   team: {
     metaTitle: 'Our team',

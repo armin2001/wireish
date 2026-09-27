@@ -2,24 +2,48 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { usePathname } from 'next/navigation';
-import { AnimatePresence, LayoutGroup, motion, useMotionValueEvent, useScroll, type PanInfo } from 'framer-motion';
-import { ArrowUpRight, Menu, X } from 'lucide-react';
+import {
+  AnimatePresence,
+  LayoutGroup,
+  motion,
+  useMotionValueEvent,
+  useScroll,
+  useSpring,
+  type PanInfo,
+  type Transition,
+} from 'framer-motion';
+import { ArrowUpRight } from 'lucide-react';
 import { LanguageGrid, LanguageSwitcher } from '@/components/layout/LanguageSwitcher';
 import { TransitionLink } from '@/components/layout/PageTransition';
 import { ButtonLink } from '@/components/ui/Button';
 import { Logo } from '@/components/ui/Logo';
+import { Magnetic } from '@/components/ui/Magnetic';
 import { cn } from '@/lib/cn';
 import { DEMO_HREF, NAV_LINKS } from '@/lib/content';
 import { OPEN_ROLES } from '@/lib/careers';
 import { useI18n } from '@/lib/i18n/client';
 import { splitLocale } from '@/lib/i18n/config';
+import { HOVER_SPRING } from '@/lib/motion';
 
 const isActive = (path: string, href: string) => path === href || path.startsWith(`${href}/`);
+
+/** Entrance timing (ms): the pill drops first, then logo → links → actions follow. */
+const ENTRANCE = { logo: 220, firstLink: 280, perLink: 60, actions: 600 };
+
+/** Hamburger bars, 6px apart; open, the outer two cross into an ✕ and the middle one fades. */
+const BAR_SPRING: Transition = { type: 'spring', stiffness: 420, damping: 30 };
+const BARS = [
+  { key: 'top', className: 'right-0.5', closed: { y: -6, rotate: 0, opacity: 1 }, open: { y: 0, rotate: 45, opacity: 1 } },
+  { key: 'middle', className: 'right-2', closed: { y: 0, rotate: 0, opacity: 1 }, open: { y: 0, rotate: 0, opacity: 0 } },
+  { key: 'bottom', className: 'right-0.5', closed: { y: 6, rotate: 0, opacity: 1 }, open: { y: 0, rotate: -45, opacity: 1 } },
+] as const;
 
 export default function Navbar() {
   const { t } = useI18n();
   const path = splitLocale(usePathname()).path;
-  const { scrollY } = useScroll();
+  const { scrollY, scrollYProgress } = useScroll();
+  // Page progress, smoothed so the wire along the pill glides instead of stepping with the wheel.
+  const progress = useSpring(scrollYProgress, { stiffness: 200, damping: 30, restDelta: 0.001 });
   const [scrolled, setScrolled] = useState(false);
   const [hovered, setHovered] = useState<string | null>(null);
   const [open, setOpen] = useState(false);
@@ -74,37 +98,73 @@ export default function Navbar() {
         initial={false}
         animate={{ maxWidth: scrolled ? 1000 : 1152 }}
         transition={{ type: 'spring', stiffness: 260, damping: 32 }}
+        // Glass from the first pixel, barely tinted over the hero; denser once content scrolls beneath it.
+        // Desktop is a 1fr / auto / 1fr grid so the links sit at the true center, whatever the logo and actions measure.
+        // The animated wire border only runs while the pointer is over the pill or a keyboard user is inside it.
         className={cn(
-          'pointer-events-auto flex h-16 w-full items-center justify-between gap-3 rounded-full pl-5 pr-2 lg:pr-3.5 transition-[background-color,border-color,box-shadow] duration-300',
-          scrolled || open ? 'glass-overlay' : 'border border-transparent',
+          'pointer-events-auto flex h-16 w-full animate-nav-drop items-center justify-between gap-3 rounded-full border pl-5 pr-2 backdrop-blur-md backdrop-saturate-150 lg:grid lg:grid-cols-[1fr_auto_1fr] lg:pr-3.5',
+          'transition-[background-color,border-color,box-shadow] duration-300',
+          'wire-border [--wire-opacity:0] [--wire-play:paused] hover:[--wire-opacity:1] hover:[--wire-play:running] has-focus-visible:[--wire-opacity:1] has-focus-visible:[--wire-play:running]',
+          scrolled || open
+            ? 'border-white/10 bg-night/60 shadow-[0_20px_60px_-24px_rgb(0_0_0/0.8)] backdrop-blur-xl'
+            : 'border-white/8 bg-white/4',
         )}
       >
-        <TransitionLink href="/" onClick={close} aria-label={t.nav.home} className="shrink-0 rounded-full p-1">
-          <Logo height={24} priority />
+        <TransitionLink
+          href="/"
+          onClick={close}
+          aria-label={t.nav.home}
+          className="group relative shrink-0 animate-nav-item justify-self-start rounded-full p-1"
+          style={{ animationDelay: `${ENTRANCE.logo}ms` }}
+        >
+          <span
+            aria-hidden
+            className="pointer-events-none absolute inset-x-2 inset-y-1 -z-10 rounded-full opacity-0 blur-xl transition-opacity duration-500 group-hover:opacity-60"
+            style={{ backgroundImage: 'var(--gradient-wire)' }}
+          />
+          <motion.span className="block" whileHover={{ scale: 1.05 }} transition={HOVER_SPRING}>
+            <Logo height={24} priority />
+          </motion.span>
         </TransitionLink>
 
         <LayoutGroup id="nav">
           <ul className="hidden items-center gap-0.5 lg:flex" onMouseLeave={() => setHovered(null)}>
-            {NAV_LINKS.map((link) => {
+            {NAV_LINKS.map((link, i) => {
               const active = isActive(path, link.href);
+              const label = t.nav[link.key];
               return (
-                <li key={link.href} className="relative">
+                <li
+                  key={link.href}
+                  className="relative animate-nav-item"
+                  style={{ animationDelay: `${ENTRANCE.firstLink + i * ENTRANCE.perLink}ms` }}
+                >
                   <TransitionLink
                     href={link.href}
                     aria-current={active ? 'page' : undefined}
                     onMouseEnter={() => setHovered(link.href)}
                     onFocus={() => setHovered(link.href)}
                     className={cn(
-                      'relative z-10 block whitespace-nowrap rounded-full px-3.5 py-2 text-sm transition-colors duration-200',
-                      active ? 'text-white' : 'text-mist hover:text-white',
+                      'group relative z-10 block whitespace-nowrap rounded-full px-3.5 py-2 text-sm transition-colors duration-200',
+                      active ? 'text-white' : 'text-mist hover:text-white focus-visible:text-white',
                     )}
                   >
-                    {t.nav[link.key]}
+                    {/* Text roll: the label slides up and an identical copy rises into its place. */}
+                    <span className="relative block overflow-hidden">
+                      <span className="block transition-transform duration-300 ease-wire group-hover:-translate-y-full group-focus-visible:-translate-y-full">
+                        {label}
+                      </span>
+                      <span
+                        aria-hidden
+                        className="absolute inset-0 block translate-y-full transition-transform duration-300 ease-wire group-hover:translate-y-0 group-focus-visible:translate-y-0"
+                      >
+                        {label}
+                      </span>
+                    </span>
                   </TransitionLink>
                   {hovered === link.href && (
                     <motion.span
                       layoutId="nav-hover"
-                      className="absolute inset-0 rounded-full bg-white/[0.07]"
+                      className="absolute inset-0 rounded-full bg-white/7 shadow-[inset_0_1px_0_0_rgb(255_255_255/0.08)]"
                       transition={{ type: 'spring', stiffness: 520, damping: 40 }}
                     />
                   )}
@@ -121,11 +181,16 @@ export default function Navbar() {
           </ul>
         </LayoutGroup>
 
-        <div className="flex items-center gap-1.5">
+        <div
+          className="flex animate-nav-item items-center gap-1.5 justify-self-end"
+          style={{ animationDelay: `${ENTRANCE.actions}ms` }}
+        >
           <LanguageSwitcher className="hidden sm:block" />
-          <ButtonLink href={DEMO_HREF} size="sm" className="hidden lg:inline-flex">
-            {t.common.bookDemo}
-          </ButtonLink>
+          <Magnetic className="hidden lg:inline-flex">
+            <ButtonLink href={DEMO_HREF} size="sm">
+              {t.common.bookDemo}
+            </ButtonLink>
+          </Magnetic>
           <button
             ref={toggleRef}
             type="button"
@@ -133,21 +198,31 @@ export default function Navbar() {
             aria-expanded={open}
             aria-controls="mobile-menu"
             aria-label={open ? t.nav.closeMenu : t.nav.openMenu}
-            className="grid h-11 w-11 place-items-center rounded-full text-white transition-[background-color,transform] hover:bg-white/[0.07] active:scale-90 lg:hidden"
+            className="grid h-11 w-11 place-items-center rounded-full text-white transition-[background-color,scale] hover:bg-white/7 active:scale-90 lg:hidden"
           >
-            <AnimatePresence mode="wait" initial={false}>
-              <motion.span
-                key={open ? 'close' : 'open'}
-                initial={{ rotate: -90, opacity: 0 }}
-                animate={{ rotate: 0, opacity: 1 }}
-                exit={{ rotate: 90, opacity: 0 }}
-                transition={{ duration: 0.16 }}
-              >
-                {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-              </motion.span>
-            </AnimatePresence>
+            <span aria-hidden className="relative block h-5 w-5">
+              {BARS.map((bar) => (
+                <motion.span
+                  key={bar.key}
+                  className={cn('absolute left-0.5 top-1/2 -mt-px h-0.5 rounded-full bg-current', bar.className)}
+                  initial={false}
+                  animate={open ? bar.open : bar.closed}
+                  transition={BAR_SPRING}
+                />
+              ))}
+            </span>
           </button>
         </div>
+
+        {/* Reading progress: a wire along the pill's bottom edge, on the straight part between the rounded ends. */}
+        <motion.span
+          aria-hidden
+          className={cn(
+            'pointer-events-none absolute -bottom-px left-8 right-8 h-px origin-left rounded-full shadow-glow-signal transition-opacity duration-500',
+            scrolled ? 'opacity-100' : 'opacity-0',
+          )}
+          style={{ scaleX: progress, backgroundImage: 'var(--gradient-spectrum)' }}
+        />
       </motion.nav>
 
       <AnimatePresence>

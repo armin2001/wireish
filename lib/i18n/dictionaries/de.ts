@@ -36,6 +36,7 @@ const de: Dictionary = {
     company: 'Unternehmen',
     legal: 'Rechtliches',
     howItWorks: 'So funktioniert es',
+    liveDemo: 'Live-Demo',
     faq: 'FAQ',
     team: 'Unser Team',
     careers: 'Karriere',
@@ -46,6 +47,10 @@ const de: Dictionary = {
     instagram: 'Wireish auf Instagram',
     linkedin: 'Wireish auf LinkedIn',
     x: 'Wireish auf X',
+    cta: {
+      title: 'Bereit, Ihren Kundenservice auf Autopilot zu stellen?',
+      body: 'Buchen Sie ein 30-minütiges Gespräch. Wir zeigen Ihnen einen Agenten, der auf Ihre eigene Website trainiert ist, und planen dann gemeinsam Ihr Projekt.',
+    },
   },
   loader: {
     label: 'Wireish wird geladen',
@@ -60,23 +65,42 @@ const de: Dictionary = {
   },
   home: {
     hero: {
-      lines: ['Ihr KI-Agent,', 'verbunden mit jedem', 'Kanal.'],
-      body: 'Wireish baut und betreibt KI-Agenten, die Kunden auf Ihrer Website, auf Instagram und WhatsApp antworten. Sie sind auf Ihr Unternehmen trainiert und übergeben das Gespräch an Ihr Team, wenn ein Mensch gebraucht wird.',
-      secondary: 'Setup skizzieren',
+      eyebrow: 'Von unserem Team gebaut, trainiert und betrieben',
+      lines: ['Support automatisieren.', 'Vertrieb skalieren.'],
+      highlight: '24/7.',
+      body: 'Wireish KI-Agenten beantworten jede Kundenanfrage auf Ihrer Website, auf Instagram und WhatsApp in Sekunden. Sie qualifizieren Leads, buchen Termine und übergeben knifflige Gespräche an Ihr Team. So gewinnen Sie jede Woche Stunden zurück, und keine Anfrage wartet bis Montag.',
+      primary: 'Jetzt starten',
+      secondary: 'Live-Demo ansehen',
       answersOn: 'Antwortet auf',
-      hint: 'Klicken Sie auf einen Kanal, um eine Testnachricht zu senden',
-      scene: {
-        website: 'Website-Chat',
-        instagram: 'Instagram-DMs',
-        whatsapp: 'WhatsApp Business',
-        knowledge: 'Wissensbasis',
-        crm: 'CRM',
-        team: 'Ihr Team',
+      mockup: {
+        label: 'Vorschau: Um 21:47 beantwortet ein Wireish-Agent eine WhatsApp-Nachricht, bucht einen Termin und legt den neuen Patienten im CRM an.',
+        title: 'Live-Posteingang',
+        online: 'Online',
+        channel: 'WhatsApp',
+        time: '21:47',
+        agent: 'Wireish-Agent',
+        customer: 'Hallo! Haben Sie diese Woche noch einen Termin für eine Zahnreinigung frei? Am liebsten nach 17 Uhr.',
+        reply: 'Ja! Donnerstag um 17:30 oder Freitag um 18:00 sind frei. Welchen Termin darf ich für Sie buchen?',
+        customer2: 'Donnerstag, bitte!',
+        autopilot: 'Ihr Agent übernimmt diesen Chat',
+        booked: 'Termin gebucht',
+        bookedDetail: 'Donnerstag · 17:30',
+        lead: 'Neuer Patient',
+        leadDetail: 'In Ihrem CRM angelegt',
       },
     },
-    services: {
-      title: 'Ein Agent auf den Kanälen, die Ihre Kunden schon nutzen.',
-      body: 'Wir richten ihn ein, trainieren ihn auf Ihr Unternehmen und verbessern ihn laufend. Sie bekommen die Gespräche, die Leads und die Buchungen.',
+    demo: {
+      title: 'Stellen Sie eine Frage. Sehen Sie, wie er antwortet.',
+      body: 'Das ist ein echter Wireish-Agent, genau die Art, die wir für Sie bauen. Fragen Sie ihn nach unseren Leistungen, Preisen oder wie schnell Sie live gehen können. Ihrer wäre auf Ihre eigene Website, Ihren Katalog und Ihre Richtlinien trainiert.',
+      points: [
+        'Antwortet mit Ihren Inhalten, im Ton Ihrer Marke',
+        'Stellt die richtigen Rückfragen, um jeden Lead zu qualifizieren',
+        'Übergibt das Gespräch an Ihr Team, wenn ein Mensch gebraucht wird',
+      ],
+      label: 'Chat mit dem Wireish-Agenten',
+      loading: 'Verbindung zum Agenten wird hergestellt',
+      error: 'Der Chat konnte nicht geladen werden. Möglicherweise blockiert ihn eine Browser-Erweiterung oder eine Netzwerkeinstellung.',
+      note: 'Live-KI-Agent. Bitte geben Sie im Chat keine sensiblen persönlichen Daten ein.',
     },
     teaser: {
       title: 'Skizzieren Sie Ihr Setup, bevor wir es bauen.',
@@ -113,32 +137,45 @@ const de: Dictionary = {
         },
       ],
     },
-    benefits: {
-      title: 'Warum Unternehmen Wireish wählen',
-      body: 'Automatisierung, die schneller antwortet, weniger kostet als Personal für jede Spitze und trotzdem nach Ihnen klingt.',
-      items: [
-        {
-          title: 'Rund um die Uhr erreichbar',
-          body: 'Ihr Agent beantwortet Fragen, qualifiziert Leads und vereinbart Termine zu jeder Uhrzeit, damit keine Anfrage bis Montag wartet.',
-        },
-        { title: 'Antworten in Sekunden', body: 'Kunden erhalten auf jedem Kanal sofort präzise Antworten, statt in einer Warteschlange zu stehen.' },
-        {
-          title: 'Geringere Supportkosten',
-          body: 'Wiederkehrende Fragen werden für Sie erledigt, damit sich Ihr Team auf komplexe Fälle und Abschlüsse konzentrieren kann.',
-        },
-        {
-          title: 'Klingt nach Ihrer Marke',
-          body: 'Trainiert auf Ihren Tonfall, Ihren Produktkatalog und Ihre Richtlinien, damit Antworten klingen, als hätte Ihr Team sie geschrieben.',
-        },
-        {
-          title: 'Meistert Spitzenlasten',
-          body: 'Hunderte Gespräche gleichzeitig bei Launches oder Aktionen, ohne zusätzliches Supportpersonal.',
-        },
-        {
-          title: 'Sicherheit auf Enterprise-Niveau',
-          body: 'Ihre Daten und die Gespräche Ihrer Kunden sind durch führende Sicherheits- und Datenschutzprotokolle geschützt.',
-        },
-      ],
+    features: {
+      title: 'Alles, was ein großartiges Support-Team leistet. Ohne Warteschlange.',
+      body: 'Ein Agent, der Ihr Unternehmen kennt, auf jedem Kanal antwortet und weiß, wann ein Mensch übernehmen sollte.',
+      training: {
+        title: 'Auf Ihr Unternehmen trainiert',
+        body: 'Wir trainieren Ihren Agenten auf Ihre Website, Ihren Produktkatalog, PDFs und frühere Gespräche. So antwortet er mit Ihren Fakten und in Ihrem Ton.',
+        sources: ['Website', 'Produktkatalog', 'PDF-Dokumente', 'Frühere Chats'],
+        agent: 'Ihr Agent',
+      },
+      always: {
+        title: 'Wach um 3 Uhr nachts',
+        body: 'Nachts, am Wochenende und an Feiertagen: Jede Nachricht bekommt in Sekunden eine Antwort.',
+        time: '03:12',
+        event: 'Lead erfasst',
+      },
+      handoff: {
+        title: 'Nahtlose Übergabe an Menschen',
+        body: 'Ein komplexer Fall oder ein wichtiger Kunde? Der Agent benachrichtigt Ihr Team per E-Mail oder Slack und übergibt den vollständigen Kontext.',
+        bubble: 'Dafür braucht es eine Fachperson. Ich verbinde Sie jetzt mit unserem Team.',
+        alert: 'Neue Übergabe',
+        alertDetail: 'An Slack und E-Mail gesendet',
+      },
+      channels: {
+        title: 'Omnichannel vom ersten Tag an',
+        body: 'Website-Chat, Instagram-DMs und WhatsApp teilen sich ein Gedächtnis für jeden Kunden, niemand muss sich wiederholen.',
+      },
+      security: {
+        title: 'Standardmäßig privat',
+        body: 'Gespräche und Trainingsdaten sind bei der Übertragung und im Ruhezustand verschlüsselt und werden nie weitergegeben.',
+        transit: 'Bei Übertragung',
+        rest: 'Im Ruhezustand',
+      },
+      analytics: {
+        title: 'Analyse-Dashboard',
+        body: 'Sehen Sie, was Kunden fragen, wie viele Gespräche der Agent selbst löst und welche davon zu Leads werden.',
+        resolved: 'Vom Agenten gelöst',
+        team: 'An Ihr Team übergeben',
+        example: 'Beispieldaten',
+      },
     },
     faq: {
       title: 'Antworten auf Ihre Fragen',
@@ -166,10 +203,6 @@ const de: Dictionary = {
           a: 'Überhaupt nicht. Wir übernehmen 100 % der technischen Einrichtung, Wartung und laufenden Optimierung. Sie erhalten ein einfaches Dashboard oder direkte Berichte zur Leistung.',
         },
       ],
-    },
-    cta: {
-      title: 'Sehen Sie, wie er Ihren Kunden antwortet.',
-      body: 'Wählen Sie einen 30-minütigen Termin. Wir zeigen Ihnen einen Agenten, der auf Ihre eigene Website trainiert ist, und planen dann gemeinsam das Projekt.',
     },
   },
   services: {
@@ -448,9 +481,61 @@ const de: Dictionary = {
   pricing: {
     metaTitle: 'Preise',
     metaDescription:
-      'Wireish kalkuliert jeden KI-Agenten nach Ihrem Umfang statt nach festen Paketen. Schätzen Sie die gewonnenen Stunden und buchen Sie ein Gespräch für ein Angebot.',
-    title: 'Preis nach Umfang, nicht nach Paket',
-    body: 'Jedes Unternehmen arbeitet anders, deshalb verkaufen wir keine festen Pakete. Wir planen jeden Agenten nach Ihren Kanälen, Ihrem Volumen und Ihren Zielen und machen nach einem kurzen Gespräch ein Angebot.',
+      'Drei Wireish-Pakete, jeweils auf Ihre Kanäle und Ihr Gesprächsvolumen zugeschnitten und nach einem kurzen Gespräch angeboten. Schätzen Sie, wie viele Stunden Sie zurückgewinnen.',
+    title: 'Pakete, zugeschnitten auf Ihr Unternehmen',
+    body: 'Starten Sie mit dem Paket, das Ihren Kanälen und Ihrem Volumen am nächsten kommt. In einem 30-minütigen Gespräch passen wir es an Ihre Abläufe an und schicken Ihnen ein schriftliches Angebot.',
+    plans: {
+      title: 'Pakete, die mit Ihren Gesprächen wachsen',
+      body: 'Jedes Paket wird von unserem Team gebaut, trainiert und betrieben. Wählen Sie den Umfang, der heute passt; wir passen ihn in einem 30-minütigen Gespräch an und machen Ihnen ein schriftliches Angebot.',
+      billing: 'Abrechnungszeitraum',
+      monthly: 'Monatlich',
+      yearly: 'Jährlich',
+      popular: 'Am beliebtesten',
+      price: 'Individuelles Angebot',
+      cadence: { monthly: 'Angebot als monatliche Pauschale', yearly: 'Angebot als Jahresplan' },
+      volume: 'Gespräche pro Monat',
+      cta: 'Angebot anfordern',
+      includes: 'Enthalten',
+      compare: 'Unsicher, welches Paket passt?',
+      compareLink: 'Gewonnene Stunden schätzen',
+      tiers: {
+        starter: {
+          name: 'Starter',
+          tagline: 'Nehmen Sie Ihrem Team den meistgenutzten Kanal ab.',
+          volume: 'Bis 1.000',
+          features: [
+            'Ein Kanal: Website-Chat, Instagram oder WhatsApp',
+            'Trainiert auf Ihre Website und FAQ',
+            'Übergabe an Ihr Team per E-Mail',
+            'Monatlicher Leistungsbericht',
+          ],
+        },
+        growth: {
+          name: 'Growth',
+          tagline: 'Ein Agent, der Kunden überall dort antwortet, wo sie Ihnen schreiben.',
+          volume: '1.000 bis 5.000',
+          features: [
+            'Website, Instagram und WhatsApp mit einem gemeinsamen Gedächtnis',
+            'Trainiert auf Ihren Katalog, Ihre Dokumente und frühere Chats',
+            'Qualifizierte Leads und Buchungen direkt in CRM und Kalender',
+            'Übergabe an Ihr Team per E-Mail oder Slack',
+            'Monatliche Gesprächsauswertung und Verbesserungen',
+          ],
+        },
+        enterprise: {
+          name: 'Enterprise',
+          tagline: 'Für hohes Volumen, individuelle Abläufe und strenge Anforderungen.',
+          volume: '5.000+',
+          features: [
+            'Alle Kanäle, einschließlich Facebook Messenger',
+            'Individuelle Integrationen mit Ihren internen Tools und APIs',
+            'Eine feste Ansprechperson in unserem Team',
+            'Laufende Optimierung, während Ihr Traffic wächst',
+            'Sicherheits- und Datenprüfung mit Ihrer IT',
+          ],
+        },
+      },
+    },
     estimator: {
       title: 'Schätzen Sie die Zeit, die Sie zurückgewinnen',
       body: 'Stellen Sie die Regler auf Ihr Unternehmen ein. Das Ergebnis nutzt nur Ihre Werte.',
@@ -476,9 +561,6 @@ const de: Dictionary = {
       },
       { title: 'Feste Partnerschaft', body: 'Laufende Optimierung, Auswertung von Gesprächen und Skalierung, wenn Ihr Aufkommen wächst.' },
     ],
-    ctaTitle: 'Planen wir Ihren Agenten',
-    ctaBody: 'In einem 30-minütigen Gespräch sehen wir uns Ihre Abläufe an und schicken ein Angebot, das zu Ihren Zielen passt.',
-    ctaSecondary: 'Frage stellen',
   },
   team: {
     metaTitle: 'Unser Team',

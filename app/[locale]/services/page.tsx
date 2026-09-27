@@ -1,5 +1,4 @@
 import type { Metadata } from 'next';
-import DemoCta from '@/components/home/DemoCta';
 import { ServiceGrid } from '@/components/sections/Services';
 import { getDictionary } from '@/lib/i18n/get-dictionary';
 import { pageMetadata } from '@/lib/i18n/metadata';
@@ -26,9 +25,6 @@ export default async function ServicesPage({ params }: LocaleParams) {
           <p className="mt-6 text-lg leading-relaxed text-mist">{t.services.body}</p>
         </header>
         <ServiceGrid t={t} className="mt-14" />
-        <div className="mt-20">
-          <DemoCta t={t} />
-        </div>
       </div>
     </main>
   );

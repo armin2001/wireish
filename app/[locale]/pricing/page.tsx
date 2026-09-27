@@ -1,8 +1,7 @@
 import type { Metadata } from 'next';
 import { MessageSquare, ShieldCheck, Zap } from 'lucide-react';
-import { ButtonLink } from '@/components/ui/Button';
+import Pricing from '@/components/pricing/Pricing';
 import { ValueEstimator } from '@/components/pricing/ValueEstimator';
-import { DEMO_HREF } from '@/lib/content';
 import { getDictionary } from '@/lib/i18n/get-dictionary';
 import { pageMetadata } from '@/lib/i18n/metadata';
 import { localeFrom, type LocaleParams } from '@/lib/i18n/server';
@@ -35,7 +34,11 @@ export default async function PricingPage({ params }: LocaleParams) {
           <p className="mt-6 text-lg leading-relaxed text-mist">{t.pricing.body}</p>
         </header>
 
-        <div className="mt-14">
+        <div className="mt-16">
+          <Pricing embedded />
+        </div>
+
+        <div id="estimator" className="mt-28 scroll-mt-28">
           <ValueEstimator />
         </div>
 
@@ -57,20 +60,6 @@ export default async function PricingPage({ params }: LocaleParams) {
               );
             })}
           </ul>
-        </section>
-
-        <section className="glass-raised relative mt-24 overflow-hidden rounded-[2rem] px-8 py-14 text-center md:px-14">
-          <div className="wire-line absolute inset-x-0 top-0" aria-hidden />
-          <h2 className="font-display text-3xl font-semibold tracking-[-0.02em] text-white md:text-4xl">{t.pricing.ctaTitle}</h2>
-          <p className="mx-auto mt-4 max-w-xl text-lg text-mist">{t.pricing.ctaBody}</p>
-          <div className="mt-8 flex flex-wrap justify-center gap-3">
-            <ButtonLink href={DEMO_HREF} size="lg">
-              {t.common.bookDemo}
-            </ButtonLink>
-            <ButtonLink href="/contact" size="lg" variant="secondary">
-              {t.pricing.ctaSecondary}
-            </ButtonLink>
-          </div>
         </section>
       </div>
     </main>

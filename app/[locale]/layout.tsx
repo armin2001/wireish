@@ -6,10 +6,10 @@ import '../globals.css';
 import Navbar from '@/components/layout/Navbar';
 import { Footer } from '@/components/layout/Footer';
 import { HideOnRoutes } from '@/components/layout/HideOnRoutes';
+import { MotionProvider } from '@/components/layout/MotionProvider';
 import { TransitionProvider } from '@/components/layout/PageTransition';
 import { SplashScreen } from '@/components/layout/SplashScreen';
 import { SplashBootScript } from '@/components/layout/SplashBootScript';
-import { VoiceflowWidget } from '@/components/layout/VoiceflowWidget';
 import { ToastProvider } from '@/components/ui/Toaster';
 import { I18nProvider } from '@/lib/i18n/client';
 import { LOCALES, LOCALE_META } from '@/lib/i18n/config';
@@ -68,26 +68,27 @@ export default async function LocaleLayout({ children, params }: LocaleParams & 
       </head>
       <body className="font-sans">
         <I18nProvider locale={locale} dictionary={t}>
-          <SplashScreen />
-          <ToastProvider>
-            <TransitionProvider>
-              <a
-                href="#content"
-                className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[110] focus:rounded-full focus:bg-white focus:px-4 focus:py-2 focus:text-night"
-              >
-                {t.common.skipToContent}
-              </a>
-              <Navbar />
-              <div id="content" className="relative flex min-h-dvh flex-col">
-                {children}
-              </div>
-              <HideOnRoutes routes={['/canvas']}>
-                <Footer t={t} />
-              </HideOnRoutes>
-            </TransitionProvider>
-          </ToastProvider>
+          <MotionProvider>
+            <SplashScreen />
+            <ToastProvider>
+              <TransitionProvider>
+                <a
+                  href="#content"
+                  className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[110] focus:rounded-full focus:bg-white focus:px-4 focus:py-2 focus:text-night"
+                >
+                  {t.common.skipToContent}
+                </a>
+                <Navbar />
+                <div id="content" className="relative flex min-h-dvh flex-col">
+                  {children}
+                </div>
+                <HideOnRoutes routes={['/canvas']}>
+                  <Footer t={t} />
+                </HideOnRoutes>
+              </TransitionProvider>
+            </ToastProvider>
+          </MotionProvider>
         </I18nProvider>
-        <VoiceflowWidget />
         <Analytics />
       </body>
     </html>

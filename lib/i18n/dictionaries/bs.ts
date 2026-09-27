@@ -36,6 +36,7 @@ const bs: Dictionary = {
     company: 'Kompanija',
     legal: 'Pravno',
     howItWorks: 'Kako funkcioniše',
+    liveDemo: 'Demo uživo',
     faq: 'Česta pitanja',
     team: 'Naš tim',
     careers: 'Karijere',
@@ -46,6 +47,10 @@ const bs: Dictionary = {
     instagram: 'Wireish na Instagramu',
     linkedin: 'Wireish na LinkedInu',
     x: 'Wireish na X-u',
+    cta: {
+      title: 'Spremni da korisničku podršku prebacite na autopilot?',
+      body: 'Zakažite poziv od 30 minuta. Pokazat ćemo vam agenta obučenog na vašoj web stranici, a zatim zajedno isplanirati vaš projekat.',
+    },
   },
   loader: {
     label: 'Učitavanje Wireisha',
@@ -60,23 +65,42 @@ const bs: Dictionary = {
   },
   home: {
     hero: {
-      lines: ['Vaš AI agent,', 'povezan na svaki', 'kanal.'],
-      body: 'Wireish gradi i vodi AI agente koji odgovaraju kupcima na vašoj web stranici, Instagramu i WhatsAppu. Obučeni su na vašem poslovanju i prepuštaju razgovor vašem timu kada je potrebna osoba.',
-      secondary: 'Mapirajte svoj sistem',
+      eyebrow: 'Gradi, obučava i vodi naš tim',
+      lines: ['Automatizujte podršku.', 'Povećajte prodaju.'],
+      highlight: '24/7.',
+      body: 'Wireish AI agenti za nekoliko sekundi odgovaraju svakom kupcu na vašoj web stranici, Instagramu i WhatsAppu. Kvalifikuju upite, zakazuju sastanke i složene razgovore prepuštaju vašem timu, pa svake sedmice dobijate sate nazad, a nijedan upit ne čeka do ponedjeljka.',
+      primary: 'Započnite',
+      secondary: 'Pogledajte demo uživo',
       answersOn: 'Odgovara na',
-      hint: 'Kliknite na kanal da pošaljete testnu poruku',
-      scene: {
-        website: 'Chat na web stranici',
-        instagram: 'Instagram poruke',
-        whatsapp: 'WhatsApp Business',
-        knowledge: 'Baza znanja',
-        crm: 'CRM',
-        team: 'Vaš tim',
+      mockup: {
+        label: 'Pregled: u 21:47 Wireish agent odgovara na WhatsApp poruku, zakazuje termin i dodaje novog pacijenta u CRM.',
+        title: 'Inbox uživo',
+        online: 'Na mreži',
+        channel: 'WhatsApp',
+        time: '21:47',
+        agent: 'Wireish agent',
+        customer: 'Zdravo! Ima li slobodan termin za čišćenje kamenca ove sedmice? Po mogućnosti poslije 17 sati.',
+        reply: 'Ima! Slobodni su četvrtak u 17:30 i petak u 18:00. Koji termin da vam rezervišem?',
+        customer2: 'Četvrtak, molim!',
+        autopilot: 'Vaš agent vodi ovaj razgovor',
+        booked: 'Termin zakazan',
+        bookedDetail: 'Četvrtak · 17:30',
+        lead: 'Novi pacijent',
+        leadDetail: 'Dodan u vaš CRM',
       },
     },
-    services: {
-      title: 'Jedan agent, na kanalima koje vaši kupci već koriste.',
-      body: 'Mi ga postavljamo, obučavamo na vašem poslovanju i stalno unapređujemo. Vi dobijate razgovore, upite i rezervacije.',
+    demo: {
+      title: 'Postavite pitanje. Pogledajte kako odgovara.',
+      body: 'Ovo je Wireish agent uživo, iste vrste kakvog gradimo za vas. Pitajte ga o našim uslugama, cijenama ili o tome koliko brzo možete krenuti. Vaš bi bio obučen na vašoj web stranici, katalogu i pravilima.',
+      points: [
+        'Odgovara na osnovu vašeg sadržaja, u tonu vašeg brenda',
+        'Postavlja prava dodatna pitanja da kvalifikuje svaki upit',
+        'Prepušta razgovor vašem timu kada je potrebna osoba',
+      ],
+      label: 'Razgovor s Wireish agentom',
+      loading: 'Povezivanje s agentom',
+      error: 'Chat se nije mogao učitati. Možda ga blokira proširenje preglednika ili mrežna postavka.',
+      note: 'AI agent uživo. Molimo vas da u chat ne unosite osjetljive lične podatke.',
     },
     teaser: {
       title: 'Skicirajte svoj sistem prije nego što ga izgradimo.',
@@ -113,32 +137,45 @@ const bs: Dictionary = {
         },
       ],
     },
-    benefits: {
-      title: 'Zašto kompanije biraju Wireish',
-      body: 'Automatizacija koja odgovara brže, košta manje od zapošljavanja za svaku gužvu i i dalje zvuči kao vi.',
-      items: [
-        {
-          title: 'Dostupan u svako doba',
-          body: 'Vaš agent odgovara na pitanja, kvalifikuje upite i zakazuje termine u bilo koje doba, pa nijedan upit ne čeka ponedjeljak.',
-        },
-        { title: 'Odgovori za nekoliko sekundi', body: 'Kupci odmah dobijaju precizne odgovore na svakom kanalu umjesto čekanja u redu.' },
-        {
-          title: 'Niži troškovi podrške',
-          body: 'Ponavljajuća pitanja rješavaju se umjesto vas, pa se vaš tim može fokusirati na složene slučajeve i zaključivanje poslova.',
-        },
-        {
-          title: 'Zvuči kao vaš brend',
-          body: 'Obučen na vašem tonu, katalogu proizvoda i smjernicama, pa odgovori zvuče kao da ih je napisao vaš tim.',
-        },
-        {
-          title: 'Podnosi velike gužve',
-          body: 'Stotine razgovora istovremeno tokom lansiranja ili akcija, bez dodatnog osoblja za podršku.',
-        },
-        {
-          title: 'Sigurnost na nivou velikih kompanija',
-          body: 'Vaši podaci i razgovori vaših kupaca zaštićeni su vrhunskim sigurnosnim protokolima i protokolima privatnosti.',
-        },
-      ],
+    features: {
+      title: 'Sve što radi odličan tim podrške. Bez čekanja u redu.',
+      body: 'Jedan agent koji poznaje vaše poslovanje, odgovara na svim kanalima i zna kada treba uključiti osobu.',
+      training: {
+        title: 'Obučen na vašem poslovanju',
+        body: 'Agenta obučavamo na vašoj web stranici, katalogu proizvoda, PDF dokumentima i ranijim razgovorima, pa odgovara vašim činjenicama i u vašem tonu.',
+        sources: ['Web stranica', 'Katalog proizvoda', 'PDF dokumenti', 'Raniji razgovori'],
+        agent: 'Vaš agent',
+      },
+      always: {
+        title: 'Budan u 3 ujutro',
+        body: 'Noću, vikendom i praznicima: svaka poruka dobije odgovor za nekoliko sekundi.',
+        time: '03:12',
+        event: 'Upit zabilježen',
+      },
+      handoff: {
+        title: 'Glatka predaja ljudima',
+        body: 'Složen slučaj ili važan kupac? Agent obavještava vaš tim emailom ili putem Slacka i prenosi cijeli kontekst.',
+        bubble: 'Za ovo je potreban stručnjak. Povezujem vas s našim timom.',
+        alert: 'Nova predaja',
+        alertDetail: 'Poslano na Slack i email',
+      },
+      channels: {
+        title: 'Svi kanali od prvog dana',
+        body: 'Chat na web stranici, Instagram poruke i WhatsApp dijele jedno pamćenje o svakom kupcu, pa niko ništa ne mora ponavljati.',
+      },
+      security: {
+        title: 'Privatnost kao standard',
+        body: 'Razgovori i podaci za obuku šifrirani su u prijenosu i u mirovanju i nikada se ne dijele.',
+        transit: 'U prijenosu',
+        rest: 'U mirovanju',
+      },
+      analytics: {
+        title: 'Analitička kontrolna tabla',
+        body: 'Pratite šta kupci pitaju, koliko razgovora agent riješi sam i koji od njih donesu nove upite.',
+        resolved: 'Riješio agent',
+        team: 'Predano vašem timu',
+        example: 'Primjer podataka',
+      },
     },
     faq: {
       title: 'Odgovori na vaša pitanja',
@@ -166,10 +203,6 @@ const bs: Dictionary = {
           a: 'Nimalo. Mi preuzimamo 100% tehničkog postavljanja, održavanja i stalne optimizacije. Vi dobijate jednostavan pregled ili direktne izvještaje o rezultatima.',
         },
       ],
-    },
-    cta: {
-      title: 'Pogledajte kako odgovara vašim kupcima.',
-      body: 'Izaberite termin od 30 minuta. Pokazat ćemo vam agenta obučenog na vašoj web stranici, a zatim s vama definisati obim posla.',
     },
   },
   services: {
@@ -448,9 +481,61 @@ const bs: Dictionary = {
   pricing: {
     metaTitle: 'Cijene',
     metaDescription:
-      'Wireish svakom AI agentu određuje cijenu prema obimu posla, bez fiksnih paketa. Procijenite koliko sati dobijate nazad, a zatim zakažite poziv za ponudu.',
-    title: 'Cijena prema vašem obimu, ne prema paketu',
-    body: 'Svaka kompanija ima drugačije procese, zato ne prodajemo fiksne pakete. Svakog agenta prilagođavamo vašim kanalima, obimu i ciljevima, a ponudu šaljemo nakon kratkog poziva.',
+      'Tri Wireish paketa, svaki prilagođen vašim kanalima i broju razgovora, s ponudom nakon kratkog poziva. Procijenite koliko sati dobijate nazad.',
+    title: 'Paketi prilagođeni vašem poslovanju',
+    body: 'Krenite od paketa koji je najbliži vašim kanalima i obimu. Na pozivu od 30 minuta prilagodimo ga vašim procesima, a zatim vam pošaljemo pisanu ponudu.',
+    plans: {
+      title: 'Paketi koji rastu s vašim razgovorima',
+      body: 'Svaki paket gradi, obučava i vodi naš tim. Odaberite obim koji vam danas odgovara; prilagodimo ga na pozivu od 30 minuta i pošaljemo pisanu ponudu.',
+      billing: 'Period naplate',
+      monthly: 'Mjesečno',
+      yearly: 'Godišnje',
+      popular: 'Najpopularnije',
+      price: 'Ponuda po mjeri',
+      cadence: { monthly: 'Ponuda kao mjesečni paušal', yearly: 'Ponuda kao godišnji plan' },
+      volume: 'razgovora mjesečno',
+      cta: 'Zatražite ponudu',
+      includes: 'Uključuje',
+      compare: 'Niste sigurni koji paket vam odgovara?',
+      compareLink: 'Procijenite koliko sati dobijate nazad',
+      tiers: {
+        starter: {
+          name: 'Starter',
+          tagline: 'Rasteretite tim na kanalu s najviše poruka.',
+          volume: 'Do 1.000',
+          features: [
+            'Jedan kanal: chat na web stranici, Instagram ili WhatsApp',
+            'Obuka na vašoj web stranici i čestim pitanjima',
+            'Predaja vašem timu putem emaila',
+            'Mjesečni izvještaj o učinku',
+          ],
+        },
+        growth: {
+          name: 'Growth',
+          tagline: 'Jedan agent koji odgovara kupcima gdje god vam pišu.',
+          volume: '1.000 do 5.000',
+          features: [
+            'Web stranica, Instagram i WhatsApp s jednim zajedničkim pamćenjem',
+            'Obuka na vašem katalogu, dokumentima i ranijim razgovorima',
+            'Kvalifikovani upiti i rezervacije idu u vaš CRM i kalendar',
+            'Predaja vašem timu putem emaila ili Slacka',
+            'Mjesečni pregled razgovora i poboljšanja',
+          ],
+        },
+        enterprise: {
+          name: 'Enterprise',
+          tagline: 'Za veliki obim, prilagođene procese i stroge zahtjeve.',
+          volume: '5.000+',
+          features: [
+            'Svi kanali, uključujući Facebook Messenger',
+            'Prilagođene integracije s vašim internim alatima i API-jima',
+            'Posebna kontakt osoba u našem timu',
+            'Stalna optimizacija kako vaš promet raste',
+            'Pregled sigurnosti i podataka s vašim IT timom',
+          ],
+        },
+      },
+    },
     estimator: {
       title: 'Procijenite koliko vremena dobijate nazad',
       body: 'Pomjerite klizače prema svom poslovanju. Rezultat koristi samo brojeve koje postavite.',
@@ -476,9 +561,6 @@ const bs: Dictionary = {
       },
       { title: 'Posvećeno partnerstvo', body: 'Stalna optimizacija, pregledi razgovora i skaliranje kako vaš promet raste.' },
     ],
-    ctaTitle: 'Hajde da definišemo vašeg agenta',
-    ctaBody: 'U pozivu od 30 minuta pogledamo vaše procese i pošaljemo ponudu koja odgovara vašim ciljevima.',
-    ctaSecondary: 'Postavite pitanje',
   },
   team: {
     metaTitle: 'Naš tim',

@@ -49,8 +49,8 @@ export function SplashScreen() {
   };
 
   if (seen || finished) return null;
-  // The home hero and the booking panel render the 3D scene: fetch it while the splash plays.
-  return <SplashOverlay preloadScene={path === '/' || path === '/book-a-demo'} onDone={finish} />;
+  // The booking panel renders the 3D scene: fetch it while the splash plays.
+  return <SplashOverlay preloadScene={path === '/book-a-demo'} onDone={finish} />;
 }
 
 function SplashOverlay({ preloadScene, onDone }: { preloadScene: boolean; onDone: () => void }) {

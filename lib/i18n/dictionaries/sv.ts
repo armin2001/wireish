@@ -36,6 +36,7 @@ const sv: Dictionary = {
     company: 'Företaget',
     legal: 'Juridik',
     howItWorks: 'Så fungerar det',
+    liveDemo: 'Livedemo',
     faq: 'Vanliga frågor',
     team: 'Vårt team',
     careers: 'Karriär',
@@ -46,6 +47,10 @@ const sv: Dictionary = {
     instagram: 'Wireish på Instagram',
     linkedin: 'Wireish på LinkedIn',
     x: 'Wireish på X',
+    cta: {
+      title: 'Redo att sätta din kundservice på autopilot?',
+      body: 'Boka ett samtal på 30 minuter. Vi visar en agent som är tränad på din egen webbplats och planerar sedan bygget tillsammans med dig.',
+    },
   },
   loader: {
     label: 'Laddar Wireish',
@@ -60,23 +65,42 @@ const sv: Dictionary = {
   },
   home: {
     hero: {
-      lines: ['Din AI-agent,', 'kopplad till varje', 'kanal.'],
-      body: 'Wireish bygger och driver AI-agenter som svarar kunder på din webbplats, Instagram och WhatsApp. De är tränade på din verksamhet och lämnar över samtalet till ditt team när en människa behövs.',
-      secondary: 'Rita upp din lösning',
+      eyebrow: 'Byggd, tränad och driven av vårt team',
+      lines: ['Automatisera supporten.', 'Skala försäljningen.'],
+      highlight: '24/7.',
+      body: 'Wireish AI-agenter svarar varje kund på din webbplats, Instagram och WhatsApp på några sekunder. De kvalificerar leads, bokar möten och lämnar över de kluriga samtalen till ditt team, så att du vinner tillbaka timmar varje vecka och ingen förfrågan får vänta till måndag.',
+      primary: 'Kom igång',
+      secondary: 'Se livedemo',
       answersOn: 'Svarar på',
-      hint: 'Klicka på en kanal för att skicka ett testmeddelande',
-      scene: {
-        website: 'Chatt på webbplatsen',
-        instagram: 'Instagram-DM',
-        whatsapp: 'WhatsApp Business',
-        knowledge: 'Kunskapsbas',
-        crm: 'CRM',
-        team: 'Ditt team',
+      mockup: {
+        label: 'Förhandsvisning: klockan 21:47 svarar en Wireish-agent på ett WhatsApp-meddelande, bokar en tid och lägger in den nya patienten i CRM:et.',
+        title: 'Inkorg live',
+        online: 'Online',
+        channel: 'WhatsApp',
+        time: '21:47',
+        agent: 'Wireish-agent',
+        customer: 'Hej! Finns det någon tid för tandrengöring den här veckan? Gärna efter 17.',
+        reply: 'Ja! Torsdag 17:30 eller fredag 18:00 är lediga. Vilken ska jag boka åt dig?',
+        customer2: 'Torsdag, tack!',
+        autopilot: 'Din agent sköter den här chatten',
+        booked: 'Tid bokad',
+        bookedDetail: 'Torsdag · 17:30',
+        lead: 'Ny patient',
+        leadDetail: 'Tillagd i ditt CRM',
       },
     },
-    services: {
-      title: 'En agent, i kanalerna dina kunder redan använder.',
-      body: 'Vi sätter upp den, tränar den på din verksamhet och förbättrar den löpande. Du får samtalen, leadsen och bokningarna.',
+    demo: {
+      title: 'Ställ en fråga. Se hur den svarar.',
+      body: 'Det här är en riktig Wireish-agent, samma sort som vi bygger åt dig. Fråga den om våra tjänster, priser eller hur snabbt du kan gå live. Din skulle vara tränad på din egen webbplats, din katalog och dina riktlinjer.',
+      points: [
+        'Svarar utifrån ditt innehåll, med ditt varumärkes ton',
+        'Ställer rätt följdfrågor för att kvalificera varje lead',
+        'Lämnar över samtalet till ditt team när en människa behövs',
+      ],
+      label: 'Chatt med Wireish-agenten',
+      loading: 'Ansluter till agenten',
+      error: 'Chatten kunde inte laddas. Ett webbläsartillägg eller en nätverksinställning kan blockera den.',
+      note: 'AI-agent live. Dela inte känsliga personuppgifter i chatten.',
     },
     teaser: {
       title: 'Skissa din lösning innan vi bygger den.',
@@ -113,32 +137,45 @@ const sv: Dictionary = {
         },
       ],
     },
-    benefits: {
-      title: 'Därför väljer företag Wireish',
-      body: 'Automatisering som svarar snabbare, kostar mindre än att anställa för varje topp och fortfarande låter som ni.',
-      items: [
-        {
-          title: 'Tillgänglig dygnet runt',
-          body: 'Din agent svarar på frågor, kvalificerar leads och bokar möten när som helst, så ingen förfrågan behöver vänta till måndag.',
-        },
-        { title: 'Svar på sekunder', body: 'Kunderna får exakta svar direkt i varje kanal i stället för att stå i kö.' },
-        {
-          title: 'Lägre supportkostnader',
-          body: 'Återkommande frågor hanteras åt dig, så att teamet kan fokusera på svåra ärenden och affärer.',
-        },
-        {
-          title: 'Låter som ert varumärke',
-          body: 'Tränad på ert tonläge, er produktkatalog och era riktlinjer, så att svaren låter som om teamet skrivit dem.',
-        },
-        {
-          title: 'Klarar trafiktoppar',
-          body: 'Hundratals samtal samtidigt vid lanseringar och kampanjer, utan extra supportpersonal.',
-        },
-        {
-          title: 'Säkerhet i företagsklass',
-          body: 'Era data och kundernas samtal skyddas av ledande protokoll för säkerhet och integritet.',
-        },
-      ],
+    features: {
+      title: 'Allt ett riktigt bra supportteam gör. Utan kön.',
+      body: 'En agent som kan din verksamhet, svarar i alla kanaler och vet när en människa ska ta över.',
+      training: {
+        title: 'Tränad på din verksamhet',
+        body: 'Vi tränar din agent på din webbplats, produktkatalog, PDF:er och tidigare samtal, så att den svarar med dina fakta och i din ton.',
+        sources: ['Webbplats', 'Produktkatalog', 'PDF-dokument', 'Tidigare chattar'],
+        agent: 'Din agent',
+      },
+      always: {
+        title: 'Vaken klockan 3 på natten',
+        body: 'Nätter, helger och helgdagar: varje meddelande får svar på några sekunder.',
+        time: '03:12',
+        event: 'Lead fångad',
+      },
+      handoff: {
+        title: 'Smidig överlämning till människor',
+        body: 'Ett komplext ärende eller en viktig kund? Agenten meddelar ditt team via e-post eller Slack och skickar med hela sammanhanget.',
+        bubble: 'Det här behöver en specialist. Jag kopplar dig till vårt team nu.',
+        alert: 'Ny överlämning',
+        alertDetail: 'Skickad till Slack och e-post',
+      },
+      channels: {
+        title: 'Alla kanaler från dag ett',
+        body: 'Webbchatt, Instagram-DM och WhatsApp delar ett minne av varje kund, så ingen behöver upprepa sig.',
+      },
+      security: {
+        title: 'Privat som standard',
+        body: 'Samtal och träningsdata krypteras under överföring och i vila, och delas aldrig.',
+        transit: 'Vid överföring',
+        rest: 'I vila',
+      },
+      analytics: {
+        title: 'Analyspanel',
+        body: 'Se vad kunderna frågar, hur många samtal agenten löser själv och vilka som blir leads.',
+        resolved: 'Lösta av agenten',
+        team: 'Överlämnade till ditt team',
+        example: 'Exempeldata',
+      },
     },
     faq: {
       title: 'Svar på dina frågor',
@@ -166,10 +203,6 @@ const sv: Dictionary = {
           a: 'Inte alls. Vi sköter 100 % av den tekniska uppsättningen, underhållet och den löpande optimeringen. Du får en enkel översikt eller direkta rapporter om resultaten.',
         },
       ],
-    },
-    cta: {
-      title: 'Se den svara dina kunder.',
-      body: 'Välj en tid på 30 minuter. Vi visar en agent som tränats på din egen webbplats och planerar sedan bygget tillsammans med dig.',
     },
   },
   services: {
@@ -448,9 +481,61 @@ const sv: Dictionary = {
   pricing: {
     metaTitle: 'Priser',
     metaDescription:
-      'Wireish prissätter varje AI-agent efter ert behov i stället för fasta paket. Uppskatta hur många timmar ni får tillbaka och boka sedan ett samtal för en offert.',
-    title: 'Pris efter ert behov, inte efter paket',
-    body: 'Alla företag arbetar olika, därför säljer vi inga fasta paket. Vi utformar varje agent efter era kanaler, er volym och era mål och skickar en offert efter ett kort samtal.',
+      'Tre Wireish-paket, vart och ett anpassat efter dina kanaler och din samtalsvolym och offererat efter ett kort samtal. Uppskatta hur många timmar du får tillbaka.',
+    title: 'Paket anpassade efter din verksamhet',
+    body: 'Börja med paketet som ligger närmast dina kanaler och din volym. Vi anpassar det efter dina arbetsflöden under ett samtal på 30 minuter och skickar sedan en skriftlig offert.',
+    plans: {
+      title: 'Paket som växer med dina samtal',
+      body: 'Varje paket byggs, tränas och drivs av vårt team. Välj den omfattning som passar i dag; vi anpassar den under ett samtal på 30 minuter och lämnar en skriftlig offert.',
+      billing: 'Faktureringsperiod',
+      monthly: 'Månadsvis',
+      yearly: 'Årsvis',
+      popular: 'Populärast',
+      price: 'Offert efter behov',
+      cadence: { monthly: 'Offereras som månadsavgift', yearly: 'Offereras som årsavtal' },
+      volume: 'samtal i månaden',
+      cta: 'Begär offert',
+      includes: 'Ingår',
+      compare: 'Osäker på vilket paket som passar?',
+      compareLink: 'Uppskatta timmarna du får tillbaka',
+      tiers: {
+        starter: {
+          name: 'Starter',
+          tagline: 'Avlasta ditt team i den mest belastade kanalen.',
+          volume: 'Upp till 1 000',
+          features: [
+            'En kanal: webbchatt, Instagram eller WhatsApp',
+            'Tränad på din webbplats och dina vanliga frågor',
+            'Överlämning till ditt team via e-post',
+            'Månatlig resultatrapport',
+          ],
+        },
+        growth: {
+          name: 'Growth',
+          tagline: 'En agent som svarar kunder var de än skriver till dig.',
+          volume: '1 000 till 5 000',
+          features: [
+            'Webbplats, Instagram och WhatsApp med ett gemensamt minne',
+            'Tränad på din katalog, dina dokument och tidigare chattar',
+            'Kvalificerade leads och bokningar direkt i ditt CRM och din kalender',
+            'Överlämning till ditt team via e-post eller Slack',
+            'Månatlig genomgång av samtal och förbättringar',
+          ],
+        },
+        enterprise: {
+          name: 'Enterprise',
+          tagline: 'För stor volym, anpassade flöden och höga krav.',
+          volume: '5 000+',
+          features: [
+            'Alla kanaler, inklusive Facebook Messenger',
+            'Anpassade integrationer med dina interna verktyg och API:er',
+            'En dedikerad kontaktperson i vårt team',
+            'Löpande optimering i takt med att trafiken växer',
+            'Säkerhets- och datagenomgång med ditt IT-team',
+          ],
+        },
+      },
+    },
     estimator: {
       title: 'Uppskatta tiden ni får tillbaka',
       body: 'Anpassa reglagen efter er verksamhet. Resultatet bygger bara på värdena ni anger.',
@@ -476,9 +561,6 @@ const sv: Dictionary = {
       },
       { title: 'Ett nära partnerskap', body: 'Löpande optimering, genomgång av samtal och skalning i takt med att trafiken växer.' },
     ],
-    ctaTitle: 'Låt oss utforma din agent',
-    ctaBody: 'Under ett samtal på 30 minuter går vi igenom era arbetsflöden och skickar en offert som passar era mål.',
-    ctaSecondary: 'Ställ en fråga',
   },
   team: {
     metaTitle: 'Vårt team',
