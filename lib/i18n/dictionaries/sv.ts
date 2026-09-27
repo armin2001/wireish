@@ -535,14 +535,6 @@ const sv: Dictionary = {
     privacy: { title: 'Integritetspolicy', description: 'Hur Wireish hanterar data på webbplatsen, i AI-agenter och integrationer.' },
     terms: { title: 'Användarvillkor', description: 'Villkoren för användning av Wireish webbplats, AI-agenter och integrationer.' },
   },
-  helix: {
-    eyebrow: 'AI-agenter i alla kanaler',
-    badge: 'Alltid på',
-    badgeValue: '24/7',
-    body: 'Kundsamtal, exakta som en ritning. Våra AI-agenter svarar på din webbplats, Instagram och WhatsApp och lämnar över till ditt team när en människa behövs.',
-    tagsLabel: 'Det här sköter agenten',
-    tags: ['Svar dygnet runt', 'Kvalificering av leads', 'Bokningar', 'Överlämning'],
-  },
   notFound: {
     title: 'Den här tråden leder ingenstans.',
     code: 'Fel 404',

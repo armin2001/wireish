@@ -535,14 +535,6 @@ const fr: Dictionary = {
     privacy: { title: 'Politique de confidentialité', description: 'Comment Wireish traite les données sur son site, dans ses agents IA et ses intégrations.' },
     terms: { title: 'Conditions d’utilisation', description: 'Les conditions qui régissent l’utilisation du site, des agents IA et des intégrations Wireish.' },
   },
-  helix: {
-    eyebrow: 'Agents IA omnicanaux',
-    badge: 'Toujours actifs',
-    badgeValue: '24 h/24',
-    body: 'Des conversations clients conçues avec la précision d’un plan. Nos agents IA répondent sur votre site, Instagram et WhatsApp, et passent la main à votre équipe quand une personne est nécessaire.',
-    tagsLabel: 'Ce que l’agent prend en charge',
-    tags: ['Réponses 24 h/24', 'Qualification des prospects', 'Réservations', 'Transfert humain'],
-  },
   notFound: {
     title: 'Ce fil ne mène nulle part.',
     code: 'Erreur 404',

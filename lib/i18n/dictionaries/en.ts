@@ -537,14 +537,6 @@ const en = {
     privacy: { title: 'Privacy Policy', description: 'How Wireish handles data across its website, AI agents and integrations.' },
     terms: { title: 'Terms of Service', description: 'The terms that govern use of the Wireish website, AI agents and integrations.' },
   },
-  helix: {
-    eyebrow: 'Omnichannel AI agents',
-    badge: 'Always on',
-    badgeValue: '24/7',
-    body: 'Customer conversations, engineered like a blueprint. Our AI agents answer on your website, Instagram and WhatsApp, and hand off to your team when a person is needed.',
-    tagsLabel: 'What the agent handles',
-    tags: ['24/7 answers', 'Lead qualification', 'Bookings', 'Human handoff'],
-  },
   notFound: {
     title: 'This wire leads nowhere.',
     code: 'Error 404',

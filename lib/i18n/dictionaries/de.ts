@@ -535,14 +535,6 @@ const de: Dictionary = {
     privacy: { title: 'Datenschutzerklärung', description: 'Wie Wireish mit Daten auf der Website, in KI-Agenten und Integrationen umgeht.' },
     terms: { title: 'Nutzungsbedingungen', description: 'Die Bedingungen für die Nutzung der Wireish-Website, KI-Agenten und Integrationen.' },
   },
-  helix: {
-    eyebrow: 'KI-Agenten für alle Kanäle',
-    badge: 'Immer erreichbar',
-    badgeValue: '24/7',
-    body: 'Kundengespräche, präzise wie ein Bauplan. Unsere KI-Agenten antworten auf Ihrer Website, auf Instagram und WhatsApp und übergeben an Ihr Team, wenn ein Mensch gebraucht wird.',
-    tagsLabel: 'Was der Agent übernimmt',
-    tags: ['Antworten rund um die Uhr', 'Lead-Qualifizierung', 'Buchungen', 'Übergabe an Menschen'],
-  },
   notFound: {
     title: 'Dieser Draht führt ins Leere.',
     code: 'Fehler 404',

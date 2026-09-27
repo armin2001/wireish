@@ -535,14 +535,6 @@ const ko: Dictionary = {
     privacy: { title: '개인정보 처리방침', description: 'Wireish가 웹사이트, AI 에이전트, 연동에서 데이터를 처리하는 방식입니다.' },
     terms: { title: '이용약관', description: 'Wireish 웹사이트, AI 에이전트, 연동의 이용 조건입니다.' },
   },
-  helix: {
-    eyebrow: '옴니채널 AI 에이전트',
-    badge: '상시 운영',
-    badgeValue: '24/7',
-    body: '설계도처럼 정밀한 고객 응대. AI 에이전트가 웹사이트, 인스타그램, 왓츠앱에서 응답하고, 사람이 필요할 때는 팀에 대화를 넘깁니다.',
-    tagsLabel: '에이전트가 처리하는 일',
-    tags: ['24시간 응답', '잠재 고객 선별', '예약', '상담원 연결'],
-  },
   notFound: {
     title: '이 선은 어디에도 연결되어 있지 않습니다.',
     code: '오류 404',

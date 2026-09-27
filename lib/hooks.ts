@@ -21,20 +21,6 @@ export function useIdle(timeout = 1500): boolean {
   return idle;
 }
 
-function subscribeSplash(onChange: () => void) {
-  const observer = new MutationObserver(onChange);
-  observer.observe(document.documentElement, { attributes: true, attributeFilter: ['data-splash'] });
-  return () => observer.disconnect();
-}
-
-/**
- * True once the first-visit splash (components/layout/SplashScreen) is gone, so entrance
- * animations play where they can be seen instead of underneath it.
- */
-export function useSplashDone(): boolean {
-  return useSyncExternalStore(subscribeSplash, () => document.documentElement.dataset.splash !== 'active', () => false);
-}
-
 /** Platform check for rendering the right modifier key (⌘ vs Ctrl). */
 export function useIsMac(): boolean {
   return useSyncExternalStore(

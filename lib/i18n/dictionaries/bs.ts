@@ -535,14 +535,6 @@ const bs: Dictionary = {
     privacy: { title: 'Politika privatnosti', description: 'Kako Wireish postupa s podacima na web stranici, u AI agentima i integracijama.' },
     terms: { title: 'Uslovi korištenja', description: 'Uslovi koji uređuju korištenje Wireish web stranice, AI agenata i integracija.' },
   },
-  helix: {
-    eyebrow: 'AI agenti na svim kanalima',
-    badge: 'Uvijek aktivni',
-    badgeValue: '24/7',
-    body: 'Razgovori s kupcima, precizni kao nacrt. Naši AI agenti odgovaraju na vašoj web stranici, Instagramu i WhatsAppu, a razgovor prepuštaju vašem timu kada je potrebna osoba.',
-    tagsLabel: 'Šta agent obavlja',
-    tags: ['Odgovori 24/7', 'Kvalifikacija upita', 'Rezervacije', 'Predaja timu'],
-  },
   notFound: {
     title: 'Ova žica ne vodi nikuda.',
     code: 'Greška 404',

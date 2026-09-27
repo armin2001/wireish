@@ -73,13 +73,6 @@
   --animate-spark: spark 2.6s ease-out infinite;
 }
 
-/* `inline` puts the var() into the font-mono utility itself, so it resolves on the element:
-   pages that load JetBrains Mono set --font-jetbrains-mono on their own wrapper (see
-   app/[locale]/helix/page.tsx); everywhere else falls back to the system monospace. */
-@theme inline {
-  --font-mono: var(--font-jetbrains-mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace);
-}
-
 /* Keyframes live outside @theme so they are always emitted (utilities below use them too). */
 @keyframes wire-spin {
   to {
