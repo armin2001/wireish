@@ -1,6 +1,7 @@
 export const SITE = {
   name: 'Wireish',
-  url: 'https://wireish.com',
+  // The live host: Vercel redirects wireish.com here, so canonical, hreflang and sitemap URLs must use it too.
+  url: 'https://www.wireish.com',
   // TODO: confirm this address has an inbox before launch (it is currently the Resend "from" identity).
   email: 'contact@wireish.com',
   instagram: 'https://www.instagram.com/wireish/',

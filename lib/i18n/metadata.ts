@@ -1,7 +1,8 @@
 import type { Metadata } from 'next';
+import { SITE } from '@/lib/content';
 import { LOCALES, LOCALE_META, type Locale } from './config';
 
-export const SITE_URL = 'https://wireish.com';
+export const SITE_URL = SITE.url;
 
 /** Share image for every page. Set here, not as a file convention: a page's openGraph would replace the layout's. */
 const SHARE_IMAGE = { url: '/og-image.jpg', width: 3000, height: 2000, alt: 'Wireish' };

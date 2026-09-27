@@ -10,6 +10,7 @@ import { Reveal } from '@/components/ui/Reveal';
 import { getDictionary } from '@/lib/i18n/get-dictionary';
 import { pageMetadata } from '@/lib/i18n/metadata';
 import { localeFrom, type LocaleParams } from '@/lib/i18n/server';
+import { homeStructuredData, jsonLd } from '@/lib/structured-data';
 
 export async function generateMetadata({ params }: LocaleParams): Promise<Metadata> {
   const locale = await localeFrom(params);
@@ -23,9 +24,11 @@ export async function generateMetadata({ params }: LocaleParams): Promise<Metada
  * is the footer's, shared with every page.
  */
 export default async function HomePage({ params }: LocaleParams) {
-  const t = await getDictionary(await localeFrom(params));
+  const locale = await localeFrom(params);
+  const t = await getDictionary(locale);
   return (
     <main>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLd(homeStructuredData(locale, t.meta.description)) }} />
       <Hero />
       <InteractiveChatDemo />
       <BentoFeatures />
