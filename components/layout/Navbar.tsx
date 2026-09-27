@@ -73,7 +73,7 @@ export default function Navbar() {
         animate={{ maxWidth: scrolled ? 1000 : 1152 }}
         transition={{ type: 'spring', stiffness: 260, damping: 32 }}
         className={cn(
-          'pointer-events-auto flex h-16 w-full items-center justify-between gap-3 rounded-full pl-5 pr-2 transition-[background-color,border-color,box-shadow] duration-300',
+          'pointer-events-auto flex h-16 w-full items-center justify-between gap-3 rounded-full pl-5 pr-2 lg:pr-3.5 transition-[background-color,border-color,box-shadow] duration-300',
           scrolled || open ? 'glass-overlay' : 'border border-transparent',
         )}
       >
@@ -193,7 +193,7 @@ export default function Navbar() {
                         href={link.href}
                         onClick={close}
                         aria-current={active ? 'page' : undefined}
-                        className="flex items-center justify-between rounded-2xl px-4 py-3.5 font-display text-lg text-white transition-[background-color,transform] duration-150 hover:bg-white/[0.06] active:scale-[0.98] aria-[current=page]:bg-white/[0.06]"
+                        className="flex items-center justify-between rounded-2xl px-4 py-3.5 font-display text-lg text-white transition-[background-color,transform] duration-150 hover:bg-white/6 active:scale-[0.98] aria-[current=page]:bg-white/6"
                       >
                         {t.nav[link.key]}
                         {active && <span className="h-1.5 w-1.5 rounded-full bg-signal shadow-glow-signal" />}
@@ -206,7 +206,7 @@ export default function Navbar() {
                     href="/careers"
                     onClick={close}
                     aria-current={isActive(path, '/careers') ? 'page' : undefined}
-                    className="flex items-center justify-between rounded-2xl px-4 py-3 text-mist transition-colors hover:bg-white/[0.06] hover:text-white aria-[current=page]:text-white"
+                    className="flex items-center justify-between rounded-2xl px-4 py-3 text-mist transition-colors hover:bg-white/6 hover:text-white aria-[current=page]:text-white"
                   >
                     <span className="flex items-center gap-2">
                       {t.footer.careers}
