@@ -535,6 +535,14 @@ const ja: Dictionary = {
     privacy: { title: 'プライバシーポリシー', description: 'Wireishのウェブサイト、AIエージェント、連携におけるデータの取り扱いについて。' },
     terms: { title: '利用規約', description: 'Wireishのウェブサイト、AIエージェント、連携の利用条件です。' },
   },
+  helix: {
+    eyebrow: 'オムニチャネルAIエージェント',
+    badge: '常時稼働',
+    badgeValue: '24時間365日',
+    body: '設計図のように緻密な顧客対応を。AIエージェントがウェブサイト、Instagram、WhatsAppで応答し、人の対応が必要なときはチームに会話を引き継ぎます。',
+    tagsLabel: 'エージェントが対応すること',
+    tags: ['24時間の応答', '見込み客の選別', '予約受付', '担当者への引き継ぎ'],
+  },
   notFound: {
     title: 'この線はどこにもつながっていません。',
     code: 'エラー 404',
