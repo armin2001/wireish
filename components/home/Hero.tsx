@@ -1,11 +1,12 @@
 'use client';
 
 import { useRef } from 'react';
-import { motion, useScroll, useTransform } from 'framer-motion';
+import { motion, transform, useScroll, useTransform } from 'framer-motion';
 import { Globe, Play } from 'lucide-react';
 import { FaFacebookMessenger, FaInstagram, FaWhatsapp } from 'react-icons/fa';
 import { HeroVisual } from '@/components/home/HeroVisual';
 import { ButtonLink } from '@/components/ui/Button';
+import { Glow } from '@/components/ui/Glow';
 import { DEMO_HREF } from '@/lib/content';
 import { usePrefersReducedMotion } from '@/lib/hooks';
 import { useI18n } from '@/lib/i18n/client';
@@ -16,6 +17,13 @@ const CHANNELS = [
   { key: 'whatsapp', Icon: FaWhatsapp },
   { key: 'messenger', Icon: FaFacebookMessenger },
 ] as const;
+
+/*
+ * Copy opacity over the scroll. A function on purpose: given ranges, useTransform lets
+ * framer-motion hand opacity to the browser's native ViewTimeline (new in Safari 26), whose
+ * "exit" range also starts the fade late on a hero taller than the screen, as on every phone.
+ */
+const fadeCopy = transform([0, 0.75], [1, 0]);
 
 /*
  * Entrances use the CSS `animate-rise` rather than framer-motion: they run before hydration,
@@ -34,7 +42,7 @@ export default function Hero() {
   const { scrollYProgress } = useScroll({ target: section, offset: ['start start', 'end start'] });
   const backdropY = useTransform(scrollYProgress, [0, 1], [0, 220]);
   const copyY = useTransform(scrollYProgress, [0, 1], [0, -90]);
-  const copyOpacity = useTransform(scrollYProgress, [0, 0.75], [1, 0]);
+  const copyOpacity = useTransform(scrollYProgress, fadeCopy);
   const visualY = useTransform(scrollYProgress, [0, 1], [0, 70]);
 
   return (
@@ -42,14 +50,8 @@ export default function Hero() {
       {/* Backdrop: two logo-colored glows and a dot grid that fades out toward the edges. */}
       <div aria-hidden className="pointer-events-none absolute inset-0 -z-10">
         <motion.div className="absolute inset-0" style={reduceMotion ? { y: 0 } : { y: backdropY }}>
-          <div
-            className="absolute -left-48 -top-48 h-155 w-155 rounded-full opacity-30 blur-[140px]"
-            style={{ backgroundImage: 'var(--gradient-wire)' }}
-          />
-          <div
-            className="absolute -right-40 top-1/4 h-130 w-130 rounded-full opacity-25 blur-[140px]"
-            style={{ backgroundImage: 'var(--gradient-pulse)' }}
-          />
+          <Glow className="-left-48 -top-48 h-155 w-155" gradient="var(--gradient-wire)" blur={140} opacity={0.3} />
+          <Glow className="-right-40 top-1/4 h-130 w-130" gradient="var(--gradient-pulse)" blur={140} opacity={0.25} />
           <div className="dot-grid absolute inset-0 mask-[radial-gradient(ellipse_75%_65%_at_50%_35%,#000_25%,transparent_75%)]" />
         </motion.div>
         {/* Hides where the glows are clipped; the demo section's light blends over it from below. */}

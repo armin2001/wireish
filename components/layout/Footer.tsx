@@ -3,6 +3,7 @@ import { FaXTwitter } from 'react-icons/fa6';
 import { HideOnRoutes } from '@/components/layout/HideOnRoutes';
 import { TransitionLink } from '@/components/layout/PageTransition';
 import { ButtonLink } from '@/components/ui/Button';
+import { Glow } from '@/components/ui/Glow';
 import { Logo } from '@/components/ui/Logo';
 import { Reveal } from '@/components/ui/Reveal';
 import { OPEN_ROLES } from '@/lib/careers';
@@ -59,16 +60,13 @@ export function Footer({ t }: { t: Dictionary }) {
         <Reveal className="mx-auto mb-20 max-w-6xl pt-8">
           <div className="glass-raised relative overflow-hidden rounded-[2.5rem] px-6 py-16 text-center sm:px-12 md:py-24">
             <div className="wire-line absolute inset-x-0 top-0" aria-hidden />
-            <div
-              aria-hidden
-              className="pointer-events-none absolute -top-40 left-1/2 -z-10 h-120 w-[min(760px,120%)] -translate-x-1/2 rounded-full opacity-45 blur-[110px]"
-              style={{ backgroundImage: 'var(--gradient-wire)' }}
+            <Glow
+              className="-top-40 left-1/2 -z-10 h-120 w-[min(760px,120%)] -translate-x-1/2"
+              gradient="var(--gradient-wire)"
+              blur={110}
+              opacity={0.45}
             />
-            <div
-              aria-hidden
-              className="pointer-events-none absolute -bottom-48 -right-24 -z-10 h-100 w-100 rounded-full opacity-30 blur-[110px]"
-              style={{ backgroundImage: 'var(--gradient-pulse)' }}
-            />
+            <Glow className="-bottom-48 -right-24 -z-10 h-100 w-100" gradient="var(--gradient-pulse)" blur={110} opacity={0.3} />
             <div
               aria-hidden
               className="dot-grid pointer-events-none absolute inset-0 -z-10 mask-[radial-gradient(ellipse_60%_70%_at_50%_30%,#000_20%,transparent_75%)]"

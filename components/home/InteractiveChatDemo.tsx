@@ -4,6 +4,7 @@ import { useRef } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { Check } from 'lucide-react';
 import { VoiceflowChat } from '@/components/home/VoiceflowChat';
+import { Glow } from '@/components/ui/Glow';
 import { usePrefersReducedMotion } from '@/lib/hooks';
 import { useI18n } from '@/lib/i18n/client';
 import { REVEAL } from '@/lib/motion';
@@ -22,26 +23,20 @@ export default function InteractiveChatDemo() {
   return (
     // `isolate` keeps this section's light in its own layer, painted over the hero's bottom fade
     // instead of sliding underneath it (which showed as a hard horizontal edge).
-    <section ref={section} id="demo" className="relative isolate scroll-mt-24 px-6 py-28">
+    // overflow-x-clip: the glows spill past the screen edge, and without it mobile browsers widen
+    // (and zoom out) the whole page to fit them. Only x, so the light still bleeds up and down.
+    <section ref={section} id="demo" className="relative isolate scroll-mt-24 overflow-x-clip px-6 py-28">
       {/*
         Ambient light, far layer: reaches 16rem into the hero and 10rem into the next section,
         feathered by the mask so no edge ever shows, and drifts slower than the page.
-        overflow-x-clip: without it the glows stick out past the screen edge, and mobile
-        browsers widen (and zoom out) the whole page to fit them.
       */}
       <motion.div
         aria-hidden
         style={reduceMotion ? { y: 0 } : { y: lightY }}
-        className="pointer-events-none absolute inset-x-0 -top-64 -bottom-40 -z-10 overflow-x-clip mask-[linear-gradient(to_bottom,transparent,#000_35%,#000_65%,transparent)]"
+        className="pointer-events-none absolute inset-x-0 -top-64 -bottom-40 -z-10 mask-[linear-gradient(to_bottom,transparent,#000_35%,#000_65%,transparent)]"
       >
-        <div
-          className="absolute right-[6%] top-1/2 h-152 w-152 -translate-y-1/2 rounded-full opacity-35 blur-[130px]"
-          style={{ backgroundImage: 'var(--gradient-pulse)' }}
-        />
-        <div
-          className="absolute left-[10%] top-[42%] h-104 w-104 -translate-y-1/2 rounded-full opacity-20 blur-[130px]"
-          style={{ backgroundImage: 'var(--gradient-wire)' }}
-        />
+        <Glow className="right-[6%] top-1/2 h-152 w-152 -translate-y-1/2" gradient="var(--gradient-pulse)" blur={130} opacity={0.35} />
+        <Glow className="left-[10%] top-[42%] h-104 w-104 -translate-y-1/2" gradient="var(--gradient-wire)" blur={130} opacity={0.2} />
       </motion.div>
 
       <motion.div
@@ -68,11 +63,7 @@ export default function InteractiveChatDemo() {
 
         {/* Near layer: the chat drifts a little faster than the page, ahead of the copy. */}
         <motion.div className="relative" style={reduceMotion ? { y: 0 } : { y: chatY }}>
-          <div
-            aria-hidden
-            className="pointer-events-none absolute -inset-6 -z-10 rounded-[3rem] opacity-25 blur-[90px]"
-            style={{ backgroundImage: 'var(--gradient-spectrum)' }}
-          />
+          <Glow className="-inset-6 -z-10" shape="rect" gradient="var(--gradient-spectrum)" blur={90} opacity={0.25} />
           <VoiceflowChat
             label={copy.label}
             loading={copy.loading}

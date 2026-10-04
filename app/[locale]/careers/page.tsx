@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { ArrowUpRight, Code2, MessagesSquare, Route } from 'lucide-react';
 import { TransitionLink } from '@/components/layout/PageTransition';
 import { ButtonLink } from '@/components/ui/Button';
+import { Glow } from '@/components/ui/Glow';
 import { OPEN_ROLES } from '@/lib/careers';
 import { getDictionary } from '@/lib/i18n/get-dictionary';
 import { pageMetadata } from '@/lib/i18n/metadata';
@@ -28,11 +29,7 @@ export default async function CareersPage({ params }: LocaleParams) {
 
   return (
     <main className="relative overflow-x-clip px-6 pb-28 pt-36">
-      <div
-        aria-hidden
-        className="pointer-events-none absolute -top-32 left-[-10%] -z-10 h-130 w-155 rounded-full opacity-25 blur-[130px]"
-        style={{ backgroundImage: 'var(--gradient-pulse)' }}
-      />
+      <Glow className="-top-32 left-[-10%] -z-10 h-130 w-155" gradient="var(--gradient-pulse)" blur={130} opacity={0.25} />
       <div className="mx-auto max-w-6xl">
         <header className="max-w-3xl">
           <h1 className="font-display text-4xl font-semibold tracking-[-0.03em] text-white md:text-6xl">{c.title}</h1>

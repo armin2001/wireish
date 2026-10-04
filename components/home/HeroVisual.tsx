@@ -4,6 +4,7 @@ import { useEffect, useState, type ReactNode } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Bot, CalendarCheck, CheckCheck, Sparkles, UserPlus } from 'lucide-react';
 import { FaWhatsapp } from 'react-icons/fa';
+import { Glow } from '@/components/ui/Glow';
 import { TypingIndicator } from '@/components/ui/TypingIndicator';
 import { cn } from '@/lib/cn';
 import { usePrefersReducedMotion, useSplashDone } from '@/lib/hooks';
@@ -42,11 +43,7 @@ export function HeroVisual() {
 
   return (
     <div role="img" aria-label={m.label} className="relative mx-auto w-full max-w-[440px] animate-rise [animation-delay:320ms] lg:mr-0">
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-6 -z-10 rounded-[3rem] opacity-45 blur-[70px]"
-        style={{ backgroundImage: 'var(--gradient-spectrum)' }}
-      />
+      <Glow className="inset-6 -z-10" shape="rect" gradient="var(--gradient-spectrum)" blur={70} opacity={0.45} />
 
       <motion.div
         animate={{ y: [0, -14, 0] }}

@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { Bot, Eye, Users } from 'lucide-react';
 import { TeamShowcase } from '@/components/team/TeamShowcase';
 import { ButtonLink } from '@/components/ui/Button';
+import { Glow } from '@/components/ui/Glow';
 import { getDictionary } from '@/lib/i18n/get-dictionary';
 import { pageMetadata } from '@/lib/i18n/metadata';
 import { localeFrom, type LocaleParams } from '@/lib/i18n/server';
@@ -35,10 +36,11 @@ export default async function TeamPage({ params }: LocaleParams) {
 
   return (
     <main className="relative overflow-x-clip pb-28 pt-36">
-      <div
-        aria-hidden
-        className="pointer-events-none absolute left-1/2 top-0 -z-10 h-[460px] w-[820px] -translate-x-1/2 rounded-full opacity-25 blur-[130px]"
-        style={{ backgroundImage: 'var(--gradient-spectrum)' }}
+      <Glow
+        className="left-1/2 top-0 -z-10 h-[460px] w-[820px] -translate-x-1/2"
+        gradient="var(--gradient-spectrum)"
+        blur={130}
+        opacity={0.25}
       />
       <header className="mx-auto max-w-6xl px-6">
         <h1 className="max-w-3xl font-display text-4xl font-semibold tracking-[-0.03em] text-white md:text-6xl">{t.team.title}</h1>

@@ -3,6 +3,7 @@ import { Clock, Mail, Video } from 'lucide-react';
 import { BookingBackdrop } from '@/components/booking/BookingBackdrop';
 import { BookingFlow } from '@/components/booking/BookingFlow';
 import { DemoScenePanel } from '@/components/booking/DemoScenePanel';
+import { Glow } from '@/components/ui/Glow';
 import { MEETING_MINUTES } from '@/lib/availability';
 import { format } from '@/lib/i18n/format';
 import { getDictionary } from '@/lib/i18n/get-dictionary';
@@ -66,11 +67,7 @@ export default async function BookDemoPage({ params }: LocaleParams) {
 
         <div className="relative min-w-0">
           {/* Soft brand glow around the card; the card itself is opaque. */}
-          <div
-            aria-hidden
-            className="pointer-events-none absolute -inset-x-8 -inset-y-10 -z-10 rounded-[3rem] opacity-[0.18] blur-3xl"
-            style={{ backgroundImage: 'var(--gradient-spectrum)' }}
-          />
+          <Glow className="-inset-x-8 -inset-y-10 -z-10" shape="rect" gradient="var(--gradient-spectrum)" blur={64} opacity={0.18} />
           <BookingFlow />
         </div>
       </div>

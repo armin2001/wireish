@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { MessageSquare, ShieldCheck, Zap } from 'lucide-react';
 import Pricing from '@/components/pricing/Pricing';
 import { ValueEstimator } from '@/components/pricing/ValueEstimator';
+import { Glow } from '@/components/ui/Glow';
 import { getDictionary } from '@/lib/i18n/get-dictionary';
 import { pageMetadata } from '@/lib/i18n/metadata';
 import { localeFrom, type LocaleParams } from '@/lib/i18n/server';
@@ -23,10 +24,11 @@ export default async function PricingPage({ params }: LocaleParams) {
   const t = await getDictionary(await localeFrom(params));
   return (
     <main className="relative overflow-x-clip px-6 pb-28 pt-36">
-      <div
-        aria-hidden
-        className="pointer-events-none absolute left-1/2 top-0 -z-10 h-[420px] w-[760px] -translate-x-1/2 rounded-full opacity-25 blur-[120px]"
-        style={{ backgroundImage: 'var(--gradient-wire)' }}
+      <Glow
+        className="left-1/2 top-0 -z-10 h-[420px] w-[760px] -translate-x-1/2"
+        gradient="var(--gradient-wire)"
+        blur={120}
+        opacity={0.25}
       />
       <div className="mx-auto max-w-6xl">
         <header className="max-w-2xl">

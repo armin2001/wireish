@@ -5,6 +5,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { ArrowRight, Check, Sparkles } from 'lucide-react';
 import { TransitionLink } from '@/components/layout/PageTransition';
 import { ButtonLink } from '@/components/ui/Button';
+import { Glow } from '@/components/ui/Glow';
 import { cn } from '@/lib/cn';
 import { DEMO_HREF } from '@/lib/content';
 import type { Dictionary } from '@/lib/i18n/dictionaries/en';
@@ -50,13 +51,15 @@ export default function Pricing({ embedded = false }: PricingProps) {
       id={embedded ? undefined : 'pricing'}
       aria-labelledby={embedded ? undefined : 'pricing-title'}
       aria-label={embedded ? copy.title : undefined}
-      className={cn('relative', !embedded && 'scroll-mt-24 px-6 py-28')}
+      // overflow-x-clip: the glow spills past the screen edge, which would widen the page on phones.
+      className={cn('relative', !embedded && 'scroll-mt-24 overflow-x-clip px-6 py-28')}
     >
       {!embedded && (
-        <div
-          aria-hidden
-          className="pointer-events-none absolute left-1/2 top-1/2 -z-10 h-130 w-[min(900px,100%)] -translate-x-1/2 -translate-y-1/2 rounded-full opacity-20 blur-[140px]"
-          style={{ backgroundImage: 'var(--gradient-wire)' }}
+        <Glow
+          className="left-1/2 top-1/2 -z-10 h-130 w-[min(900px,100%)] -translate-x-1/2 -translate-y-1/2"
+          gradient="var(--gradient-wire)"
+          blur={140}
+          opacity={0.2}
         />
       )}
 

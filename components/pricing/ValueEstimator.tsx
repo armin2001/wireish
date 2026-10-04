@@ -2,6 +2,7 @@
 
 import { useEffect, useId, useState } from 'react';
 import { motion, useSpring, useTransform, type MotionValue } from 'framer-motion';
+import { Glow } from '@/components/ui/Glow';
 import { cn } from '@/lib/cn';
 import { useI18n } from '@/lib/i18n/client';
 import { intlLocale } from '@/lib/i18n/config';
@@ -100,11 +101,7 @@ export function ValueEstimator() {
   return (
     <section aria-labelledby="estimator-title" className="glass-raised relative overflow-hidden rounded-4xl">
       <div className="wire-line absolute inset-x-0 top-0" aria-hidden />
-      <div
-        aria-hidden
-        className="pointer-events-none absolute -right-32 -top-32 h-96 w-96 rounded-full opacity-25 blur-[110px]"
-        style={{ backgroundImage: 'var(--gradient-pulse)' }}
-      />
+      <Glow className="-right-32 -top-32 h-96 w-96" gradient="var(--gradient-pulse)" blur={110} opacity={0.25} />
       <div className="relative grid gap-10 p-7 sm:p-10 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)]">
         <div>
           <h2 id="estimator-title" className="font-display text-2xl font-semibold text-white">

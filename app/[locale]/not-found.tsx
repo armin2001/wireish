@@ -1,6 +1,7 @@
 'use client';
 
 import { ButtonLink } from '@/components/ui/Button';
+import { Glow } from '@/components/ui/Glow';
 import { TransitionLink } from '@/components/layout/PageTransition';
 import { BRAND } from '@/lib/brand';
 import { DEMO_HREF, NAV_LINKS } from '@/lib/content';
@@ -43,10 +44,11 @@ export default function NotFound() {
   const { t } = useI18n();
   return (
     <main className="relative grid flex-1 place-items-center overflow-hidden px-6 pb-24 pt-36">
-      <div
-        aria-hidden
-        className="pointer-events-none absolute left-1/2 top-1/3 -z-10 h-[420px] w-[520px] -translate-x-1/2 rounded-full opacity-20 blur-[120px]"
-        style={{ backgroundImage: 'var(--gradient-pulse)' }}
+      <Glow
+        className="left-1/2 top-1/3 -z-10 h-[420px] w-[520px] -translate-x-1/2"
+        gradient="var(--gradient-pulse)"
+        blur={120}
+        opacity={0.2}
       />
       <div className="w-full max-w-lg text-center">
         <BrokenWire />

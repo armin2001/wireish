@@ -3,6 +3,7 @@ import { Mail } from 'lucide-react';
 import { FaInstagram, FaLinkedin } from 'react-icons/fa';
 import { ContactForm } from '@/components/contact/ContactForm';
 import { TransitionLink } from '@/components/layout/PageTransition';
+import { Glow } from '@/components/ui/Glow';
 import { OPEN_ROLES } from '@/lib/careers';
 import { DEMO_HREF, SITE } from '@/lib/content';
 import { getDictionary } from '@/lib/i18n/get-dictionary';
@@ -37,11 +38,7 @@ export default async function ContactPage({ params, searchParams }: ContactPageP
 
   return (
     <main className="relative overflow-x-clip px-6 pb-28 pt-36">
-      <div
-        aria-hidden
-        className="pointer-events-none absolute -top-40 right-[-10%] -z-10 h-[520px] w-[520px] rounded-full opacity-25 blur-[120px]"
-        style={{ backgroundImage: 'var(--gradient-wire)' }}
-      />
+      <Glow className="-top-40 right-[-10%] -z-10 h-[520px] w-[520px]" gradient="var(--gradient-wire)" blur={120} opacity={0.25} />
       <div className="mx-auto grid max-w-6xl gap-14 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)]">
         <section className="lg:pt-4">
           <h1 className="font-display text-4xl font-semibold tracking-[-0.03em] text-white md:text-6xl">{t.contact.title}</h1>
